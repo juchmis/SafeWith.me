@@ -14,9 +14,9 @@ public class Bucket implements DTO {
 	 */
 	
 	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-    private String id;
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+	private String id;
 	
 	@Persistent
 	private String fsBlobUri;	// blobUri pointing to the bucket's encrypted json filesystem
