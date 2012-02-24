@@ -32,8 +32,8 @@ public class ServeBlobServlet extends HttpServlet {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {				
 
 				// serve the blob
-			    BlobKey blobKey = new BlobKey(req.getParameter("blob-key"));
-			    blobstoreService.serve(blobKey, resp);
+				BlobKey blobKey = new BlobKey(req.getParameter("blob-key"));
+				blobstoreService.serve(blobKey, resp);
 			}
 		});
 	}
@@ -45,17 +45,17 @@ public class ServeBlobServlet extends HttpServlet {
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {				
 				
-			    BlobKey blobKey = new BlobKey(req.getParameter("blob-key"));
-		        long blobSize = new BlobInfoFactory().loadBlobInfo(blobKey).getSize();
-			    
-		        // delete the blob
-		        blobstoreService.delete(blobKey);
-			    
-		        // update user's used storage
-		        user.updateUsedStorage( (-1) * blobSize );
-		        new GenericDAO().persist(user);
-			    
-		        resp.getWriter().close();
+				BlobKey blobKey = new BlobKey(req.getParameter("blob-key"));
+				long blobSize = new BlobInfoFactory().loadBlobInfo(blobKey).getSize();
+				
+				// delete the blob
+				blobstoreService.delete(blobKey);
+				
+				// update user's used storage
+				user.updateUsedStorage( (-1) * blobSize );
+				new GenericDAO().persist(user);
+				
+				resp.getWriter().close();
 			}
 		});
 	}	
