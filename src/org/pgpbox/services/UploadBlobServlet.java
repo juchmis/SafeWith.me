@@ -34,11 +34,11 @@ public class UploadBlobServlet extends HttpServlet {
 
 				// build upload url for the upload form
 				String uploadUrl = blobstoreService.createUploadUrl("/app/uploadBlob");
-		        
-		        resp.setContentType("application/json");
-		        String json = "{ \"uploadUrl\" : \"" + uploadUrl + "\" }";
-		        resp.getWriter().print(json);
-		        resp.getWriter().close();
+				
+				resp.setContentType("application/json");
+				String json = "{ \"uploadUrl\" : \"" + uploadUrl + "\" }";
+				resp.getWriter().print(json);
+				resp.getWriter().close();
 			}
 		});
 	}
@@ -59,23 +59,23 @@ public class UploadBlobServlet extends HttpServlet {
 				// parse the request for blob data
 				@SuppressWarnings("deprecation")
 				Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(req);
-		        BlobKey blobKey = blobs.get("file");
-
-		        // update user's used storage
-		        long blobSize = new BlobInfoFactory().loadBlobInfo(blobKey).getSize();
-		        user.updateUsedStorage(blobSize);
-		        new GenericDAO().persist(user);
-		
-		        // redirect to serveBlobServlet
-		        if (blobKey == null) {
-		        	resp.sendError(500, "Invalid or no blob-key specified!");
-		        } else {
-		    		String json = "{ \"uri\" : \"/app/blobs?blob-key=" + blobKey.getKeyString() + "\" }";
-		    		resp.setStatus(201);
-		    		resp.setContentType("application/json");
-		    		resp.getWriter().println(json);
-		    		resp.getWriter().close();
-		        }	
+				BlobKey blobKey = blobs.get("file");
+				
+				// update user's used storage
+				long blobSize = new BlobInfoFactory().loadBlobInfo(blobKey).getSize();
+				user.updateUsedStorage(blobSize);
+				new GenericDAO().persist(user);
+				
+				// redirect to serveBlobServlet
+				if (blobKey == null) {
+					resp.sendError(500, "Invalid or no blob-key specified!");
+				} else {
+					String json = "{ \"uri\" : \"/app/blobs?blob-key=" + blobKey.getKeyString() + "\" }";
+					resp.setStatus(201);
+					resp.setContentType("application/json");
+					resp.getWriter().println(json);
+					resp.getWriter().close();
+				}	
 			}
 		});
 	}
