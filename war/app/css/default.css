@@ -1,0 +1,45 @@
+#nav {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 250px;
+	height: 100%;
+	padding: 0px;
+}
+
+#body {
+	height: 100%;
+}
+
+#main_view {
+	margin-left: 250px;
+	height: 100%;
+}
+
+#login {
+	position:absolute;
+	top: 0;
+	right: 0;
+	margin-top: 25px;
+	margin-right: 40px;
+	font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
+	font-size: 90%;
+}
+
+td:hover {
+	background-color: #088284;
+}
+
+#docList li {
+	font-size: 80%;
+}
+
+#holder {
+	margin: 175px;
+	border: 10px dashed #ccc;
+	height: 400px;
+}
+
+#holder.hover {
+	border: 10px dashed #333;
+}

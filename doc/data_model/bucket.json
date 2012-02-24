@@ -1,0 +1,36 @@
+{
+  "id" : "2675a0fd-a472-461d-8b24-75cfb2bb1339",
+  "name" : "Personal Documents",
+  "ownerEmail" : "test@asdf.com",
+  "created" : "2003-12-13T18:30:02Z",
+  "root" : [
+    {
+      "type" : "file",
+      "name" : "helloworld.pdf",
+      "size" : "1024",
+      "uploaded" : "2003-12-13T18:30:02Z",
+      "mimeType" : "application/pdf",
+      "blobUri" : "/blobs?blob-key=DFXuo21JPUh2nIV2B5K08A"
+    },
+    {
+      "type" : "dir",
+      "name" : "Taxes",
+      "children" : [
+        {
+          "type" : "dir",
+          "name" : "2010",
+          "children" : [
+            {
+              "type" : "file",
+              "name" : "helloworld.pdf",
+              "size" : "1024",
+              "uploaded" : "2003-12-13T18:30:02Z",
+              "mimeType" : "application/pdf",
+              "blobUri" : "/blobs?blob-key=DFXuo21JPUh2nIV2B5K08A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <welcome-file-list>
+	<welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  
+  <!-- Http Servlet for login --> 
+  <servlet>
+	<servlet-name>Login</servlet-name>
+	<servlet-class>org.pgpbox.services.LoginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>Login</servlet-name>
+	<url-pattern>/app/login</url-pattern>
+  </servlet-mapping>
+    
+  <!-- Http Servlet for serving buckets -->  
+  <servlet>
+    <servlet-name>BucketServlet</servlet-name>
+    <servlet-class>org.pgpbox.services.BucketServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>BucketServlet</servlet-name>
+    <url-pattern>/app/buckets</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Http Servlet for uploading blobs -->  
+  <servlet>
+    <servlet-name>UploadBlobServlet</servlet-name>
+    <servlet-class>org.pgpbox.services.UploadBlobServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>UploadBlobServlet</servlet-name>
+    <url-pattern>/app/uploadBlob</url-pattern>
+  </servlet-mapping>
+    
+  <!-- Http Servlet for serving blobs -->  
+  <servlet>
+    <servlet-name>ServeBlobServlet</servlet-name>
+    <servlet-class>org.pgpbox.services.ServeBlobServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>ServeBlobServlet</servlet-name>
+    <url-pattern>/app/blobs</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Make HTTPS mandatory -->
+  <security-constraint>
+    <web-resource-collection>
+      <url-pattern>/app/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+</web-app>

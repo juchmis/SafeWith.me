@@ -1,0 +1,23 @@
+
+---- alpha test & push to github ----
+
+Create fancy design
+Put up warning when not using unsupported browser
+add warning when drag and drop large files
+add handler for multiple files
+create wait dialog during encryption
+Add file name to data url
+Main page: create explanatory images of BucketFS and describe what the server knows (privacy)
+Add facebook, twitter, google+ sharing (with two-clicks for more privacy) on hp
+Error handling: What when the previous REST call has gone wrong
+Deal with "eventual consistency" race conditions (e.g. used storage)
+Fix memory leak during encryption
+Look at signing of files
+
+---- beta test ----
+
+Refactor to REST style e.g. with Restlets
+Add Create/Delete bucket option
+Delete user file blobs before deleting bucket
+Sharing of buckets with other users (via recepient's public key)
+put crypto logic in web worker
