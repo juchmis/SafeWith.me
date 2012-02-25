@@ -1,7 +1,7 @@
 ## PGPbox - an open source document archive with client-side encryption
 http://pgpbox.org
 
-PGPbox lets your store and share your files using OpenPGP encryption. Its written completely in JavaScript and HTML5, so you can access files from any device.
+PGPbox lets your store and share your files using OpenPGP encryption. The client is written completely in JavaScript and HTML5, so you can access files from any device.
 
 ### In order to run a server locally, you must:
     1. Install the Google App Engine SDK: http://code.google.com/intl/en/appengine/downloads.html#Google_App_Engine_SDK_for_Java
