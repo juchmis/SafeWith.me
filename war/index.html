@@ -1,35 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <!--
-   ~ Copyright 2012 SafeWith.me All Rights Reserved.
-  -->
+   - SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
+   -
+   - Copyright (c) 2012 Tankred Hase
+   - 
+   - This program is free software; you can redistribute it and/or
+   - modify it under the terms of the GNU General Public License
+   - as published by the Free Software Foundation; version 2
+   - of the License.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   - GNU General Public License for more details.
+   - 
+   - You should have received a copy of the GNU General Public License
+   - along with this program; if not, write to the Free Software
+   - Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+   -->
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <title>SafeWith.me</title>
-    <link rel="stylesheet" href="default.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Store and share your files with OpenPGP encryption on any device via HTML5">
+    <meta name="author" content="Tankred Hase">
     <meta name="keywords" content="safe with me, secure online storage, secure cloud storage, secure file sharing, securely share files, open source, privacy, security, client side encryption, pgp, openpgp, html5" />
-    <style>
-      #logo { background-image:url('/images/safe-icon.png'); width: 256px; height: 265px;  margin-left: auto; margin-right: auto; }
-      article { font: italic 14px/19px Georgia,Times New Roman,serif; font-family: Georgia, 'Times New Roman', serif; color: #777; text-align: center; }
-      #control { font-style: italic; padding-bottom: 10px; }
+
+    <!-- Le styles -->
+    <link href="app/css/bootstrap-2.0.1.min.css" rel="stylesheet">
+    <!-- <link href="default.css" rel="stylesheet"> -->
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      
+      #logo {
+        background-image:url('/images/safe-icon.png');
+        width: 256px;
+        height: 265px;
+        margin-left: auto;
+        margin-right: auto;
+        background-repeat: no-repeat;
+        padding-top: 10px;
+      }
+      
+      article {
+        font: italic 14px/19px Georgia,Times New Roman,serif;
+        font-family: Georgia, 'Times New Roman', serif;
+        color: #777; text-align: center;
+      }
+      
+      #control {
+        font-style: italic;
+        padding-bottom: 10px;
+      }
+      
+      h1 {
+        font-size: 1.75em;
+        padding-top: 10px;
+        padding-bottom: 20px;
+      }
+      
+      h1, h3 {
+        line-height: 1.2em;
+        text-align: center;
+        text-shadow: 1px 2px 5px rgba(64, 64, 64, 0.5);
+      }
+      
+      #wrapper {
+      }
     </style>
+    <link href="app/css/bootstrap-responsive-2.0.1.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="../favicon.ico">
+    <!-- <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png"> -->
   </head>
+
   <body>
-    <section id="wrapper">
-      <header>
-        <h1>Would you post a scan of<br/>your credit card on the internet?<br/><br/>You could be doing that right now<br/>without even knowing it.</h1>
-      </header>
-      <div id="logo"></div>
-      <h3 id="control">Take control of your privacy with SafeWith.me <a href="how.html">How?</a></h3>
-      <article>
-        <p><b>Our mission:</b> provide you secure access to all of your private documents<br/> anywhere, anytime and on all of your devices.</p>
-      </article>
-      <a id="html5badge" href="http://www.w3.org/html/logo/">
-        <img src="/images/html5-badge-h-css3-performance-storage.png" width="197" height="64" alt="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage" title="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage">
-      </a>
-      <footer><a href="">About Us</a>/<a href="">Privacy</a>/<a href="">Terms</a>/<a href="mailto:info@safewith.me">Contact</a></footer> 
-    </section>
-    <a href="https://github.com/tanx/SafeWith.me"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/5d21241b64dc708fcbb701f68f72f41e9f1fadd6/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">SafeWith.me</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <li><a href="https://github.com/tanx/SafeWith.me">Source Code</a></li>
+            </ul>
+            <p id="login" class="navbar-text pull-right">Log in with your <a href="#">Google OpenID</a></p>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="well">
+
+          <section id="wrapper">
+            <header>
+              <h1>Would you post a scan of<br/>your credit card on the internet?<br/><br/>You could be doing that right now<br/>without even knowing it.</h1>
+            </header>
+            <div id="logo"></div>
+            <h3 id="control">Take control of your privacy <a href="how.html">How?</a></h3>
+            <article>
+              <p><b>Our mission:</b> provide you secure access to all of your private documents<br/> anywhere, anytime and on all of your devices.</p>
+            </article>
+            <a id="html5badge" href="http://www.w3.org/html/logo/">
+              <img src="/images/html5-badge-h-css3-performance-storage.png" width="197" height="64" alt="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage" title="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage">
+            </a>
+          </section><!--/wrapper-->
+          
+        </div><!--/well-->
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <p>&copy; 2012 Tankred Hase</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="app/js/jquery-1.7.1.min.js"></script>
+    <script src="app/js/bootstrap-2.0.1.min.js"></script>
+
   </body>
 </html>
