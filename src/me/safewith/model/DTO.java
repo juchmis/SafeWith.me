@@ -1,4 +1,4 @@
-package org.pgpbox.model;
+package me.safewith.model;
 
 public interface DTO {
 

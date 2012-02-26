@@ -1,4 +1,4 @@
-package org.pgpbox.services;
+package me.safewith.services;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.pgpbox.model.ValidUser;
+import me.safewith.model.ValidUser;
 
 public class RequestHelper {
 

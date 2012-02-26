@@ -1,4 +1,4 @@
-package org.pgpbox.model;
+package me.safewith.model;
 
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;

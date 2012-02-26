@@ -1,4 +1,4 @@
-package org.pgpbox.dataAccess;
+package me.safewith.dataAccess;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +10,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.pgpbox.model.DTO;
+import me.safewith.model.DTO;
 
 
 /**

@@ -1,4 +1,4 @@
-package org.pgpbox.dataAccess;
+package me.safewith.dataAccess;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;

@@ -1,4 +1,4 @@
-package org.pgpbox.services;
+package me.safewith.services;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -8,9 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.pgpbox.dataAccess.GenericDAO;
-import org.pgpbox.model.ValidUser;
-import org.pgpbox.services.RequestHelper.Command;
+import me.safewith.dataAccess.GenericDAO;
+import me.safewith.model.ValidUser;
+import me.safewith.services.RequestHelper.Command;
+
 
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;

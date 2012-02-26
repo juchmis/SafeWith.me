@@ -1,8 +1,8 @@
-package org.pgpbox.dataAccess;
+package me.safewith.dataAccess;
 
 import java.util.List;
 
-import org.pgpbox.model.Bucket;
+import me.safewith.model.Bucket;
 
 public class BucketDAO {
 	

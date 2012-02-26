@@ -1,4 +1,4 @@
-package org.pgpbox.test;
+package me.safewith.test;
 
 import static org.junit.Assert.*;
 
@@ -9,15 +9,16 @@ import java.util.UUID;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
+import me.safewith.dataAccess.GenericDAO;
+import me.safewith.model.Bucket;
+import me.safewith.model.ValidUser;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.pgpbox.dataAccess.GenericDAO;
-import org.pgpbox.model.Bucket;
-import org.pgpbox.model.ValidUser;
 
 
 public class GenericDAOTest {

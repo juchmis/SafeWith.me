@@ -1,4 +1,4 @@
-package org.pgpbox.services;
+package me.safewith.services;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -8,9 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.pgpbox.dataAccess.GenericDAO;
-import org.pgpbox.model.LoginInfo;
-import org.pgpbox.model.ValidUser;
+import me.safewith.dataAccess.GenericDAO;
+import me.safewith.model.LoginInfo;
+import me.safewith.model.ValidUser;
+
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
