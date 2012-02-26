@@ -50,12 +50,6 @@
         font: italic 14px/19px Georgia,Times New Roman,serif;
         font-family: Georgia, 'Times New Roman', serif;
         color: #777;
-        text-align: center;
-      }
-      
-      #control {
-        font-style: italic;
-        padding-bottom: 10px;
       }
       
       h1 {
@@ -69,8 +63,10 @@
         text-align: center;
         text-shadow: 1px 2px 5px rgba(64, 64, 64, 0.5);
       }
-      
-      #wrapper {
+
+      #control {
+        font-style: italic;
+        padding-bottom: 20px;
       }
     </style>
     <link href="app/css/bootstrap-responsive-2.0.1.min.css" rel="stylesheet">
@@ -100,8 +96,8 @@
           <a class="brand" href="#">SafeWith.me</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="active"><a href="index.html">Home</a></li>
-              <li><a href="about.html">About</a></li>
+              <li><a href="index.html">Home</a></li>
+              <li class="active"><a href="about.html">About</a></li>
               <li><a href="contact.html">Contact</a></li>
               <li><a href="https://github.com/tanx/SafeWith.me">Source Code</a></li>
             </ul>
@@ -115,18 +111,21 @@
       <div class="row-fluid">
         <div class="well">
 
-          <section id="wrapper">
+          <section id="wrapper"> 
             <header>
-              <h1>Would you post a scan of<br/>your credit card on the internet?<br/><br/>You could be doing that right now<br/>without even knowing it.</h1>
+              <h1>"So every online storage provider tells me they're<br/>secure... what makes you any better?"</h1>
+              <div id="logo"></div>
+              <h3 id="control">Because <b>SafeWith.me</b> gives you total control of your privacy.</h3>
             </header>
-            <div id="logo"></div>
-            <h3 id="control">Take control of your privacy <a href="about.html">How?</a></h3>
             <article>
-              <p><b>Our mission:</b> provide you secure access to all of your private documents<br/> anywhere, anytime and on all of your devices.</p>
+              <ul>
+                <li>Documents are encrypted in your web browser with <b>your personal key before uploading</b>, using the trusted and well-known OpenPGP standard.</li>
+                <li>Other storage services on the web may encrypt your data with their key after upload. But this means that they will still always have access. This presents a very <b>real privacy threat for you</b>, if their service is compromised.</li>
+                <li>With SafeWith.me, no one (not even we) can read your documents without your private key, since <b>only the encrypted versions of your files are sent to our servers</b>. You are the only one who is able to access your data.</li>
+                <li><b>Secure sharing</b> of documents with others using their public key enables only the recipients to have access.</li>
+                <li><b>It's Open Source</b>. Providing transparency of the software and enabling collabaration with a community of security experts.</li>
+              </ul>
             </article>
-            <a id="html5badge" href="http://www.w3.org/html/logo/">
-              <img src="/images/html5-badge-h-css3-performance-storage.png" width="197" height="64" alt="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage" title="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage">
-            </a>
           </section><!--/wrapper-->
           
         </div><!--/well-->
