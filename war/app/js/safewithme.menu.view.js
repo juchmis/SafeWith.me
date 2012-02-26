@@ -30,8 +30,8 @@ function MenuView() {
 	/**
 	 * init UI
 	 */
-	this.init = function(callback) {
-		self.presenter.getLoginInfo(function(loginInfo) {
+	this.init = function(goal, callback) {
+		self.presenter.getLoginInfo(goal, function(loginInfo) {
 			self.updateLogin(loginInfo);
 			callback(loginInfo);
 		});
@@ -48,7 +48,7 @@ function MenuView() {
 			// anchor = '<div id="user" email="' + loginInfo.email + '"><a href="'
 			// + loginInfo.logoutUrl + '">Logout ' + loginInfo.email + '</a></div>';
 		} else {
-			anchor = 'Not logged in: <a href="' + loginInfo.loginUrl + '">Login</a>';
+			anchor = 'Log in with your <a href="' + loginInfo.loginUrl + '">Google OpenID</a>';
 			
 			// anchor = '<div id="user"><a href="' + loginInfo.loginUrl +
 			// '">Login</a></div>';

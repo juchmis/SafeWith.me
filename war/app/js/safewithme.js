@@ -39,7 +39,7 @@ function SafeWithMe() {
 	// init views
 	var menuView = new MenuView();
 	menuView.presenter = menu;
-	menuView.init(function(loginInfo) {
+	menuView.init('/', function(loginInfo) {
 		
 		// check if user is logged in
 		if (loginInfo.loggedIn && loginInfo.email) {

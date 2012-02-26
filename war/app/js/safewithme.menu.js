@@ -22,9 +22,10 @@
 
 function Menu(server) {
 	
-	this.getLoginInfo = function(callback) {
+	this.getLoginInfo = function(goal, callback) {
 		// init Login anchor
-		server.call('GET', '/app/login?requestUri=' + window.location.href, function(loginInfo) {
+		var uri = window.location.origin + goal;
+		server.call('GET', '/app/login?requestUri=' + uri, function(loginInfo) {
 			callback(loginInfo);
 		});
 	};
