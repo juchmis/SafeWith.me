@@ -48,7 +48,7 @@ function MenuView() {
 			// anchor = '<div id="user" email="' + loginInfo.email + '"><a href="'
 			// + loginInfo.logoutUrl + '">Logout ' + loginInfo.email + '</a></div>';
 		} else {
-			anchor = 'Log in with your <a href="' + loginInfo.loginUrl + '">Google OpenID</a>';
+			anchor = 'Try the alpha: Login with your <a href="' + loginInfo.loginUrl + '">Google OpenID</a>';
 			
 			// anchor = '<div id="user"><a href="' + loginInfo.loginUrl +
 			// '">Login</a></div>';
