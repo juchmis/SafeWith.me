@@ -27,6 +27,7 @@
 function FS(crypto, server) {
 
 	this.BucketFS = function(id, name, ownerEmail) {
+		this.version = "1.0";
 		this.id = id;
 		this.name = name;
 		this.ownerEmail = ownerEmail;
