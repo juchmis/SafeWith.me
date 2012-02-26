@@ -21,7 +21,7 @@
    -->
   <head>
     <meta charset="utf-8">
-    <title>PGPbox</title>
+    <title>SafeWith.me</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -35,6 +35,22 @@
       }
       .sidebar-nav {
         padding: 9px 0;
+      }
+      
+      #holder h1 {
+        padding-bottom: 20px;
+        text-shadow: 1px 2px 5px rgba(64, 64, 64, 0.5);
+        text-align: center;
+      }
+      
+      #logo {
+        width: 128px;
+        height: 128px;
+        margin-left: auto;
+        margin-right: auto;
+        background-image: url('/images/safe-icon-small.png');
+        background-repeat: no-repeat;
+        padding-top: 20px;
       }
       
       .fileinput-button {
@@ -81,7 +97,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">PGPbox</a>
+          <a class="brand" href="#">SafeWith.me</a>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
@@ -104,8 +120,9 @@
         </div><!--/span-->
         <div class="span8">
           <div id="holder" class="hero-unit">
-            <h1>Drag files here!</h1>
-            <p>You can either drag and drop files on this area or you can select files from your filesystem using the upload button.</p>
+            <h1>Drag to safe!</h1>
+            <div id="logo"></div>
+            <p>You can upload files with drag and drop onto the safe or by using the upload button.</p>
             <p>
               <span class="btn btn-success fileinput-button">
                 <span><i class="icon-plus icon-white"></i> Upload... </span>
@@ -119,7 +136,7 @@
       <hr>
 
       <footer>
-        <p>&copy; PGPbox.org 2012</p>
+        <p>&copy; 2012 Tankred Hase</p>
       </footer>
 
     </div><!--/.fluid-container-->

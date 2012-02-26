@@ -125,8 +125,8 @@ function FSView() {
 	this.addLinkToList = function(file) {
 		var uri = file.blobUri;
 		var item = '<li><div>' +
-				   '<a id="showItem" href="' + uri + '">' + file.name + '</a>' +
 				   '<a id="deleteItem" href="' + uri + '"><i class="icon-remove icon-black"></i></a>' +
+				   '<a id="showItem" href="' + uri + '">' + file.name + '</a>' +
 				   '</div></li>';
 		
 		$('#buckets').append(item);
