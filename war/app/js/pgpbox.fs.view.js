@@ -181,7 +181,8 @@ function FSView() {
 		// 	$("#main_view").html(image);
 		// 
 		// } else {
-			window.open(dataUrl);
+			window.location = dataUrl;
+			//window.open(dataUrl);
 		// }
 	};
 	
