@@ -23,8 +23,9 @@
     <meta charset="utf-8">
     <title>SafeWith.me</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Store and share your files with OpenPGP encryption on any device via HTML5">
+    <meta name="author" content="Tankred Hase">
+    <meta name="keywords" content="safe with me, secure online storage, secure cloud storage, secure file sharing, securely share files, open source, privacy, security, client side encryption, pgp, openpgp, html5" />
 
     <!-- Le styles -->
     <link href="css/bootstrap-2.0.1.min.css" rel="stylesheet">
@@ -33,6 +34,7 @@
         padding-top: 60px;
         padding-bottom: 40px;
       }
+      
       .sidebar-nav {
         padding: 9px 0;
       }
@@ -48,7 +50,7 @@
         height: 128px;
         margin-left: auto;
         margin-right: auto;
-        background-image: url('/images/safe-icon-small.png');
+        background-image: url('/img/safe-icon-small.png');
         background-repeat: no-repeat;
         padding-top: 20px;
       }
@@ -59,6 +61,7 @@
         float: left;
         margin-right: 4px;
       }
+      
       .fileinput-button input {
         position: absolute;
         top: 0;
@@ -99,10 +102,11 @@
           </a>
           <a class="brand" href="#">SafeWith.me</a>
           <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+            <ul class="nav">              
+              <li><a href="/index.html">Home</a></li>
+              <li><a href="/about.html">About</a></li>
+              <li><a href="/contact.html">Contact</a></li>
+              <li><a href="https://github.com/tanx/SafeWith.me">Source Code</a></li>
             </ul>
             <p id="login" class="navbar-text pull-right">Logged in as <a href="#">username</a></p>
           </div><!--/.nav-collapse -->
@@ -122,7 +126,7 @@
           <div id="holder" class="hero-unit">
             <h1>Drag to safe!</h1>
             <div id="logo"></div>
-            <p>You can upload files with drag and drop onto the safe or by using the upload button.</p>
+            <p>You can drag and drop files onto the safe or use the upload button. Uploaded files are listed on the left</p>
             <p>
               <span class="btn btn-success fileinput-button">
                 <span><i class="icon-plus icon-white"></i> Upload... </span>
