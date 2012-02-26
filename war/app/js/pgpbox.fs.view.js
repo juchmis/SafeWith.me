@@ -44,7 +44,14 @@ function FSView() {
 			var file = e.dataTransfer.files[0];
 			self.handleFileDrop(file);
 		};
-
+		
+		// upload button
+		function handleFileSelect(e) {
+			var file = e.target.files[0];
+			self.handleFileDrop(file);
+		}
+		document.getElementById('files').addEventListener('change', handleFileSelect, false);
+		
 		// get user's bucket if logged in
 		self.presenter.getBuckets(function(buckets) {
 			// if the user does not have any buckets create a default bucket for him

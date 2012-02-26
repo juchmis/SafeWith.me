@@ -67,7 +67,12 @@
           <div id="holder" class="hero-unit">
             <h1>Drag files here!</h1>
             <p>You can either drag and drop files on this area or you can select files from your filesystem using the upload button.</p>
-            <p><a class="btn btn-primary btn-large">Upload &raquo;</a></p>
+            <p>
+              <input type="file" id="files" name="files[]" multiple />
+              <span class="btn btn-primary btn-large">
+                Upload &raquo;
+              </span>
+            </p>
           </div>
         </div><!--/span-->
       </div><!--/row-->
