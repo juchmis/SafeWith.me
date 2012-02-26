@@ -9,20 +9,21 @@ test("Init", 4, function() {
 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
 });
 
-// test("Generate Keys", 4, function() {
-// 	var crypto = new Crypto();
-// 	
-// 	var start = (new Date).getTime();
-// 	var keySize = 2048;
-// 	crypto.generateKeys(keySize, "test@example.com");
-// 	var diff = (new Date).getTime() - start;
-// 	
-// 	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair)');
-// 	ok(crypto.getPrivateKey());
-// 	ok(crypto.getPrivateKey().indexOf('-----BEGIN PGP PRIVATE KEY BLOCK-----') === 0);
-// 	ok(crypto.getPublicKey());
-// 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
-// });
+test("Generate Keys", 4, function() {
+	var crypto = new Crypto();
+	crypto.init("test@asdf.com");
+	
+	var start = (new Date).getTime();
+	var keySize = 2048;
+	crypto.generateKeys(keySize, "test@asdf.com");
+	var diff = (new Date).getTime() - start;
+	
+	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair)');
+	ok(crypto.getPrivateKey());
+	ok(crypto.getPrivateKey().indexOf('-----BEGIN PGP PRIVATE KEY BLOCK-----') === 0);
+	ok(crypto.getPublicKey());
+	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
+});
 
 function helperEncrDecr(plaintext) {
 	var crypto = new Crypto();

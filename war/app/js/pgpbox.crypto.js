@@ -35,20 +35,23 @@ function Crypto() {
 	this.init = function(userEmail) {
 		// initialize OpenPGP.js
 		openpgp.init();
+	
+		privateKey = { armored : $('#privateKeyArea').val() };
+		publicKey = { armored : $('#publicKeyArea').val() };
 		
-		// read keys from local storage
-		var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(userEmail);
-		var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(userEmail);
-		
-		if (storedPrivateKeys.length < 1 || storedPublicKeys.length < 1) {
-			// generate keys
-			generateKeys(2048, userEmail);
-			storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(userEmail);
-			storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(userEmail);
-		}
-		
-		privateKey = storedPrivateKeys[0];
-		publicKey = storedPublicKeys[0];
+		// // read keys from local storage
+		// var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(userEmail);
+		// var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(userEmail);
+		// 
+		// if (storedPrivateKeys.length < 1 || storedPublicKeys.length < 1) {
+		// 	// generate keys
+		// 	self.generateKeys(2048, userEmail);
+		// 	storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(userEmail);
+		// 	storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(userEmail);
+		// }
+		// 
+		// privateKey = storedPrivateKeys[0];
+		// publicKey = storedPublicKeys[0];
 	};
 	
 	/**
@@ -57,7 +60,7 @@ function Crypto() {
 	 * @email [string] user's email address
 	 * @return {privateKey: [openpgp_msg_privatekey], privateKeyArmored: [string], publicKeyArmored: [string]}
 	 */
-	var generateKeys = function(numBits, email) {
+	this.generateKeys = function(numBits, email) {
 		var userId = 'PGPbox User <' + email + '>';
 		var keys = openpgp.generate_key_pair(1, numBits, userId); // keytype 1=RSA
 		
