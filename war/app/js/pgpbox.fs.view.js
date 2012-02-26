@@ -33,11 +33,13 @@ function FSView() {
 	this.init = function() {
 		// drag and drop area
 		var holder = document.getElementById('holder');
-		holder.ondragover = function () { this.className = 'hover'; return false; };
-		holder.ondragend = function () { this.className = ''; return false; };
+		// holder.ondragover = function () { this.className = 'hover'; return false; };
+		// holder.ondragend = function () { this.className = ''; return false; };
+		holder.ondragover = function () { return false; };
+		holder.ondragend = function () { return false; };
 
 		holder.ondrop = function(e) {
-			this.className = '';			
+			// this.className = '';			
 			e.preventDefault();
 			var file = e.dataTransfer.files[0];
 			self.handleFileDrop(file);
@@ -87,25 +89,26 @@ function FSView() {
 			self.presenter.cacheBucket(bucket, bucketFS);
 			
 			// add bucket to accordion
-			var html = '<div>' +
-							'<h3><a href="#">' + bucketFS.name + '</a></h3>' +
-							'<ol id="docList"></ol>' +
-						'</div>';
-			$('#accordion').append(html);
+			var html = '<li class="nav-header">' + bucketFS.name + '</li>';
+			// var html = '<div>' +
+			// 				'<h3><a href="#">' + bucketFS.name + '</a></h3>' +
+			// 				'<ol id="docList"></ol>' +
+			// 			'</div>';
+			$('#buckets').append(html);
 			
 			// display file links
 			for (var i=0; i < bucketFS.root.length; i++) {
 				self.addLinkToList(bucketFS.root[i]);
 			}
 			
-			// render accordion after the last bucket
-			if(index === numBuckets - 1) {
-				// jquery accordion for bucket menu
-				$("#accordion").accordion({
-					header: "h3",
-					fillSpace: true
-				});
-			}
+			// // render accordion after the last bucket
+			// if(index === numBuckets - 1) {
+			// 	// jquery accordion for bucket menu
+			// 	$("#accordion").accordion({
+			// 		header: "h3",
+			// 		fillSpace: true
+			// 	});
+			// }
 		});
 	};
 	
@@ -114,12 +117,12 @@ function FSView() {
 	 */
 	this.addLinkToList = function(file) {
 		var uri = file.blobUri;
-		var item = '<li>' +
+		var item = '<li><div>' +
 				   '<a id="showItem" href="' + uri + '">' + file.name + '</a>' +
 				   '<a id="deleteItem" href="' + uri + '"> x </a>' +
-				   '</li>';
+				   '</div></li>';
 		
-		$('#docList').append(item);
+		$('#buckets').append(item);
 		$('#showItem[href="' + uri + '"]').click(function(e) {
 			e.preventDefault();
 			self.showDocItem(uri);
@@ -157,22 +160,22 @@ function FSView() {
 	 * Displays the document in the main view
 	 */
 	this.displayDoc = function(dataUrl) {
-		// check mime-type at the beginning of each dataUrl
-		if (dataUrl.indexOf('data:application/pdf') === 0) {
-			// add embed view for pdfs
-			var embed = '<embed src="' + dataUrl + '" width="100%" height="100%"/>';
-			// remove other elems in main_view
-			$("#main_view").html(embed);
-
-		} else if (dataUrl.indexOf('data:image/') === 0) {
-			// add image tag
-			var image = '<img src="' + dataUrl + '"/>';
-			// remove other elems in main_view
-			$("#main_view").html(image);
-
-		} else {
+		// // check mime-type at the beginning of each dataUrl
+		// if (dataUrl.indexOf('data:application/pdf') === 0) {
+		// 	// add embed view for pdfs
+		// 	var embed = '<embed src="' + dataUrl + '" width="100%" height="100%"/>';
+		// 	// remove other elems in main_view
+		// 	$("#main_view").html(embed);
+		// 
+		// } else if (dataUrl.indexOf('data:image/') === 0) {
+		// 	// add image tag
+		// 	var image = '<img src="' + dataUrl + '"/>';
+		// 	// remove other elems in main_view
+		// 	$("#main_view").html(image);
+		// 
+		// } else {
 			window.open(dataUrl);
-		}
+		// }
 	};
 	
 }
