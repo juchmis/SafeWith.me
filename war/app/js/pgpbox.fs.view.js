@@ -126,7 +126,7 @@ function FSView() {
 		var uri = file.blobUri;
 		var item = '<li><div>' +
 				   '<a id="showItem" href="' + uri + '">' + file.name + '</a>' +
-				   '<a id="deleteItem" href="' + uri + '"> x </a>' +
+				   '<a id="deleteItem" href="' + uri + '"><i class="icon-remove icon-black"></i></a>' +
 				   '</div></li>';
 		
 		$('#buckets').append(item);

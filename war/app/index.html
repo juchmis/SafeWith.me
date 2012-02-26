@@ -36,6 +36,26 @@
       .sidebar-nav {
         padding: 9px 0;
       }
+      
+      .fileinput-button {
+        position: relative;
+        overflow: hidden;
+        float: left;
+        margin-right: 4px;
+      }
+      .fileinput-button input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        border: solid transparent;
+        border-width: 0 0 100px 200px;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        -moz-transform: translate(-300px, 0) scale(4);
+        direction: ltr;
+        cursor: pointer;
+      }
     </style>
     <link href="css/bootstrap-responsive-2.0.1.min.css" rel="stylesheet">
 
@@ -87,9 +107,9 @@
             <h1>Drag files here!</h1>
             <p>You can either drag and drop files on this area or you can select files from your filesystem using the upload button.</p>
             <p>
-              <input type="file" id="files" name="files[]" multiple />
-              <span class="btn btn-primary btn-large">
-                Upload &raquo;
+              <span class="btn btn-success fileinput-button">
+                <span><i class="icon-plus icon-white"></i> Upload... </span>
+                <input type="file" id="files" name="files[]" multiple />
               </span>
             </p>
           </div>
