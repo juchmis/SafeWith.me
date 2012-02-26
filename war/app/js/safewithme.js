@@ -1,5 +1,5 @@
 /*
- * PGPbox - an open source document archive with client-side encryption
+ * SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
  *
  * Copyright (c) 2012 Tankred Hase
  * 
@@ -21,14 +21,14 @@
 'use strict';
 
 /**
- * PGPbox.js uses the model-view-presenter (MVP) pattern to seperate 'view'
+ * SafeWith.me uses the model-view-presenter (MVP) pattern to seperate 'view'
  * (DOM manipulation) logic from 'presenter' (business) logic. Dependency
  * injection is used to keep presenters decoupled and testable. The
  * 'model' is implemented using a json filesystem called 'BucketFS', which is
  * encrypted before being persisted on the server. This way the server has
  * no knowledge of file meta-data such as filenames.
  */
-function PGPbox() {
+function SafeWithMe() {
 
 	// init presenters
 	var crypto = new Crypto();
@@ -56,8 +56,8 @@ function PGPbox() {
 }
 
 /**
- * Init PGPbox on document ready
+ * Init on document ready
  */
 $(function() {
-	var pgpbox = new PGPbox();
+	var safeWithMe = new SafeWithMe();
 });

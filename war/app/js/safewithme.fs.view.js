@@ -1,5 +1,5 @@
 /*
- * PGPbox - an open source document archive with client-side encryption
+ * SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
  *
  * Copyright (c) 2012 Tankred Hase
  * 

@@ -1,5 +1,5 @@
 /*
- * PGPbox - an open source document archive with client-side encryption
+ * SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
  *
  * Copyright (c) 2012 Tankred Hase
  * 
@@ -19,33 +19,6 @@
  */
 
 function Util() {
-
-	/**
-	 * PDF viewer logic
-	 */
-	this.displayPDF = function(data) {
-		//
-		// Instantiate PDFDoc with PDF data
-		//
-		var pdf = new PDFJS.PDFDoc(data);
-		var page = pdf.getPage(1);
-		var scale = 0.75;
-
-		//
-		// Prepare canvas using PDF page dimensions
-		//
-		var canvas = document.getElementById('the-canvas');
-		var context = canvas.getContext('2d');
-
-		var pdfView = document.getElementById('pdf_view');
-		canvas.height = page.height * scale;
-		canvas.width = page.width * scale;
-
-		//
-		// Render PDF page into canvas context
-		//
-		page.startRendering(context);
-	};
 
 	/**
 	 * Converts a UTF16 String to an ArrayBuffer

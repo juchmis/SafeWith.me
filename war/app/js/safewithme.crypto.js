@@ -1,5 +1,5 @@
 /*
- * PGPbox - an open source document archive with client-side encryption
+ * SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
  *
  * Copyright (c) 2012 Tankred Hase
  * 
@@ -61,7 +61,7 @@ function Crypto() {
 	 * @return {privateKey: [openpgp_msg_privatekey], privateKeyArmored: [string], publicKeyArmored: [string]}
 	 */
 	this.generateKeys = function(numBits, email) {
-		var userId = 'PGPbox User <' + email + '>';
+		var userId = 'SafeWith.me User <' + email + '>';
 		var keys = openpgp.generate_key_pair(1, numBits, userId); // keytype 1=RSA
 		
 		// store keys in html5 local storage
