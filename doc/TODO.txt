@@ -1,11 +1,9 @@
 
 ---- alpha test & push to github ----
 
-Create fancy design
 create wait dialog/hourglass during encryption/upload
 Add file name to data url
 Error handling: What when the previous REST call has gone wrong
-Deal with "eventual consistency" race conditions (e.g. used storage)
 add handler for multiple files
 Sharing of buckets with other users (via recepient's public key)
 Put up warning when using unsupported browser
