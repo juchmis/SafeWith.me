@@ -151,13 +151,15 @@
     <script src="app/js/safewithme.server.js"></script>
     
     <script>
-      // init login link
-      var server = new Server();
-      var menu = new Menu(server);
-      
-    	var menuView = new MenuView();
-    	menuView.presenter = menu;
-    	menuView.init('/app/', function() {});
+      $(function() {
+        // init login link
+        var server = new Server();
+        var menu = new Menu(server);
+
+      	var menuView = new MenuView();
+      	menuView.presenter = menu;
+      	menuView.init('/app/', function() {});
+      });
     </script>
 
   </body>
