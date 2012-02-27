@@ -31,6 +31,9 @@ function FSView() {
 	 * init UI
 	 */
 	this.init = function() {
+		// show progress bar
+		$('#disclaimerModal').modal('show');
+		
 		// drag and drop area
 		var holder = document.getElementById('holder');
 		// holder.ondragover = function () { this.className = 'hover'; return false; };
@@ -71,18 +74,30 @@ function FSView() {
 	 * Process a file after it has been droped on the droparea
 	 */
 	this.handleFileDrop = function(file) {
-		// read, encrypt and upload encrypted file to server
-		self.presenter.readFile(file, function(uri) {
-			// add file to bucket fs
-			var fsFile = new self.presenter.File(file.name, file.size, file.type, uri);
-			var bucket = self.presenter.currentBucket();
-			var bucketFS = self.presenter.currentBucketFS();
+		
+		// show progress bar
+		$('#encryptModal').modal('show');
+		
+		// wait for modal to appear, then start encryption
+		setTimeout(function() {
 			
-			self.presenter.addFileToBucketFS(fsFile, bucketFS, bucket, function() {
-				// display link to the file
-				self.addLinkToList(fsFile);
+			// read, encrypt and upload encrypted file to server
+			self.presenter.readFile(file, function(uri) {
+				// add file to bucket fs
+				var fsFile = new self.presenter.File(file.name, file.size, file.type, uri);
+				var bucket = self.presenter.currentBucket();
+				var bucketFS = self.presenter.currentBucketFS();
+
+				// hide progress bar
+				$('#encryptModal').modal('hide');
+
+				self.presenter.addFileToBucketFS(fsFile, bucketFS, bucket, function() {
+					// display link to the file
+					self.addLinkToList(fsFile);
+				});
 			});
-		});
+			
+		}, 500);
 	};
 	
 	/**
@@ -107,15 +122,6 @@ function FSView() {
 			for (var i=0; i < bucketFS.root.length; i++) {
 				self.addLinkToList(bucketFS.root[i]);
 			}
-			
-			// // render accordion after the last bucket
-			// if(index === numBuckets - 1) {
-			// 	// jquery accordion for bucket menu
-			// 	$("#accordion").accordion({
-			// 		header: "h3",
-			// 		fillSpace: true
-			// 	});
-			// }
 		});
 	};
 	
@@ -145,9 +151,21 @@ function FSView() {
 	 * Downloads the encrypted document, decrypt it and display it
 	 */
 	this.showDocItem = function(uri) {
-		self.presenter.getFile(uri, function(decrypted) {
-			self.displayDoc(decrypted);
-		});
+		
+		// show progress bar
+		$('#decryptModal').modal('show');
+
+		// wait for modal to appear, then start encryption
+		setTimeout(function() {
+			
+			self.presenter.getFile(uri, function(decrypted) {
+				// hide progress bar
+				$('#decryptModal').modal('hide');
+				self.displayDoc(decrypted);
+			});
+
+		}, 500);
+		
 		
 		// prevent default bahavior: dont open href in new window
 		return false;
@@ -167,23 +185,7 @@ function FSView() {
 	 * Displays the document in the main view
 	 */
 	this.displayDoc = function(dataUrl) {
-		// // check mime-type at the beginning of each dataUrl
-		// if (dataUrl.indexOf('data:application/pdf') === 0) {
-		// 	// add embed view for pdfs
-		// 	var embed = '<embed src="' + dataUrl + '" width="100%" height="100%"/>';
-		// 	// remove other elems in main_view
-		// 	$("#main_view").html(embed);
-		// 
-		// } else if (dataUrl.indexOf('data:image/') === 0) {
-		// 	// add image tag
-		// 	var image = '<img src="' + dataUrl + '"/>';
-		// 	// remove other elems in main_view
-		// 	$("#main_view").html(image);
-		// 
-		// } else {
-			window.location = dataUrl;
-			//window.open(dataUrl);
-		// }
+		window.location = dataUrl;
 	};
 	
 }
