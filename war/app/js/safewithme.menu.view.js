@@ -43,16 +43,16 @@ function MenuView() {
 	this.updateLogin = function(loginInfo) {
 		var anchor = '';
 		if (loginInfo.loggedIn) {
+			// if logged in user is not displaying the app, forward him to the application
+			if (window.location.pathname !== '/app/') {
+				window.location.pathname = '/app/';
+			}
 			anchor = 'Logged in as <a href="' + loginInfo.logoutUrl + '">' + loginInfo.email + '</a>';
 			
-			// anchor = '<div id="user" email="' + loginInfo.email + '"><a href="'
-			// + loginInfo.logoutUrl + '">Logout ' + loginInfo.email + '</a></div>';
 		} else {
 			anchor = 'Try the alpha: Login with your <a href="' + loginInfo.loginUrl + '">Google OpenID</a>';
-			
-			// anchor = '<div id="user"><a href="' + loginInfo.loginUrl +
-			// '">Login</a></div>';
 		}
+		
 		$('#login').html(anchor);
 	};
 }
