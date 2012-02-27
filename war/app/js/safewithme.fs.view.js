@@ -88,10 +88,10 @@ function FSView() {
 				var bucket = self.presenter.currentBucket();
 				var bucketFS = self.presenter.currentBucketFS();
 
-				// hide progress bar
-				$('#encryptModal').modal('hide');
-
 				self.presenter.addFileToBucketFS(fsFile, bucketFS, bucket, function() {
+					// hide progress bar
+					$('#encryptModal').modal('hide');
+					
 					// display link to the file
 					self.addLinkToList(fsFile);
 				});
