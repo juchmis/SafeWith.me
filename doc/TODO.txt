@@ -1,7 +1,6 @@
 
 ---- alpha test & push to github ----
 
-create wait dialog/hourglass during encryption/upload
 Add file name to data url
 Error handling: What when the previous REST call has gone wrong
 add handler for multiple files
