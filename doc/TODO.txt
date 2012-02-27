@@ -1,11 +1,11 @@
 
 ---- alpha test & push to github ----
 
+Filesharing & Keymanagement
 Add file name to data url
-Error handling: What when the previous REST call has gone wrong
-add handler for multiple files
-Sharing of buckets with other users (via recepient's public key)
 Put up warning when using unsupported browser
+add handler for multiple files
+Error handling: What when the previous REST call has gone wrong
 add warning when drag and drop large files
 Refactor to REST style e.g. with Restlets (permanent URIs in BucketFS!)
 
