@@ -20,39 +20,14 @@
 
 'use strict';
 
-/**
- * This class contains all logic that makes changes to the DOM
- */
-function MenuView() {
-
-	var self = this;
-
-	/**
-	 * init UI
-	 */
-	this.init = function(goal, callback) {
-		self.presenter.getLoginInfo(goal, function(loginInfo) {
-			self.updateLogin(loginInfo);
+function Menu() {
+	
+	this.getLoginInfo = function(goal, callback) {
+		// init Login anchor
+		var uri = '/login?requestUri=' + window.location.origin + goal;
+		$.get(uri, function(loginInfo) {
 			callback(loginInfo);
 		});
 	};
 	
-	/**
-	 * Changes the login anchor archording to the login status
-	 */
-	this.updateLogin = function(loginInfo) {
-		var anchor = '';
-		if (loginInfo.loggedIn) {
-			// if logged in user is not displaying the app, forward him to the application
-			if (window.location.pathname !== '/app/') {
-				window.location.pathname = '/app/';
-			}
-			anchor = 'Logged in as <a href="' + loginInfo.logoutUrl + '">' + loginInfo.email + '</a>';
-			
-		} else {
-			anchor = 'Try the alpha: Login with your <a href="' + loginInfo.loginUrl + '">Google OpenID</a>';
-		}
-		
-		$('#login').html(anchor);
-	};
 }

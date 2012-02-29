@@ -1,19 +1,25 @@
 
 ---- alpha test & push to github ----
 
-Filesharing & Keymanagement
+persist public key to server after generation
+remove permanent URIs in BucketFS! => blobkeys
+remove displaimer when pubkey already exists
+Private Key export as Ascii Armored Text file
+Filesharing
 Add file name to data url
 Put up warning when using unsupported browser
-add handler for multiple files
-Error handling: What when the previous REST call has gone wrong
+add handler for multiple files + redo pogressbar/modals
+error handling: What when the previous REST call has gone wrong
 add warning when drag and drop large files
-Refactor to REST style e.g. with Restlets (permanent URIs in BucketFS!)
+refactor to true REST style e.g. with Restlets
+fix memory leak during encryption
+Main page: create explanatory images of BucketFS and describe what the server knows (privacy)
+Add facebook, twitter, google+ sharing (with two-clicks for more privacy) on hp
 
 ---- beta test ----
 
-Fix memory leak during encryption
-Main page: create explanatory images of BucketFS and describe what the server knows (privacy)
-Add facebook, twitter, google+ sharing (with two-clicks for more privacy) on hp
+Add other OpenID Providers: Facebook, Yahoo
+Send private key to ühone as QR-code -> Readable through PhoneGap Plugin
 Add Create/Delete bucket option
 Delete user file blobs before deleting bucket
 Look at signing of files

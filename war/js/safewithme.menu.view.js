@@ -20,14 +20,35 @@
 
 'use strict';
 
-function Menu(server) {
-	
-	this.getLoginInfo = function(goal, callback) {
-		// init Login anchor
-		var uri = window.location.origin + goal;
-		server.call('GET', '/app/login?requestUri=' + uri, function(loginInfo) {
+/**
+ * This class contains all logic that makes changes to the DOM
+ */
+function MenuView() {
+
+	var self = this;
+
+	/**
+	 * init UI
+	 */
+	this.init = function(goal, callback) {
+		self.presenter.getLoginInfo(goal, function(loginInfo) {
+			self.updateLogin(loginInfo);
 			callback(loginInfo);
 		});
 	};
 	
+	/**
+	 * Changes the login anchor archording to the login status
+	 */
+	this.updateLogin = function(loginInfo) {
+		var anchor = '';
+		if (loginInfo.loggedIn) {
+			anchor = 'Logout <a href="' + loginInfo.logoutUrl + '">' + loginInfo.email + '</a>';
+			
+		} else {
+			anchor = 'Try the alpha: Login with your <a href="' + loginInfo.loginUrl + '">Google OpenID</a>';
+		}
+		
+		$('#login').html(anchor);
+	};
 }
