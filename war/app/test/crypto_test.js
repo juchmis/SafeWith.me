@@ -27,23 +27,20 @@ test("Generate Keys", 4, function() {
 
 asyncTest("CRUD PublicKey to Server", 3, function() {
 	var crypto = new Crypto();
-	var email = "test@asdf.com";
-	crypto.init(email);
-
-	var encodedKeyId = window.btoa(crypto.getPublicKeyId());
-	var publicKey = {
-		keyId : encodedKeyId,
-		ownerEmail : email,
-		asciiArmored : crypto.getPublicKey()
-	};
-	var json = JSON.stringify(publicKey);
-	
 	var server = new Server();
-	server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
-		equal(resp, "");
+	var email = "test@asdf.com";
+	var loginInfo = {
+		email : email
+	};
+	
+	crypto.initPublicKey(loginInfo, server, function(keyId) {
+		ok(keyId);
 		
-		server.call('GET', '/app/publicKeys?keyId=' + publicKey.keyId, function(resp) {
-			equal(resp.asciiArmored, publicKey.asciiArmored);
+		var encodedKeyId = btoa(keyId);
+		server.call('GET', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
+			crypto.init(loginInfo.email, keyId);
+			
+			equal(resp.asciiArmored, crypto.getPublicKey());
 			var decodedKeyId = window.atob(resp.keyId);
 			equal(decodedKeyId, crypto.getPublicKeyId());
 			

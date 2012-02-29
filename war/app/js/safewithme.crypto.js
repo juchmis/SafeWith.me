@@ -90,6 +90,7 @@ function Crypto() {
 				asciiArmored : keys.publicKeyArmored
 			};
 			var json = JSON.stringify(publicKey);
+			
 			server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
 				callback(keyId);
 			});
