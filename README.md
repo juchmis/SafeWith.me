@@ -1,5 +1,7 @@
 ## SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
 http://safewith.me
+Encryption logic is kindly provided by: http://openpgpjs.org
+
 
 ### In order to run a server locally, you must:
     1. Install the Google App Engine SDK: http://code.google.com/intl/en/appengine/downloads.html#Google_App_Engine_SDK_for_Java
