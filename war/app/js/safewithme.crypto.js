@@ -24,6 +24,9 @@
  * A wrapper for encryption logic
  */
 function Crypto() {
+
+	// initialize OpenPGP.js
+	openpgp.init();
 	
 	var self = this;
 	var privateKey;		// user's private key
@@ -32,23 +35,36 @@ function Crypto() {
 	/**
 	 * Initializes the crypto system by reading the user's pgp keys from localstorage
 	 */
-	this.init = function(userEmail) {
-		// initialize OpenPGP.js
-		openpgp.init();
-		
+	this.init = function(email, keyId) {
 		// read keys from local storage
-		var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(userEmail);
-		var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(userEmail);
+		var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(email);
+		var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(email);
 		
-		if (storedPrivateKeys.length < 1 || storedPublicKeys.length < 1) {
-			// generate 2048 bit RSA keys
-			self.generateKeys(2048, userEmail);
-			storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(userEmail);
-			storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(userEmail);
+		if (keyId) {
+			// find keys by id
+			for (var i=0; i < storedPrivateKeys.length; i++) {
+				if (storedPrivateKeys[i].keyId === keyId) {
+					privateKey = storedPrivateKeys[i];
+					break;
+				}
+			}
+			for (var j=0; j < storedPublicKeys.length; j++) {
+				if (storedPublicKeys[j].keyId === keyId) {
+					publicKey = storedPublicKeys[j];
+					break;
+				}
+			}
+			
+		} else {
+			// take first keys if no keyId is available
+			privateKey = storedPrivateKeys[0];
+			publicKey = storedPublicKeys[0];
 		}
 		
-		privateKey = storedPrivateKeys[0];
-		publicKey = storedPublicKeys[0];
+		// check keys
+		if (!publicKey || !privateKey || (publicKey.keyId !== privateKey.keyId)) {
+			throw "It seems as though the local keyring is missing a key!";
+		}
 	};
 	
 	/**
@@ -64,6 +80,8 @@ function Crypto() {
 		openpgp.keyring.importPrivateKey(keys.privateKeyArmored, self.getPassphrase());
 		openpgp.keyring.importPublicKey(keys.publicKeyArmored);
 		openpgp.keyring.store();
+		
+		return keys;
 	};
 	
 	/**

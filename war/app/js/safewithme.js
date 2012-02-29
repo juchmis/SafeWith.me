@@ -35,6 +35,16 @@ function SafeWithMe() {
 	var server = new Server();
 	var menu = new Menu();
 	var fs = new FS(crypto, server);
+	
+	function initCryptoFS(email, keyId) {
+		// init crypto for logged in user
+		crypto.init(email, keyId);
+
+		// init fs view after menu/login
+		var fsView = new FSView();
+		fsView.presenter = fs;
+		fsView.init();
+	}
 
 	// init views
 	var menuView = new MenuView();
@@ -43,13 +53,33 @@ function SafeWithMe() {
 		
 		// check if user is logged in
 		if (loginInfo.loggedIn && loginInfo.email) {
-			// init crypto for logged in user
-			crypto.init(loginInfo.email);
 			
-			// init fs view after menu/login
-			var fsView = new FSView();
-			fsView.presenter = fs;
-			fsView.init();
+			// check if user already has a public key on the server
+			var keyId = null;
+			if (loginInfo.publicKeyId) {
+				keyId = window.atob(loginInfo.publicKeyId);
+			}
+			
+			if (!keyId) {
+				// generate 2048 bit RSA keys
+				var keys = crypto.generateKeys(2048, loginInfo.email);
+				
+				// persist on server
+				keyId = keys.privateKey.getKeyId();
+				var encodedKeyId = window.btoa(keyId);
+				var publicKey = {
+					keyId : encodedKeyId,
+					ownerEmail : loginInfo.email,
+					asciiArmored : keys.publicKeyArmored
+				};
+				var json = JSON.stringify(publicKey);
+				server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
+					initCryptoFS(loginInfo.email, keyId);
+				});
+				
+			} else {
+				initCryptoFS(loginInfo.email, keyId);
+			}
 		}
 	});
 

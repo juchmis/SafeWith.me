@@ -29,8 +29,7 @@ asyncTest("CRUD PublicKey to Server", 3, function() {
 	var crypto = new Crypto();
 	var email = "test@asdf.com";
 	crypto.init(email);
-	
-	var util = new Util();
+
 	var encodedKeyId = window.btoa(crypto.getPublicKeyId());
 	var publicKey = {
 		keyId : encodedKeyId,
