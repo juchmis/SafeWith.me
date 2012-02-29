@@ -68,6 +68,39 @@ function Crypto() {
 	};
 	
 	/**
+	 * Check if user already has a public key on the server
+	 */
+	this.initPublicKey = function(loginInfo, server, callback) {
+		var keyId = null;
+		if (loginInfo.publicKeyId) {
+			keyId = window.atob(loginInfo.publicKeyId);
+		}
+		
+		if (!keyId) {
+			// user has no key on the server yet
+			// generate 2048 bit RSA keys
+			var keys = self.generateKeys(2048, loginInfo.email);
+			
+			// persist on server
+			keyId = keys.privateKey.getKeyId();
+			var encodedKeyId = window.btoa(keyId);
+			var publicKey = {
+				keyId : encodedKeyId,
+				ownerEmail : loginInfo.email,
+				asciiArmored : keys.publicKeyArmored
+			};
+			var json = JSON.stringify(publicKey);
+			server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
+				callback(keyId);
+			});
+			
+		} else {
+			// user already has a key on the server
+			callback(keyId);
+		}
+	};
+	
+	/**
 	 * Generate a key pair for the user
 	 * @param numBits [int] number of bits for the key creation. (should be 1024+, generally)
 	 * @email [string] user's email address
