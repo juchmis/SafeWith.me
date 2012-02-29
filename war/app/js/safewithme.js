@@ -33,7 +33,7 @@ function SafeWithMe() {
 	// init presenters
 	var crypto = new Crypto();
 	var server = new Server();
-	var menu = new Menu(server);
+	var menu = new Menu();
 	var fs = new FS(crypto, server);
 
 	// init views

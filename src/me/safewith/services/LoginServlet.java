@@ -40,6 +40,11 @@ public class LoginServlet extends HttpServlet {
 				// a user is logged in
 				info.setLoggedIn(true);
 				info.setEmail(user.getEmail());
+				
+				// don't send to user back to /app/ if logout is done somewhere else than the app
+				if (requestUri.contains("/app/")) {
+					requestUri = requestUri.replace("/app/", "/");
+				}
 				info.setLogoutUrl(userService.createLogoutURL(requestUri));
 				
 			} else {
