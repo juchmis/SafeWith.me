@@ -42,13 +42,13 @@ function FS(crypto, server) {
 		this.children = [];
 	};
 	
-	this.File = function(name, size, mimeType, blobUri) {
+	this.File = function(name, size, mimeType, blobKey) {
 		this.type = "file";
 		this.name = name;
 		this.size = size;		// note: this is the unencrypted file size!
 		this.uploaded = new Date().toISOString();
 		this.mimeType = mimeType;
-		this.blobUri = blobUri;	// pointer to the encrypted blob
+		this.blobKey = blobKey;	// pointer to the encrypted blob
 	};
 
 	var self = this;

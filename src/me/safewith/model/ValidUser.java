@@ -10,12 +10,9 @@ public class ValidUser implements DTO {
 	/*
 	 * private members
 	 */
-	 
-	@PrimaryKey 
-	private String email;
 
-	@Persistent
-	private String publicKeyBlobKey;
+	@PrimaryKey
+	private String email;
 	
 	@Persistent
 	private long usedStorage;
@@ -33,14 +30,6 @@ public class ValidUser implements DTO {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getPublicKeyBlobKey() {
-		return publicKeyBlobKey;
-	}
-
-	public void setPublicKeyBlobKey(String publicKeyBlobKey) {
-		this.publicKeyBlobKey = publicKeyBlobKey;
 	}
 
 	public long getUsedStorage() {

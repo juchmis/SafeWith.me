@@ -9,7 +9,7 @@ public class BucketDAO {
 	/**
 	 * Create new bucket for a user
 	 */
-	public Bucket createBucket(String email) {
+	public Bucket createBucket(String email) throws Exception {
 		// create new bucket
 		Bucket bucket = new Bucket();
 		bucket.setOwnerEmail(email);
@@ -21,7 +21,7 @@ public class BucketDAO {
 	/**
 	 * Get the user's bucket in a json repsonse
 	 */
-	public List<Bucket> listUserBuckets(String email) {
+	public List<Bucket> listUserBuckets(String email) throws Exception {
 		List<Bucket> buckets = new GenericDAO().filterBy(Bucket.class, "ownerEmail", email);
 		return buckets;
 	}
@@ -41,7 +41,7 @@ public class BucketDAO {
 		}
 	}
 	
-	public Bucket updateBucket(Bucket bucket, String email) {
+	public Bucket updateBucket(Bucket bucket, String email) throws Exception {
 
 		// check if it's the owners bucket
 		if (bucket.getOwnerEmail().equals(email)) {
@@ -56,7 +56,7 @@ public class BucketDAO {
 	/**
 	 * Deletes a users bucket
 	 */
-	public void deleteBucket(String bucketId, String email) {
+	public void deleteBucket(String bucketId, String email) throws Exception {
 		GenericDAO dao = new GenericDAO();
 		
 		// check if it's the user's own bucket

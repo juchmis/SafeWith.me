@@ -4,6 +4,7 @@ public class LoginInfo {
 	
 	private boolean loggedIn;
 	private String email;
+	private String publicKeyId;
 	private String logoutUrl;
 	private String loginUrl;
 	
@@ -18,6 +19,12 @@ public class LoginInfo {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getPublicKeyId() {
+		return publicKeyId;
+	}
+	public void setPublicKeyId(String publicKeyId) {
+		this.publicKeyId = publicKeyId;
 	}
 	public String getLogoutUrl() {
 		return logoutUrl;

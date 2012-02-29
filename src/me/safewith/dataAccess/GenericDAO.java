@@ -22,16 +22,26 @@ public class GenericDAO {
 	/**
 	 * Create or update an entry by generating an id and then persisting it
 	 */	
-	public <T extends DTO> T persist(T entry) {
+	public <T extends DTO> T persist(T entry) throws Exception {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-
+		Transaction tx = pm.currentTransaction();
+		
 		try {
+	        tx.begin();
+	        
 			T generated = pm.makePersistent(entry);
 			if (generated == null) {
 				throw new JDODataStoreException("Error while persisting entry!");
 			}
-			
+
+	        tx.commit();
 			return generated;
+			
+		} catch (Exception ex) { 
+	        if (tx.isActive()) { 
+	            tx.rollback(); 
+	        }
+	        throw ex;
 
 		} finally {
 			pm.close();
@@ -46,11 +56,19 @@ public class GenericDAO {
 			return null;
 
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		
 		try {
+	        tx.begin();
 			T entry = pm.getObjectById(cl, id);
+	        tx.commit();
+	        
 			return entry;
 			
 		} catch(Exception ex) {
+	        if (tx.isActive()) { 
+	            tx.rollback(); 
+	        }
 			return null;
 
 		} finally {
@@ -61,11 +79,11 @@ public class GenericDAO {
 	/**
 	 * Delete a persisted object from the datastore.
 	 */
-	public <T extends DTO> void delete(Class<T> cl, String id) {
+	public <T extends DTO> void delete(Class<T> cl, String id) throws Exception {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		
 		Transaction tx = pm.currentTransaction(); 
-	    try { 
+	    
+		try { 
 	        tx.begin();
 	        T toDelete = pm.getObjectById(cl, id);
 	        pm.deletePersistent(toDelete);
@@ -75,6 +93,7 @@ public class GenericDAO {
 	        if (tx.isActive()) { 
 	            tx.rollback(); 
 	        }
+	        throw ex;
 	        
 	    } finally { 
 	      pm.close(); 
@@ -84,12 +103,14 @@ public class GenericDAO {
 	/**
 	 * Returns all persisted objects of a certain type from the datastore.
 	 */
-	public <T extends DTO> ArrayList<T> getAll(Class<T> cl) {
+	public <T extends DTO> ArrayList<T> getAll(Class<T> cl) throws Exception {
 
 		ArrayList<T> list = new ArrayList<T>();
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-
+		Transaction tx = pm.currentTransaction(); 
+		
 		try {
+			tx.begin();
 
 			Query query = pm.newQuery(cl);
 			@SuppressWarnings("unchecked")
@@ -100,6 +121,14 @@ public class GenericDAO {
 				T o = it.next();
 				list.add(o);
 			}
+			
+			tx.commit();
+			
+		 } catch (Exception ex) { 
+	        if (tx.isActive()) { 
+	            tx.rollback(); 
+	        }
+	        throw ex;
 
 		} finally {
 			pm.close();
@@ -115,14 +144,18 @@ public class GenericDAO {
 	 * @param FieldValue The field value
 	 */
 	public <T extends DTO> List<T> filterBy(Class<T> cl, String fieldName,
-			String FieldValue) {
+			String FieldValue) throws Exception {
 		if (fieldName == null || FieldValue == null)
 			throw new IllegalArgumentException("Arugments cannot be null!");
 
 		List<T> list = new ArrayList<T>();
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Transaction tx = pm.currentTransaction(); 
+		
 		try {
+			tx.begin();
+			
 			Query query = pm.newQuery(cl);
 			query.setFilter(fieldName + " == arg0");
 			query.declareParameters("java.lang.String arg0");
@@ -135,7 +168,14 @@ public class GenericDAO {
 				list.add(o);
 			}
 			
+			tx.commit();
 			return list;
+			
+		} catch (Exception ex) { 
+	        if (tx.isActive()) { 
+	            tx.rollback(); 
+	        }
+	        throw ex;
 
 		} finally {
 			pm.close();

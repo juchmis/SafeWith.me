@@ -19,10 +19,13 @@ public class Bucket implements DTO {
 	private String id;
 	
 	@Persistent
-	private String fsBlobUri;	// blobUri pointing to the bucket's encrypted json filesystem
+	private String fsBlobKey;	// blobkey pointing to the bucket's encrypted json filesystem
 
 	@Persistent
 	private String ownerEmail;
+	
+	@Persistent
+	private String publicKeyId;
 	
 	/*
 	 * properties
@@ -32,12 +35,12 @@ public class Bucket implements DTO {
 		return id;
 	}
 
-	public String getFsBlobUri() {
-		return fsBlobUri;
+	public String getFsBlobKey() {
+		return fsBlobKey;
 	}
 
-	public void setFsBlobUri(String fsBlobUri) {
-		this.fsBlobUri = fsBlobUri;
+	public void setFsBlobKey(String fsBlobKey) {
+		this.fsBlobKey = fsBlobKey;
 	}
 
 	public String getOwnerEmail() {
@@ -46,6 +49,14 @@ public class Bucket implements DTO {
 
 	public void setOwnerEmail(String ownerEmail) {
 		this.ownerEmail = ownerEmail;
+	}
+
+	public String getPublicKeyId() {
+		return publicKeyId;
+	}
+
+	public void setPublicKeyId(String publicKeyId) {
+		this.publicKeyId = publicKeyId;
 	}
 	
 }
