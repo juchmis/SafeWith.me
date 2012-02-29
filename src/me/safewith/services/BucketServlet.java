@@ -1,6 +1,5 @@
 package me.safewith.services;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
@@ -78,17 +77,8 @@ public class BucketServlet extends HttpServlet {
 		
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
-				
 				// read json from request body
-				BufferedReader reader = req.getReader();
-				StringBuilder sb = new StringBuilder();
-				String line = reader.readLine();
-				while(line != null) {
-					sb.append(line);
-					line = reader.readLine();
-				}
-				reader.close();
-				String bucketJson = sb.toString();
+				String bucketJson = RequestHelper.readRequestBody(req);
 				
 				// update bucket
 				Bucket bucket = new GsonBuilder().create().fromJson(bucketJson, Bucket.class);

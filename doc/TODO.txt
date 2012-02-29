@@ -2,7 +2,6 @@
 ---- alpha test & push to github ----
 
 persist public key to server after generation
-remove permanent URIs in BucketFS! => blobkeys
 remove displaimer when pubkey already exists
 Private Key export as Ascii Armored Text file
 Filesharing

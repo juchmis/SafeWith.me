@@ -25,6 +25,34 @@ test("Generate Keys", 4, function() {
 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
 });
 
+asyncTest("CRUD PublicKey to Server", 3, function() {
+	var crypto = new Crypto();
+	var email = "test@asdf.com";
+	crypto.init(email);
+	
+	var util = new Util();
+	var encodedKeyId = window.btoa(crypto.getPublicKeyId());
+	var publicKey = {
+		keyId : encodedKeyId,
+		ownerEmail : email,
+		asciiArmored : crypto.getPublicKey()
+	};
+	var json = JSON.stringify(publicKey);
+	
+	var server = new Server();
+	server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
+		equal(resp, "");
+		
+		server.call('GET', '/app/publicKeys?keyId=' + publicKey.keyId, function(resp) {
+			equal(resp.asciiArmored, publicKey.asciiArmored);
+			var decodedKeyId = window.atob(resp.keyId);
+			equal(decodedKeyId, crypto.getPublicKeyId());
+			
+			start();
+		});
+	});
+});
+
 function helperEncrDecr(plaintext) {
 	var crypto = new Crypto();
 	crypto.init("test@asdf.com");

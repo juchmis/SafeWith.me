@@ -20,6 +20,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     
   <!-- Http Servlet for serving buckets -->  
   <servlet>
+    <servlet-name>PublicKeyServlet</servlet-name>
+    <servlet-class>me.safewith.services.PublicKeyServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>PublicKeyServlet</servlet-name>
+    <url-pattern>/app/publicKeys</url-pattern>
+  </servlet-mapping>
+    
+  <!-- Http Servlet for serving buckets -->  
+  <servlet>
     <servlet-name>BucketServlet</servlet-name>
     <servlet-class>me.safewith.services.BucketServlet</servlet-class>
   </servlet>  

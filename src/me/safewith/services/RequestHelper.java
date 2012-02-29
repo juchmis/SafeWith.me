@@ -1,5 +1,6 @@
 package me.safewith.services;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,7 +23,6 @@ public class RequestHelper {
 			throws IOException {
 
 		try {
-		
 			// check if user is logged in
 			ValidUser user = LoginServlet.getCurrentUser();
 			if (user == null) {
@@ -38,6 +38,23 @@ public class RequestHelper {
 			logger.log(Level.SEVERE, e.getMessage(), e);
 			resp.sendError(500, e.getMessage());
 		}
+	}
+	
+	/**
+	 * Reads text from an http request body and returns it as a string
+	 */
+	public static String readRequestBody(HttpServletRequest req) throws IOException {
+		BufferedReader reader = req.getReader();
+		StringBuilder sb = new StringBuilder();
+		String line = reader.readLine();
+		while(line != null) {
+			sb.append(line);
+			line = reader.readLine();
+		}
+		reader.close();
+		String body = sb.toString();
+		
+		return body;		
 	}
 
 }

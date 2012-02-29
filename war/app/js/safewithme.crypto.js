@@ -74,6 +74,13 @@ function Crypto() {
 	};
 
 	/**
+	 * Get the current user's public key
+	 */
+	this.getPublicKeyId = function() {
+		return publicKey.keyId;
+	};
+
+	/**
 	 * Get the current user's private key
 	 */
 	this.getPrivateKey = function() {
