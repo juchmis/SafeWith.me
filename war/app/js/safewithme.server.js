@@ -84,7 +84,7 @@ function Server() {
 				contentType: "multipart/form-data; boundary="+boundary,
 				data: body,
 				success: function(resp) {
-					callback(resp.uri);
+					callback(resp.blobKey);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					alert('Error uploading blob: ' + errorThrown);

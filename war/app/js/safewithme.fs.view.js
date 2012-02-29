@@ -82,9 +82,9 @@ function FSView() {
 		setTimeout(function() {
 			
 			// read, encrypt and upload encrypted file to server
-			self.presenter.readFile(file, function(uri) {
+			self.presenter.readFile(file, function(blobKey) {
 				// add file to bucket fs
-				var fsFile = new self.presenter.File(file.name, file.size, file.type, uri);
+				var fsFile = new self.presenter.File(file.name, file.size, file.type, blobKey);
 				var bucket = self.presenter.currentBucket();
 				var bucketFS = self.presenter.currentBucketFS();
 
@@ -105,7 +105,7 @@ function FSView() {
 	 */
 	this.displayBucket = function(bucket, index, numBuckets) {
 		// get bucket FS
-		self.presenter.getBucketFS(bucket.fsBlobUri, function(bucketFS) {
+		self.presenter.getBucketFS(bucket.fsBlobKey, function(bucketFS) {
 			
 			// cache local user buckets and fs
 			self.presenter.cacheBucket(bucket, bucketFS);
@@ -129,28 +129,28 @@ function FSView() {
 	 * Add new documents link to the list of available documents
 	 */
 	this.addLinkToList = function(file) {
-		var uri = file.blobUri;
+		var blobKey = file.blobKey;
 		var item = '<li><div>' +
-				   '<a id="deleteItem" href="' + uri + '"><i class="icon-remove icon-black"></i></a>' +
-				   '<a id="showItem" href="' + uri + '">' + file.name + '</a>' +
+				   '<a id="deleteItem" href="' + blobKey + '"><i class="icon-remove icon-black"></i></a>' +
+				   '<a id="showItem" href="' + blobKey + '">' + file.name + '</a>' +
 				   '</div></li>';
 		
 		$('#buckets').append(item);
-		$('#showItem[href="' + uri + '"]').click(function(e) {
+		$('#showItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
-			self.showDocItem(uri);
+			self.showDocItem(blobKey);
 		});
 		
-		$('#deleteItem[href="' + uri + '"]').click(function(e) {
+		$('#deleteItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
-			self.deleteDocItem(uri);
+			self.deleteDocItem(blobKey);
 		});
 	};
 
 	/**
 	 * Downloads the encrypted document, decrypt it and display it
 	 */
-	this.showDocItem = function(uri) {
+	this.showDocItem = function(blobKey) {
 		
 		// show progress bar
 		$('#decryptModal').modal('show');
@@ -158,7 +158,7 @@ function FSView() {
 		// wait for modal to appear, then start encryption
 		setTimeout(function() {
 			
-			self.presenter.getFile(uri, function(decrypted) {
+			self.presenter.getFile(blobKey, function(decrypted) {
 				// hide progress bar
 				$('#decryptModal').modal('hide');
 				self.displayDoc(decrypted);
@@ -171,12 +171,12 @@ function FSView() {
 		return false;
 	};
 	
-	this.deleteDocItem = function(uri) {
-		self.presenter.deleteFile(uri, function() {
+	this.deleteDocItem = function(blobKey) {
+		self.presenter.deleteFile(blobKey, function() {
 			var bucket = self.presenter.currentBucket();
 			var bucketFS = self.presenter.currentBucketFS();
-			self.presenter.deleteFileFromBucketFS(uri, bucketFS, bucket, function() {
-				$('[href="' + uri + '"]').remove();
+			self.presenter.deleteFileFromBucketFS(blobKey, bucketFS, bucket, function() {
+				$('[href="' + blobKey + '"]').remove();
 			});
 		});
 	};

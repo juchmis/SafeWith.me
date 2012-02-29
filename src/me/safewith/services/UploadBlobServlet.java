@@ -71,7 +71,7 @@ public class UploadBlobServlet extends HttpServlet {
 				if (blobKey == null) {
 					resp.sendError(500, "Invalid or no blob-key specified!");
 				} else {
-					String json = "{ \"uri\" : \"/app/blobs?blob-key=" + blobKey.getKeyString() + "\" }";
+					String json = "{ \"blobKey\" : \"" + blobKey.getKeyString() + "\" }";
 					resp.setStatus(201);
 					resp.setContentType("application/json");
 					resp.getWriter().println(json);

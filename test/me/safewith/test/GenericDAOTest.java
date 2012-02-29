@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.UUID;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -47,24 +46,26 @@ public class GenericDAOTest {
 	@Test
 	public void testCRUD() {
 		// create
+		
+		
 		ValidUser user1 = new ValidUser();
 		user1.setEmail("test@asdf.com");
-		String puBk = "qwer";
-		user1.setPublicKeyBlobKey(puBk);
+		long initialStorage = 100;
+		user1.setAllowedStorage(initialStorage);
 
 		ValidUser generated = new GenericDAO().persist(user1);
-		assertEquals(puBk, generated.getPublicKeyBlobKey());
+		assertEquals(initialStorage, generated.getAllowedStorage());
 		
 		// read
 		ValidUser read = new GenericDAO().get(ValidUser.class, user1.getEmail());
 		assertEquals(generated.getEmail(), read.getEmail());
-		assertEquals(puBk, read.getPublicKeyBlobKey());
+		assertEquals(initialStorage, read.getAllowedStorage());
 		
 		// update
-		String newPrBk = "yxcv";
-		read.setPublicKeyBlobKey(newPrBk);
+		long newStorage = 200;
+		read.setAllowedStorage(newStorage);
 		ValidUser updated = new GenericDAO().persist(read);
-		assertEquals(newPrBk, updated.getPublicKeyBlobKey());
+		assertEquals(newStorage, updated.getAllowedStorage());
 		
 		List<ValidUser> all = new GenericDAO().getAll(ValidUser.class);
 		assertTrue(all.size() == 1);

@@ -1,6 +1,6 @@
 module("FS");
 
-asyncTest("Create, Get, Delete Bucket", 9, function() {
+asyncTest("Create, Get, Delete Bucket", 10, function() {
 	var crypto = new Crypto();
 	crypto.init("test@asdf.com");
 	var server = new Server();
@@ -10,23 +10,24 @@ asyncTest("Create, Get, Delete Bucket", 9, function() {
 	// create
 	fs.createBucket(name, function(bucket) {
 		ok(bucket);
-		ok(bucket.fsBlobUri);
+		ok(bucket.fsBlobKey);
 		
 		// get created fs
-		fs.getBucketFS(bucket.fsBlobUri, function(bucketFS) {
+		fs.getBucketFS(bucket.fsBlobKey, function(bucketFS) {
 			ok(bucketFS);
 			equal(bucketFS.name, name);
+			equal(bucketFS.id, bucket.id);
 			
 			// add file to bucket fs
-			server.uploadBlob("Hello, World!", function(uri) {
-				var file = new fs.File("test file.pdf", "1024", "application/pdf", uri);
+			server.uploadBlob("Hello, World!", function(fileBlobKey) {
+				var file = new fs.File("test file.pdf", "1024", "application/pdf", fileBlobKey);
 				fs.addFileToBucketFS(file, bucketFS, bucket, function(updatedBucket) {
-					fs.getBucketFS(updatedBucket.fsBlobUri, function(gottenBucketFS) {
+					fs.getBucketFS(updatedBucket.fsBlobKey, function(gottenBucketFS) {
 						equal(gottenBucketFS.root[0].name, bucketFS.root[0].name);
 					
 						// delete file from bucket fs
-						fs.deleteFile(file.blobUri, function() {
-							fs.deleteFileFromBucketFS(file.blobUri, bucketFS, bucket, function() {
+						fs.deleteFile(file.blobKey, function() {
+							fs.deleteFileFromBucketFS(file.blobKey, bucketFS, bucket, function() {
 								equal(bucketFS.root.length, 0);
 
 								// test getAllBuckets

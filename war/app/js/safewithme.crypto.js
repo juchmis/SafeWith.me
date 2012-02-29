@@ -55,7 +55,6 @@ function Crypto() {
 	 * Generate a key pair for the user
 	 * @param numBits [int] number of bits for the key creation. (should be 1024+, generally)
 	 * @email [string] user's email address
-	 * @return {privateKey: [openpgp_msg_privatekey], privateKeyArmored: [string], publicKeyArmored: [string]}
 	 */
 	this.generateKeys = function(numBits, email) {
 		var userId = 'SafeWith.me User <' + email + '>';

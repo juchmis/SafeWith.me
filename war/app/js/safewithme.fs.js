@@ -25,6 +25,8 @@
  * I/O between the browser's HTML5 File Apis and the application.
  */
 function FS(crypto, server) {
+	
+	var blobServicePrefix = '/app/blobs?blob-key=';
 
 	this.BucketFS = function(id, name, ownerEmail) {
 		this.version = "1.0";
@@ -87,9 +89,9 @@ function FS(crypto, server) {
 			var cipher = crypto.encrypt(data, crypto.getPublicKey());
 
 			// upload the encrypted blob to the server
-			server.uploadBlob(cipher, function(uri) {
+			server.uploadBlob(cipher, function(blobKey) {
 				// add link to the file list
-				callback(uri);
+				callback(blobKey);
 			});
 		};
 
@@ -99,7 +101,8 @@ function FS(crypto, server) {
 	/**
 	 * Downloads the encrypted document and decrypt it
 	 */
-	this.getFile = function(uri, callback) {
+	this.getFile = function(blobKey, callback) {
+		var uri = blobServicePrefix + blobKey;
 		server.call('GET', uri, function(download) {
 			var decrypted = crypto.decrypt(download, crypto.getPrivateKey(), crypto.getPassphrase());
 			callback(decrypted);
@@ -109,7 +112,8 @@ function FS(crypto, server) {
 	/**
 	 * Deletes an encrypted file blob and removes it from the bucket FS
 	 */
-	this.deleteFile = function(uri, callback) {
+	this.deleteFile = function(blobKey, callback) {
+		var uri = blobServicePrefix + blobKey;
 		server.call('DELETE', uri, function(resp) {
 			callback();
 		});
@@ -127,7 +131,8 @@ function FS(crypto, server) {
 	/**
 	 * Get bucket FS from server and decrypt it
 	 */
-	this.getBucketFS = function(uri, callback) {
+	this.getBucketFS = function(blobKey, callback) {
+		var uri = blobServicePrefix + blobKey;
 		server.call('GET', uri, function(cipher) {
 			var decrypted =  crypto.decrypt(cipher, crypto.getPrivateKey(), crypto.getPassphrase());
 			var bucketFS = JSON.parse(decrypted);
@@ -151,11 +156,11 @@ function FS(crypto, server) {
 	/**
 	 * Delete a file from the currentyl selected bucket fs
 	 */
-	this.deleteFileFromBucketFS = function(fileBlobUri, bucketFS, bucket, callback) {
+	this.deleteFileFromBucketFS = function(fileBlobKey, bucketFS, bucket, callback) {
 		// rm file from root
 		for (var i = 0; i < bucketFS.root.length; i++) {
 			var current = bucketFS.root[i];
-			if (current.type === 'file' && current.blobUri === fileBlobUri) {
+			if (current.type === 'file' && current.blobKey === fileBlobKey) {
 				bucketFS.root.splice(i, 1);
 				break;
 			}
@@ -175,9 +180,9 @@ function FS(crypto, server) {
 		
 		function uploadBucketFS() {
 			// upload new bucket fs blob
-			server.uploadBlob(cipher, function(fsBlobUri) {
+			server.uploadBlob(cipher, function(fsBlobKey) {
 				// update bucket
-				bucket.fsBlobUri = fsBlobUri;
+				bucket.fsBlobKey = fsBlobKey;
 				var updatedBucketJson = JSON.stringify(bucket);
 				server.upload('PUT', '/app/buckets', 'application/json', updatedBucketJson, function(updatedBucket) {
 					callback(updatedBucket);
@@ -186,10 +191,11 @@ function FS(crypto, server) {
 		};
 
 		// check if old version of encrypted bucket fs exists
-		if (bucket.fsBlobUri) {
+		if (bucket.fsBlobKey) {
 			// remove old bucket fs blob
-			server.call('DELETE', bucket.fsBlobUri, function(resp) {
-				bucket.fsBlobUri = null;
+			var uri = blobServicePrefix + bucket.fsBlobKey;
+			server.call('DELETE', uri, function(resp) {
+				bucket.fsBlobKey = null;
 				uploadBucketFS();
 			});
 		} else {
@@ -221,7 +227,8 @@ function FS(crypto, server) {
 		// TODO: delete any containing file blobs
 		
 		// delete bucket fs blob
-		server.call('DELETE', bucket.fsBlobUri, function(resp) {
+		var uri = blobServicePrefix + bucket.fsBlobKey;
+		server.call('DELETE', uri, function(resp) {
 			// delete bucket DTO in datastore
 			server.call('DELETE', '/app/buckets?bucketId=' + bucket.id, function(resp) {
 				callback(resp);
