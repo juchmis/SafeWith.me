@@ -1,4 +1,4 @@
-## SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
+SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
 * http://safewith.me
 * http://openpgpjs.org
 
