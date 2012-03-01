@@ -25,10 +25,10 @@ test("Generate Keys", 4, function() {
 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
 });
 
-asyncTest("CRUD PublicKey to Server", 3, function() {
+asyncTest("CRUD PublicKey to Server", 4, function() {
 	var crypto = new Crypto();
 	var server = new Server();
-	var email = "test@asdf.com";
+	var email = "test@example.com";
 	var loginInfo = {
 		email : email
 	};
@@ -44,7 +44,11 @@ asyncTest("CRUD PublicKey to Server", 3, function() {
 			var decodedKeyId = window.atob(resp.keyId);
 			equal(decodedKeyId, crypto.getPublicKeyId());
 			
-			start();
+			server.call('DELETE', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
+				equal(resp, "");
+				
+				start();
+			});
 		});
 	});
 });

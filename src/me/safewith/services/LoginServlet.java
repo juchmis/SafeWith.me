@@ -1,7 +1,6 @@
 package me.safewith.services;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import me.safewith.dataAccess.GenericDAO;
+import me.safewith.dataAccess.PublicKeyDAO;
 import me.safewith.model.LoginInfo;
 import me.safewith.model.PublicKey;
 import me.safewith.model.ValidUser;
@@ -50,9 +50,9 @@ public class LoginServlet extends HttpServlet {
 				info.setLogoutUrl(userService.createLogoutURL(requestUri));
 				
 				// set user's PGP public keyId if he already has a Key
-				List<PublicKey> pkList = new GenericDAO().filterBy(PublicKey.class, "ownerEmail", user.getEmail());
-				if (pkList.size() > 0) {
-					info.setPublicKeyId(pkList.get(0).getKeyId());
+				PublicKey pk = PublicKeyDAO.getKeyForUser(user.getEmail());
+				if (pk != null) {
+					info.setPublicKeyId(pk.getKeyId());
 				}
 				
 			} else {
@@ -68,7 +68,7 @@ public class LoginServlet extends HttpServlet {
 		}  catch (Exception e) {
 			// write to log			
 			logger.log(Level.SEVERE, e.getMessage(), e);
-			resp.sendError(500);
+			resp.sendError(500, e.getMessage());
 		}
 		
 	}
