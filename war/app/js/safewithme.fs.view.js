@@ -31,9 +31,6 @@ function FSView() {
 	 * init UI
 	 */
 	this.init = function() {
-		// show progress bar
-		$('#disclaimerModal').modal('show');
-		
 		// drag and drop area
 		var holder = document.getElementById('holder');
 		// holder.ondragover = function () { this.className = 'hover'; return false; };

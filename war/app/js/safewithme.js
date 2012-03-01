@@ -54,6 +54,10 @@ function SafeWithMe() {
 				var fsView = new FSView();
 				fsView.presenter = fs;
 				fsView.init();
+			
+			}, function() {
+				// show progress bar
+				$('#disclaimerModal').modal('show');
 			});
 		}
 	});

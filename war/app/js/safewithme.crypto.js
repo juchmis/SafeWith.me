@@ -70,7 +70,7 @@ function Crypto() {
 	/**
 	 * Check if user already has a public key on the server
 	 */
-	this.initPublicKey = function(loginInfo, server, callback) {
+	this.initPublicKey = function(loginInfo, server, callback, displayCallback) {
 		var keyId = null;
 		if (loginInfo.publicKeyId) {
 			keyId = window.atob(loginInfo.publicKeyId);
@@ -78,6 +78,11 @@ function Crypto() {
 		
 		if (!keyId) {
 			// user has no key on the server yet
+			// display something while generating keys
+			if(displayCallback) {
+				displayCallback();
+			}
+			
 			// generate 2048 bit RSA keys
 			var keys = self.generateKeys(2048, loginInfo.email);
 			

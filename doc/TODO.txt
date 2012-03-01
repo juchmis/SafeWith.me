@@ -1,13 +1,13 @@
 
 ---- alpha test & push to github ----
 
-remove displaimer when pubkey already exists
 Private Key export as Ascii Armored Text file
 Filesharing
 Add file name to data url
 Put up warning when using unsupported browser
 add handler for multiple files + redo pogressbar/modals
 error handling: What when the previous REST call has gone wrong
+Review code for parsing of data... escaping in server and client (XSS & Injection attacks)
 add warning when drag and drop large files
 refactor to true REST style e.g. with Restlets
 fix memory leak during encryption
