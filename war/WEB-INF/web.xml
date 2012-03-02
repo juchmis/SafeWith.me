@@ -61,7 +61,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <!-- Make HTTPS mandatory -->
   <security-constraint>
     <web-resource-collection>
-      <url-pattern>/app/*</url-pattern>
+      <url-pattern>/*</url-pattern>
     </web-resource-collection>
     <user-data-constraint>
       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
