@@ -46,31 +46,37 @@
         padding-top: 10px;
       }
       
-      article {
-        font: italic 14px/19px Georgia,Times New Roman,serif;
-        font-family: Georgia, 'Times New Roman', serif;
-        color: #777;
-        text-align: center;
-      }
-      
-      #control {
-        font-style: italic;
-        padding-bottom: 10px;
-      }
-      
-      h1 {
+      header h1 {
         font-size: 1.75em;
         padding-top: 10px;
         padding-bottom: 20px;
-      }
-      
-      h1, h3 {
         line-height: 1.2em;
         text-align: center;
         text-shadow: 1px 2px 5px rgba(64, 64, 64, 0.5);
       }
+
+      article p {
+        font: italic 14px/19px Georgia,Times New Roman,serif;
+        font-family: Georgia, 'Times New Roman', serif;
+        color: #777;
+        text-align: center;
+          padding-bottom: 30px;
+      }
+
+      #html5badge {
+        padding-left: 15px;
+      }
       
-      #wrapper {
+      #openpgpjs {
+        font-size: 19px;
+        font-family: Georgia, serif;
+        font-weight: bold;
+        font-style: italic;
+        color:#F8F8F8;
+        text-shadow: 1px 1px 1px #606060, -1px -1px 0px #fff;
+        float: right;
+        padding-top: 25px;
+        padding-right: 15px;
       }
     </style>
     <link href="css/bootstrap-responsive-2.0.1.min.css" rel="stylesheet">
@@ -120,13 +126,19 @@
               <h1>Would you post a scan of<br/>your credit card on the internet?<br/><br/>You could be doing that right now,<br/>without even knowing it.</h1>
             </header>
             <div id="logo"></div>
-            <h3 id="control">Take control of your privacy <a href="about.html">How?</a></h3>
             <article>
-              <p><b>Our mission:</b> provide you secure access to all of your private documents<br/> anywhere, anytime and on all of your devices.</p>
+              <p><b>Our mission:</b> provide you secure access to all of your private documents<br/> anywhere, anytime and on all of your devices. <a href="about.html">How?</a></p>
             </article>
-            <a id="html5badge" href="http://www.w3.org/html/logo/">
-              <img src="/img/html5-badge-h-css3-performance-storage.png" width="197" height="64" alt="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage" title="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage">
-            </a>
+            <div class="row-fluid">
+              <div class="span6">
+                <a href="http://www.w3.org/html/logo/">
+                  <img id="html5badge" src="/img/html5-badge-h-css3-performance-storage.png" width="197" height="64" alt="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage" title="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage">
+                </a>
+              </div>
+              <div class="span6">
+                <a id="openpgpjs" href="http://openpgpjs.org">powered by OpenPGP.js</a>     
+              </div>
+            </div>       
           </section><!--/wrapper-->
           
         </div><!--/well-->
