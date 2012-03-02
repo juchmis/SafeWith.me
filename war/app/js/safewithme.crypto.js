@@ -36,7 +36,6 @@ function Crypto() {
 	 * Initializes the crypto system by reading the user's pgp keys from localstorage
 	 */
 	this.init = function(loginInfo, server, callback, displayCallback) {
-		
 		// check server for user's public key ID
 		self.initPublicKey(loginInfo, server, function(keyId) {
 			
@@ -63,10 +62,8 @@ function Crypto() {
 		
 		// user has no key on the server yet
 		if(displayCallback) {
-			
 			// display message
 			displayCallback();
-			
 			// wait a short time for the message to appear
 			setTimeout(function() {
 				self.createAndPersistKey(loginInfo.email, server, callback);
@@ -81,7 +78,6 @@ function Crypto() {
 	 * Generate a new key pair for the user and persist the public key on the server
 	 */
 	this.createAndPersistKey = function(email, server, callback) {
-		
 		// generate 2048 bit RSA keys
 		var keys = self.generateKeys(2048, email);
 		
