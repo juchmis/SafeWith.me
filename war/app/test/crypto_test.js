@@ -36,7 +36,8 @@ asyncTest("CRUD PublicKey to Server", 4, function() {
 	crypto.initPublicKey(loginInfo, server, function(keyId) {
 		ok(keyId);
 		
-		var encodedKeyId = btoa(keyId);
+		var base64Key = btoa(keyId);
+		var encodedKeyId = encodeURIComponent(base64Key);
 		server.call('GET', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
 			crypto.initKeyStore(loginInfo.email, keyId);
 			
