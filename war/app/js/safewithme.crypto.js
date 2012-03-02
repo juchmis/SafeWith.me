@@ -41,56 +41,65 @@ function Crypto() {
 		self.initPublicKey(loginInfo, server, function(keyId) {
 			
 			// read corresponding keys from localstorage
-			self.initKeyStore(loginInfo.email, keyId);
+			self.readKeys(loginInfo.email, keyId);
 			callback();
 			
-		}, function() {
-			
-			// display message to the user
-			displayCallback();
-			
-		});
+		}, displayCallback);
 	};
 	
 	/**
-	 * Check if user already has a public key on the server
+	 * Check if user already has a public key on the server and if not,
+	 * generate a new keypait for the user
 	 */
-	this.initPublicKey = function(loginInfo, server, callback, generateCallback) {
-		var keyId = null;
+	this.initPublicKey = function(loginInfo, server, callback, displayCallback) {
+		// check if user already has a key on the server
 		if (loginInfo.publicKeyId) {
-			// decode 64
-			keyId = window.atob(loginInfo.publicKeyId);
+			// decode base 64 key ID
+			var keyId = window.atob(loginInfo.publicKeyId);
+			// read the user's keys from local storage
+			callback(keyId);
+			return;
 		}
 		
-		if (!keyId) {
-			// user has no key on the server yet
-			// display something while generating keys
-			if(generateCallback) {
-				generateCallback();
-			}
+		// user has no key on the server yet
+		if(displayCallback) {
 			
-			// generate 2048 bit RSA keys
-			var keys = self.generateKeys(2048, loginInfo.email);
+			// display message
+			displayCallback();
 			
-			// persist on server
-			keyId = keys.privateKey.getKeyId();
-			// base64 encode key
-			var encodedKeyId = window.btoa(keyId);
-			var publicKey = {
-				keyId : encodedKeyId,
-				ownerEmail : loginInfo.email,
-				asciiArmored : keys.publicKeyArmored
-			};
-			var json = JSON.stringify(publicKey);
-			
-			server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
-				callback(keyId);
-			});
-			
+			// wait a short time for the message to appear
+			setTimeout(function() {
+				self.createAndPersistKey(loginInfo.email, server, callback);
+			}, 500);
+		
 		} else {
-			// user already has a key on the server
-			callback(keyId);
+			self.createAndPersistKey(loginInfo.email, server, callback);
 		}
+	};
+	
+	/**
+	 * Generate a new key pair for the user and persist the public key on the server
+	 */
+	this.createAndPersistKey = function(email, server, callback) {
+		
+		// generate 2048 bit RSA keys
+		var keys = self.generateKeys(2048, email);
+		
+		// persist public key to server
+		var keyId = keys.privateKey.getKeyId();
+		// base64 encode key
+		var encodedKeyId = window.btoa(keyId);
+		var publicKey = {
+			keyId : encodedKeyId,
+			ownerEmail : email,
+			asciiArmored : keys.publicKeyArmored
+		};
+		var json = JSON.stringify(publicKey);
+		
+		server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
+			// read the user's keys from local storage
+			callback(keyId);
+		});
 	};
 
 	/**
@@ -110,7 +119,12 @@ function Crypto() {
 		return keys;
 	};
 	
-	this.initKeyStore = function(email, keyId) {
+	/**
+	 * Read the users keys from the browser's HTML5 local storage
+	 * @email [string] user's email address
+	 * @keyId [string] the public key ID in unicode (not base 64)
+	 */
+	this.readKeys = function(email, keyId) {
 		// read keys from local storage
 		var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(email);
 		var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(email);
@@ -150,11 +164,10 @@ function Crypto() {
 	};
 
 	/**
-	 * Get the current user's base64 encoded public key
+	 * Get the current user's base64 encoded public key ID
 	 */
 	this.getPublicKeyIdBase64 = function() {
-		var keyId = publicKey.keyId;
-		return window.btoa(keyId);
+		return window.btoa(publicKey.keyId);
 	};
 
 	/**
