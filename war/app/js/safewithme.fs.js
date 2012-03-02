@@ -183,6 +183,8 @@ function FS(crypto, server) {
 			server.uploadBlob(cipher, function(fsBlobKey) {
 				// update bucket
 				bucket.fsBlobKey = fsBlobKey;
+				bucket.publicKeyId = crypto.getPublicKeyIdBase64();
+				
 				var updatedBucketJson = JSON.stringify(bucket);
 				server.upload('PUT', '/app/buckets', 'application/json', updatedBucketJson, function(updatedBucket) {
 					callback(updatedBucket);

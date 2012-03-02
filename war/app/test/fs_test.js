@@ -2,7 +2,7 @@ module("FS");
 
 asyncTest("Create, Get, Delete Bucket", 10, function() {
 	var crypto = new Crypto();
-	crypto.init("test@asdf.com");
+	crypto.initKeyStore("test@asdf.com");
 	var server = new Server();
 	var fs = new FS(crypto, server);
 

@@ -35,7 +35,82 @@ function Crypto() {
 	/**
 	 * Initializes the crypto system by reading the user's pgp keys from localstorage
 	 */
-	this.init = function(email, keyId) {
+	this.init = function(loginInfo, server, callback, displayCallback) {
+		
+		// check server for user's public key ID
+		self.initPublicKey(loginInfo, server, function(keyId) {
+			
+			// read corresponding keys from localstorage
+			self.initKeyStore(loginInfo.email, keyId);
+			callback();
+			
+		}, function() {
+			
+			// display message to the user
+			displayCallback();
+			
+		});
+	};
+	
+	/**
+	 * Check if user already has a public key on the server
+	 */
+	this.initPublicKey = function(loginInfo, server, callback, generateCallback) {
+		var keyId = null;
+		if (loginInfo.publicKeyId) {
+			// decode 64
+			keyId = window.atob(loginInfo.publicKeyId);
+		}
+		
+		if (!keyId) {
+			// user has no key on the server yet
+			// display something while generating keys
+			if(generateCallback) {
+				generateCallback();
+			}
+			
+			// generate 2048 bit RSA keys
+			var keys = self.generateKeys(2048, loginInfo.email);
+			
+			// persist on server
+			keyId = keys.privateKey.getKeyId();
+			// base64 encode key
+			var encodedKeyId = window.btoa(keyId);
+			var publicKey = {
+				keyId : encodedKeyId,
+				ownerEmail : loginInfo.email,
+				asciiArmored : keys.publicKeyArmored
+			};
+			var json = JSON.stringify(publicKey);
+			
+			server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
+				callback(keyId);
+			});
+			
+		} else {
+			// user already has a key on the server
+			callback(keyId);
+		}
+	};
+
+	/**
+	 * Generate a key pair for the user
+	 * @param numBits [int] number of bits for the key creation. (should be 1024+, generally)
+	 * @email [string] user's email address
+	 */
+	this.generateKeys = function(numBits, email) {
+		var userId = 'SafeWith.me User <' + email + '>';
+		var keys = openpgp.generate_key_pair(1, numBits, userId); // keytype 1=RSA
+
+		// store keys in html5 local storage
+		openpgp.keyring.importPrivateKey(keys.privateKeyArmored, self.getPassphrase());
+		openpgp.keyring.importPublicKey(keys.publicKeyArmored);
+		openpgp.keyring.store();
+
+		return keys;
+	};
+	
+	this.initKeyStore = function(email, keyId) {
 		// read keys from local storage
 		var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(email);
 		var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(email);
@@ -68,62 +143,6 @@ function Crypto() {
 	};
 	
 	/**
-	 * Check if user already has a public key on the server
-	 */
-	this.initPublicKey = function(loginInfo, server, callback, displayCallback) {
-		var keyId = null;
-		if (loginInfo.publicKeyId) {
-			keyId = window.atob(loginInfo.publicKeyId);
-		}
-		
-		if (!keyId) {
-			// user has no key on the server yet
-			// display something while generating keys
-			if(displayCallback) {
-				displayCallback();
-			}
-			
-			// generate 2048 bit RSA keys
-			var keys = self.generateKeys(2048, loginInfo.email);
-			
-			// persist on server
-			keyId = keys.privateKey.getKeyId();
-			var encodedKeyId = window.btoa(keyId);
-			var publicKey = {
-				keyId : encodedKeyId,
-				ownerEmail : loginInfo.email,
-				asciiArmored : keys.publicKeyArmored
-			};
-			var json = JSON.stringify(publicKey);
-			
-			server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
-				callback(keyId);
-			});
-			
-		} else {
-			// user already has a key on the server
-			callback(keyId);
-		}
-	};
-	
-	/**
-	 * Generate a key pair for the user
-	 * @param numBits [int] number of bits for the key creation. (should be 1024+, generally)
-	 * @email [string] user's email address
-	 */
-	this.generateKeys = function(numBits, email) {
-		var userId = 'SafeWith.me User <' + email + '>';
-		var keys = openpgp.generate_key_pair(1, numBits, userId); // keytype 1=RSA
-		
-		// store keys in html5 local storage
-		openpgp.keyring.importPrivateKey(keys.privateKeyArmored, self.getPassphrase());
-		openpgp.keyring.importPublicKey(keys.publicKeyArmored);
-		openpgp.keyring.store();
-		
-		return keys;
-	};
-	
-	/**
 	 * Get the current user's public key
 	 */
 	this.getPublicKey = function() {
@@ -131,10 +150,11 @@ function Crypto() {
 	};
 
 	/**
-	 * Get the current user's public key
+	 * Get the current user's base64 encoded public key
 	 */
-	this.getPublicKeyId = function() {
-		return publicKey.keyId;
+	this.getPublicKeyIdBase64 = function() {
+		var keyId = publicKey.keyId;
+		return window.btoa(keyId);
 	};
 
 	/**

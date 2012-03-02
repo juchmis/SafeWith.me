@@ -1,8 +1,8 @@
 module("Crypto");
 
-test("Init", 4, function() {
+test("Init Keystore", 4, function() {
 	var crypto = new Crypto();
-	crypto.init("test@asdf.com");
+	crypto.initKeyStore("test@asdf.com");
 	ok(crypto.getPrivateKey());
 	ok(crypto.getPrivateKey().indexOf('-----BEGIN PGP PRIVATE KEY BLOCK-----') === 0);
 	ok(crypto.getPublicKey());
@@ -11,7 +11,7 @@ test("Init", 4, function() {
 
 test("Generate Keys", 4, function() {
 	var crypto = new Crypto();
-	crypto.init("test@asdf.com");
+	crypto.initKeyStore("test@asdf.com");
 	
 	var start = (new Date).getTime();
 	var keySize = 2048;
@@ -38,11 +38,10 @@ asyncTest("CRUD PublicKey to Server", 4, function() {
 		
 		var encodedKeyId = btoa(keyId);
 		server.call('GET', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
-			crypto.init(loginInfo.email, keyId);
+			crypto.initKeyStore(loginInfo.email, keyId);
 			
 			equal(resp.asciiArmored, crypto.getPublicKey());
-			var decodedKeyId = window.atob(resp.keyId);
-			equal(decodedKeyId, crypto.getPublicKeyId());
+			equal(resp.keyId, crypto.getPublicKeyIdBase64());
 			
 			server.call('DELETE', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
 				equal(resp, "");
@@ -55,7 +54,7 @@ asyncTest("CRUD PublicKey to Server", 4, function() {
 
 function helperEncrDecr(plaintext) {
 	var crypto = new Crypto();
-	crypto.init("test@asdf.com");
+	crypto.initKeyStore("test@asdf.com");
 
 	var cipher = crypto.encrypt(plaintext, crypto.getPublicKey());
 	ok(cipher, "cipher");
@@ -76,7 +75,7 @@ test("Encrypt/Decrypt 7KB Image", 3, function() {
 
 test("Encrypt/Decrypt large Blob", 3, function() {
 	var crypto = new Crypto();
-	crypto.init("test@asdf.com");
+	crypto.initKeyStore("test@asdf.com");
 
 	// generate large string
 	var bigBlob = '';

@@ -42,24 +42,22 @@ function SafeWithMe() {
 	menuView.init('/', function(loginInfo) {
 		
 		// check if user is logged in
-		if (loginInfo.loggedIn && loginInfo.email) {
-			
-			// check for public key on the server
-			crypto.initPublicKey(loginInfo, server, function(keyId) {
-				
-				// init crypto for logged in user
-				crypto.init(loginInfo.email, keyId);
-
-				// init fs view after menu/login
-				var fsView = new FSView();
-				fsView.presenter = fs;
-				fsView.init();
-			
-			}, function() {
-				// show progress bar
-				$('#disclaimerModal').modal('show');
-			});
+		if (!loginInfo.loggedIn || !loginInfo.email) {
+			return;
 		}
+
+		// init crypto for logged in user
+		crypto.init(loginInfo, server, function() {
+
+			// init fs view after menu/login
+			var fsView = new FSView();
+			fsView.presenter = fs;
+			fsView.init();
+
+		}, function() {
+			// show disclaimer
+			$('#disclaimerModal').modal('show');
+		});
 	});
 
 }
