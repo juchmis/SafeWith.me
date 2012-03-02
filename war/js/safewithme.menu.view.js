@@ -46,7 +46,7 @@ function MenuView() {
 			anchor = 'Logout <a href="' + loginInfo.logoutUrl + '">' + loginInfo.email + '</a>';
 			
 		} else {
-			anchor = 'Try the alpha: Login with your <a href="' + loginInfo.loginUrl + '">Google OpenID</a>';
+			anchor = 'Try the alpha: Login with your <a href="' + loginInfo.loginUrl + '">Google Account</a>';
 		}
 		
 		$('#login').html(anchor);
