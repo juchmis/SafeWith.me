@@ -1,7 +1,6 @@
 
 ---- alpha test & push to github ----
 
-set publickeyId when creating bucket 
 Private Key export as Ascii Armored Text file
 Filesharing
 Add file name to data url
