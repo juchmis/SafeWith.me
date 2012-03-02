@@ -2,12 +2,15 @@ module("Crypto");
 
 test("Generate Keys", 4, function() {
 	var crypto = new Crypto();
-	crypto.readKeys("test@asdf.com");
+	var email = "test@asdf.com";
 	
 	var start = (new Date).getTime();
 	var keySize = 2048;
-	crypto.generateKeys(keySize, "test@asdf.com");
+	var keys = crypto.generateKeys(keySize, email);
 	var diff = (new Date).getTime() - start;
+	
+	var keyId = keys.privateKey.getKeyId();
+	crypto.readKeys(email, keyId);
 	
 	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair)');
 	ok(crypto.getPrivateKey());
