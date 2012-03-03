@@ -130,17 +130,37 @@ function FSView() {
 		var item = '<li><div>' +
 				   '<a id="deleteItem" href="' + blobKey + '"><i class="icon-remove icon-black"></i></a>' +
 				   '<a id="showItem" href="' + blobKey + '">' + file.name + '</a>' +
+				   '<a id="shareItem" href="' + blobKey + '"><i class="icon-share-alt icon-black"></i></a>' +
 				   '</div></li>';
 		
 		$('#buckets').append(item);
+		
+		// show document
 		$('#showItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
 			self.showDocItem(blobKey);
 		});
 		
+		// delete document
 		$('#deleteItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
 			self.deleteDocItem(blobKey);
+		});
+		
+		// share document
+		var shareSelector = '#shareItem[href="' + blobKey + '"]';
+		$(shareSelector).popover({
+			title : 'share document',
+			trigger : 'manual',
+			content : '<form class="form-inline">' + 
+						'<input type="text" class="input-medium" placeholder="recipient\'s gmail user"/>' + 
+						'<button type="submit" class="btn">share</button>' + 
+					  '</form>'
+		});
+		
+		$(shareSelector).click(function(e) {
+			e.preventDefault();
+			$(shareSelector).popover('toggle');
 		});
 	};
 
@@ -175,6 +195,12 @@ function FSView() {
 			self.presenter.deleteFileFromBucketFS(blobKey, bucketFS, bucket, function() {
 				$('[href="' + blobKey + '"]').remove();
 			});
+		});
+	};
+	
+	this.shareDocItem = function(blobKey) {
+		self.presenter.shareFile(blobKey, email, function() {
+			
 		});
 	};
 
