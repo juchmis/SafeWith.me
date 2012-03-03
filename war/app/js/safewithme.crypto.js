@@ -83,7 +83,7 @@ function Crypto() {
 		
 		// persist public key to server
 		var keyId = keys.privateKey.getKeyId();
-		// base64 encode key
+		// base64 encode key ID
 		var encodedKeyId = window.btoa(keyId);
 		var publicKey = {
 			keyId : encodedKeyId,
