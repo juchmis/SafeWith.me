@@ -1,24 +1,28 @@
 
----- alpha test & push to github ----
+--- alpha ---
 
-Private Key export as Ascii Armored Text file
-Filesharing
+filesharing
 Add file name to data url
-Put up warning when using unsupported browser
+key import/export as ascii armored text file
+put up warning when using unsupported browser (e.g. window.crypto.getRandomValues in FireFox)
+redesign user interface for directory/tree structure
 add handler for multiple files + redo pogressbar/modals
-error handling: What when the previous REST call has gone wrong
-Review code for parsing of data... escaping in server and client (XSS & Injection attacks)
-add warning when drag and drop large files
-refactor to true REST style e.g. with Restlets
+error handling between REST calls
+review code for parsing of data... escaping in server and client (XSS & Injection attacks)
+
+--- beta ---
+
 fix memory leak during encryption
-Main page: create explanatory images of BucketFS and describe what the server knows (privacy)
+add warning when drag and drop large files
+main page: create explanatory images of BucketFS and describe what the server knows (privacy), explain two factor authentication with google account
 Add facebook, twitter, google+ sharing (with two-clicks for more privacy) on hp
-
----- beta test ----
-
 Add other OpenID Providers: Facebook, Yahoo
-Send private key to ühone as QR-code -> Readable through PhoneGap Plugin
 Add Create/Delete bucket option
-Delete user file blobs before deleting bucket
-Look at signing of files
+delete user file blobs before deleting bucket
+
+--- potential features ---
+
+send private key to ühone as QR-code -> Readable through PhoneGap Plugin
+refactor to true REST convention e.g. with Restlets
+look at signing of files
 put crypto logic in web worker
