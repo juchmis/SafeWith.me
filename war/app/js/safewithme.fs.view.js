@@ -148,19 +148,33 @@ function FSView() {
 		
 		// share document
 		var shareSelector = '#shareItem[href="' + blobKey + '"]';
-		$(shareSelector).popover({
-			title : 'encrypted share',
-			trigger : 'manual',
-			content : '<form class="form-inline">' + 
-						'<input type="text" class="input-medium" placeholder="recipient\'s email"/>' + 
-						'<button type="submit" class="btn">share</button>' + 
-					  '</form>'
-		});
+		// $(shareSelector).popover({
+		// 	title : 'encrypted share',
+		// 	trigger : 'manual',
+		// 	content : '<form id="submitForm" href="' + blobKey + '" class="form-inline">' + 
+		// 				'<input type="text" class="input-medium" placeholder="recipient\'s email"/>' + 
+		// 				'<button type="submit" class="btn">share</button>' + 
+		// 			  '</form>'
+		// });
 		
 		$(shareSelector).click(function(e) {
 			e.preventDefault();
-			$(shareSelector).popover('toggle');
+			// $(shareSelector).popover('toggle');	
+			
+			self.presenter.shareFile(file, 'shareBucketName', "test@example.com", function(sharedBucket) {
+				alert('Sharing successful!');
+			});
 		});
+		
+		// $('#submitForm[href="' + blobKey + '"]').submit(function() {
+		// 	
+		// 	var shareEmail = $("input:first").val();
+		// 	self.presenter(file, 'shareBucketName', shareEmail, function(sharedBucket) {
+		// 		alert('Sharing successful!');
+		// 	});	
+		// 	
+		// 	return false;
+		// });
 	};
 
 	/**
@@ -194,12 +208,6 @@ function FSView() {
 			self.presenter.deleteFileFromBucketFS(blobKey, bucketFS, bucket, function() {
 				$('[href="' + blobKey + '"]').remove();
 			});
-		});
-	};
-	
-	this.shareDocItem = function(blobKey) {
-		self.presenter.shareFile(blobKey, email, function() {
-			
 		});
 	};
 

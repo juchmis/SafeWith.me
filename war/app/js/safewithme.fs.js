@@ -172,9 +172,15 @@ function FS(crypto, server) {
 	/**
 	 * Convert BucketFS to a JSON string, encrypt and then upload
 	 */
-	this.persistBucketFS = function(bucketFS, bucket, callback) {
+	this.persistBucketFS = function(bucketFS, bucket, callback, publicKey) {
 		var jsonFS = JSON.stringify(bucketFS);
-		var encryptedFS = crypto.encrypt(jsonFS, crypto.getPublicKey());
+		
+		var encryptedFS = null;
+		if (publicKey) {
+			encryptedFS = crypto.encrypt(jsonFS, publicKey);
+		} else {
+			encryptedFS = crypto.encrypt(jsonFS, crypto.getPublicKey());
+		}
 		
 		// update bucket
 		bucket.encryptedFS = encryptedFS;
@@ -213,6 +219,43 @@ function FS(crypto, server) {
 		server.call('DELETE', '/app/buckets?bucketId=' + bucket.id, function(resp) {
 			callback(resp);
 		});
+	};
+	
+	this.shareFile = function(file, shareBucketName, shareEmail, callback) {
+		// get recipient's public
+		server.call('GET', '/app/publicKeys?email=' + shareEmail, function(recipientKey) {
+			
+			// create a new bucket for the recipient
+			server.call('POST', '/app/buckets', function(shareBucket) {
+
+				// add all the encrypted files to fs
+				var shareFS = new self.BucketFS(shareBucket.id, shareBucketName, shareEmail);
+						
+				// get file blob from server and decrypt it
+				self.getFile(file.blobKey, function(decryptedBlob) {
+					
+					// encrypt file with recipient's public key
+					var encryptedShare = crypto.encrypt(decryptedBlob, recipientKey.asciiArmored);
+					
+					// upload encrypted file share
+					server.uploadBlob(encryptedShare, function(newBlobKey) {
+						
+						// add file to share FS
+						var shareFile = new self.File(file.name, file.size, file.mimeType, newBlobKey);
+						shareFile.uploaded = file.uploaded;
+						shareFS.root.push(shareFile);
+						
+						// hand bucket ownership over to the recipient
+						shareBucket.ownerEmail = shareEmail;
+						
+						self.persistBucketFS(shareFS, shareBucket, function(updatedShareBucket) {
+							callback(updatedShareBucket);
+						}, recipientKey.asciiArmored);
+					});
+				});
+			});
+		});
+		
 	};
 	
 }
