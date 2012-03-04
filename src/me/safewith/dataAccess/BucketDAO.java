@@ -43,10 +43,12 @@ public class BucketDAO {
 	}
 	
 	public Bucket updateBucket(Bucket bucket, String email) {
+		GenericDAO dao = new GenericDAO();
+		Bucket currentBucket = dao.get(Bucket.class, bucket.getId());
 
 		// check if it's the owners bucket
-		if (bucket.getOwnerEmail().equals(email)) {
-			Bucket updated = new GenericDAO().persist(bucket);
+		if (currentBucket.getOwnerEmail().equals(email)) {
+			Bucket updated = dao.persist(bucket);
 			return updated;
 			
 		} else {
@@ -59,9 +61,9 @@ public class BucketDAO {
 	 */
 	public void deleteBucket(String bucketId, String email) {
 		GenericDAO dao = new GenericDAO();
+		Bucket bucket = dao.get(Bucket.class, bucketId);
 		
 		// check if it's the user's own bucket
-		Bucket bucket = dao.get(Bucket.class, bucketId);
 		if (bucket.getOwnerEmail().equals(email)) {
 			dao.delete(Bucket.class, bucketId);
 		} else {

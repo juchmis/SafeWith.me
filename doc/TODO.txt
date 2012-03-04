@@ -7,6 +7,7 @@ integrate openpgp.js patch for private key passphrase
 key import/export as ascii armored text file
 information hiding crypto
 seperate unit tests from integration tests (login required)
+Fix bug: deletion of a shared file should lower the sender's used storage, not the recipients
 put up warning when using unsupported browser (e.g. window.crypto.getRandomValues in FireFox)
 redesign user interface for directory/tree structure
 add handler for multiple files + redo pogressbar/modals
