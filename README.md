@@ -12,7 +12,7 @@
 
 ### In order to deploy your own version of SafeWith.me on Google App Engine (You have 5 GBs of free storage per App):
 
-    1. Edit the the App-ID in the App Engine config file: war/WEB-INF/appengine-web.xml from 'safewith-me' e.g. to 'john-does-safe'
+    1. Edit the the App-ID in the App Engine config file: war/WEB-INF/appengine-web.xml from 'safewith-me' e.g. to 'mycompanys-safe'
     2. Sign up to App Engine and create an Application: http://code.google.com/intl/en/appengine/docs/java/gettingstarted/uploading.html
     
 ### Happy coding :)

@@ -129,15 +129,13 @@ function FS(crypto, server) {
 	};
 
 	/**
-	 * Get bucket FS from server and decrypt it
+	 * Get bucket FS from bucket and decrypt it
 	 */
-	this.getBucketFS = function(blobKey, callback) {
-		var uri = blobServicePrefix + blobKey;
-		server.call('GET', uri, function(cipher) {
-			var decrypted =  crypto.decrypt(cipher, crypto.getPrivateKey(), crypto.getPassphrase());
-			var bucketFS = JSON.parse(decrypted);
-			callback(bucketFS);
-		});
+	this.getBucketFS = function(encryptedFS) {
+		var jsonFS =  crypto.decrypt(encryptedFS, crypto.getPrivateKey(), crypto.getPassphrase());
+		var bucketFS = JSON.parse(jsonFS);
+		
+		return bucketFS;
 	};
 
 	/**
@@ -175,34 +173,17 @@ function FS(crypto, server) {
 	 * Convert BucketFS to a JSON string, encrypt and then upload
 	 */
 	this.persistBucketFS = function(bucketFS, bucket, callback) {
-		var json = JSON.stringify(bucketFS);
-		var cipher = crypto.encrypt(json, crypto.getPublicKey());
+		var jsonFS = JSON.stringify(bucketFS);
+		var encryptedFS = crypto.encrypt(jsonFS, crypto.getPublicKey());
 		
-		function uploadBucketFS() {
-			// upload new bucket fs blob
-			server.uploadBlob(cipher, function(fsBlobKey) {
-				// update bucket
-				bucket.fsBlobKey = fsBlobKey;
-				bucket.publicKeyId = crypto.getPublicKeyIdBase64();
-				
-				var updatedBucketJson = JSON.stringify(bucket);
-				server.upload('PUT', '/app/buckets', 'application/json', updatedBucketJson, function(updatedBucket) {
-					callback(updatedBucket);
-				});
-			});
-		};
-
-		// check if old version of encrypted bucket fs exists
-		if (bucket.fsBlobKey) {
-			// remove old bucket fs blob
-			var uri = blobServicePrefix + bucket.fsBlobKey;
-			server.call('DELETE', uri, function(resp) {
-				bucket.fsBlobKey = null;
-				uploadBucketFS();
-			});
-		} else {
-			uploadBucketFS();
-		}
+		// update bucket
+		bucket.encryptedFS = encryptedFS;
+		bucket.publicKeyId = crypto.getPublicKeyIdBase64();
+		
+		var updatedBucketJson = JSON.stringify(bucket);
+		server.upload('PUT', '/app/buckets', 'application/json', updatedBucketJson, function(updatedBucket) {
+			callback(updatedBucket);
+		});
 	};
 	
 	/**
@@ -228,13 +209,9 @@ function FS(crypto, server) {
 	this.removeBucket = function(bucket, callback) {
 		// TODO: delete any containing file blobs
 		
-		// delete bucket fs blob
-		var uri = blobServicePrefix + bucket.fsBlobKey;
-		server.call('DELETE', uri, function(resp) {
-			// delete bucket DTO in datastore
-			server.call('DELETE', '/app/buckets?bucketId=' + bucket.id, function(resp) {
-				callback(resp);
-			});
+		// delete bucket DTO in datastore
+		server.call('DELETE', '/app/buckets?bucketId=' + bucket.id, function(resp) {
+			callback(resp);
 		});
 	};
 	

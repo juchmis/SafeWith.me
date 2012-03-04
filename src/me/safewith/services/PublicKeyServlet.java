@@ -15,7 +15,6 @@ import me.safewith.model.PublicKeyMsg;
 import me.safewith.model.ValidUser;
 import me.safewith.services.RequestHelper.Command;
 
-import com.google.appengine.api.datastore.Text;
 import com.google.gson.GsonBuilder;
 
 @SuppressWarnings("serial")
@@ -75,10 +74,7 @@ public class PublicKeyServlet extends HttpServlet {
 					return;
 				}
 				
-				PublicKeyMsg pkMsg = new PublicKeyMsg();
-				pkMsg.setKeyId(pk.getKeyId());
-				pkMsg.setOwnerEmail(pk.getOwnerEmail());
-				pkMsg.setAsciiArmored(pk.getAsciiArmored().getValue());
+				PublicKeyMsg pkMsg = PublicKeyDAO.key2dto(pk);
 				String json = new GsonBuilder().create().toJson(pkMsg);
 				
 				resp.setContentType("application/json");
@@ -99,10 +95,7 @@ public class PublicKeyServlet extends HttpServlet {
 				String json = RequestHelper.readRequestBody(req);
 				PublicKeyMsg pkMsg = new GsonBuilder().create().fromJson(json, PublicKeyMsg.class);
 				
-				PublicKey pk = new PublicKey();
-				pk.setKeyId(pkMsg.getKeyId());
-				pk.setOwnerEmail(pkMsg.getOwnerEmail());
-				pk.setAsciiArmored(new Text(pkMsg.getAsciiArmored()));
+				PublicKey pk = PublicKeyDAO.msg2dto(pkMsg);
 				new GenericDAO().persist(pk);
 				
 				resp.getWriter().close();

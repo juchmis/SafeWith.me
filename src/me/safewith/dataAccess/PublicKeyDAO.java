@@ -3,6 +3,7 @@ package me.safewith.dataAccess;
 import java.util.List;
 
 import me.safewith.model.PublicKey;
+import me.safewith.model.PublicKeyMsg;
 
 public class PublicKeyDAO {
 	
@@ -18,6 +19,26 @@ public class PublicKeyDAO {
 		} else {
 			return null;
 		}
+	}
+	
+	public static PublicKey msg2dto(PublicKeyMsg msg) {
+		PublicKey pk = new PublicKey();
+		
+		pk.setKeyId(msg.getKeyId());
+		pk.setOwnerEmail(msg.getOwnerEmail());
+		pk.setAsciiArmored(msg.getAsciiArmored());
+		
+		return pk;		
+	}
+	
+	public static PublicKeyMsg key2dto(PublicKey pk) {
+		PublicKeyMsg msg = new PublicKeyMsg();
+		
+		msg.setKeyId(pk.getKeyId());
+		msg.setOwnerEmail(pk.getOwnerEmail());
+		msg.setAsciiArmored(pk.getAsciiArmored());
+		
+		return msg;
 	}
 
 }

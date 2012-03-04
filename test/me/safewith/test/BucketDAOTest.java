@@ -56,11 +56,11 @@ public class BucketDAOTest {
 		Bucket single = new BucketDAO().readBucket(bucket.getId(), user.getEmail());
 		assertEquals(bucket.getOwnerEmail(), single.getOwnerEmail());
 		
-		assertNull(bucket.getFsBlobKey());
+		assertNull(bucket.getEncryptedFS());
 		String newKey = "asdf";
-		bucket.setFsBlobKey(newKey);
+		bucket.setEncryptedFS(newKey);
 		Bucket updated = new BucketDAO().updateBucket(bucket, user.getEmail());
-		assertEquals(newKey, updated.getFsBlobKey());
+		assertEquals(newKey, updated.getEncryptedFS());
 		
 		// get users buckets
 		List<Bucket> buckets = new BucketDAO().listUserBuckets(user.getEmail());

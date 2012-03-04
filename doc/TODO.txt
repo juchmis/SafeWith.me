@@ -1,7 +1,9 @@
 
 --- alpha ---
 
+information hiding crypto
 filesharing
+seperate unit tests from integration tests (login required)
 Add file name to data url
 key import/export as ascii armored text file
 put up warning when using unsupported browser (e.g. window.crypto.getRandomValues in FireFox)

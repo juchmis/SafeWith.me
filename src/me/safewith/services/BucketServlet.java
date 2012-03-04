@@ -1,6 +1,7 @@
 package me.safewith.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import me.safewith.dataAccess.BucketDAO;
 import me.safewith.model.Bucket;
+import me.safewith.model.BucketMsg;
 import me.safewith.model.ValidUser;
 import me.safewith.services.RequestHelper.Command;
 
@@ -46,7 +48,14 @@ public class BucketServlet extends HttpServlet {
 				
 				// read user buckets and respond in json form
 				List<Bucket> buckets = new BucketDAO().listUserBuckets(user.getEmail());
-				String json = new GsonBuilder().create().toJson(buckets);
+				
+				// convert DTO to MSG objects
+				List<BucketMsg> bucketMsgs = new ArrayList<BucketMsg>();
+				for (Bucket b : buckets) {
+					bucketMsgs.add(BucketDAO.dto2msg(b));
+				}
+				
+				String json = new GsonBuilder().create().toJson(bucketMsgs);
 				resp.setContentType("application/json");
 				resp.getWriter().print(json);
 				resp.getWriter().close();
@@ -63,7 +72,9 @@ public class BucketServlet extends HttpServlet {
 				
 				// create new bucket
 				Bucket bucket = new BucketDAO().createBucket(user.getEmail());
-				String json = new GsonBuilder().create().toJson(bucket);
+				BucketMsg msg = BucketDAO.dto2msg(bucket);
+				
+				String json = new GsonBuilder().create().toJson(msg);
 				resp.setContentType("application/json");
 				resp.getWriter().print(json);
 				resp.getWriter().close();
@@ -81,9 +92,12 @@ public class BucketServlet extends HttpServlet {
 				String bucketJson = RequestHelper.readRequestBody(req);
 				
 				// update bucket
-				Bucket bucket = new GsonBuilder().create().fromJson(bucketJson, Bucket.class);
+				BucketMsg bucketMsg = new GsonBuilder().create().fromJson(bucketJson, BucketMsg.class);
+				Bucket bucket = BucketDAO.msg2dto(bucketMsg);
+				
 				Bucket updated = new BucketDAO().updateBucket(bucket, user.getEmail());
-				String json = new GsonBuilder().create().toJson(updated);
+				BucketMsg updatedMsg = BucketDAO.dto2msg(updated);
+				String json = new GsonBuilder().create().toJson(updatedMsg);
 				
 				resp.setContentType("application/json");
 				resp.getWriter().print(json);

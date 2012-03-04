@@ -3,6 +3,7 @@ package me.safewith.dataAccess;
 import java.util.List;
 
 import me.safewith.model.Bucket;
+import me.safewith.model.BucketMsg;
 
 public class BucketDAO {
 	
@@ -66,5 +67,27 @@ public class BucketDAO {
 		} else {
 			throw new IllegalArgumentException("Only the owner can delete his buckets!");
 		}
+	}
+	
+	public static Bucket msg2dto(BucketMsg msg) {
+		Bucket b = new Bucket();
+		
+		b.setId(msg.getId());
+		b.setOwnerEmail(msg.getOwnerEmail());
+		b.setPublicKeyId(msg.getPublicKeyId());
+		b.setEncryptedFS(msg.getEncryptedFS());
+		
+		return b;
+	}
+	
+	public static BucketMsg dto2msg(Bucket b) {
+		BucketMsg msg = new BucketMsg();
+		
+		msg.setId(b.getId());
+		msg.setOwnerEmail(b.getOwnerEmail());
+		msg.setPublicKeyId(b.getPublicKeyId());
+		msg.setEncryptedFS(b.getEncryptedFS());
+		
+		return msg;
 	}
 }

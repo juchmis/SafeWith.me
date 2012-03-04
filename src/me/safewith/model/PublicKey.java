@@ -42,12 +42,16 @@ public class PublicKey implements DTO {
 		this.ownerEmail = ownerEmail;
 	}
 
-	public Text getAsciiArmored() {
-		return asciiArmored;
+	public String getAsciiArmored() {
+		if (asciiArmored != null) {
+			return asciiArmored.getValue();
+		} else {
+			return null;
+		}
 	}
 
-	public void setAsciiArmored(Text asciiArmored) {
-		this.asciiArmored = asciiArmored;
+	public void setAsciiArmored(String asciiArmored) {
+		this.asciiArmored = new Text(asciiArmored);
 	}
 
 }

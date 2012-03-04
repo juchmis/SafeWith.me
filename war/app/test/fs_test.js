@@ -10,38 +10,37 @@ asyncTest("Create, Get, Delete Bucket", 10, function() {
 	// create
 	fs.createBucket(name, function(bucket) {
 		ok(bucket);
-		ok(bucket.fsBlobKey);
+		ok(bucket.encryptedFS);
 		
 		// get created fs
-		fs.getBucketFS(bucket.fsBlobKey, function(bucketFS) {
-			ok(bucketFS);
-			equal(bucketFS.name, name);
-			equal(bucketFS.id, bucket.id);
+		var bucketFS = fs.getBucketFS(bucket.encryptedFS);
+		ok(bucketFS);
+		equal(bucketFS.name, name);
+		equal(bucketFS.id, bucket.id);
+		
+		// add file to bucket fs
+		server.uploadBlob("Hello, World!", function(fileBlobKey) {
+			var file = new fs.File("test file.pdf", "1024", "application/pdf", fileBlobKey);
+			fs.addFileToBucketFS(file, bucketFS, bucket, function(updatedBucket) {
+				
+				var gottenBucketFS = fs.getBucketFS(updatedBucket.encryptedFS);
+				equal(gottenBucketFS.root[0].name, bucketFS.root[0].name);
 			
-			// add file to bucket fs
-			server.uploadBlob("Hello, World!", function(fileBlobKey) {
-				var file = new fs.File("test file.pdf", "1024", "application/pdf", fileBlobKey);
-				fs.addFileToBucketFS(file, bucketFS, bucket, function(updatedBucket) {
-					fs.getBucketFS(updatedBucket.fsBlobKey, function(gottenBucketFS) {
-						equal(gottenBucketFS.root[0].name, bucketFS.root[0].name);
-					
-						// delete file from bucket fs
-						fs.deleteFile(file.blobKey, function() {
-							fs.deleteFileFromBucketFS(file.blobKey, bucketFS, bucket, function() {
-								equal(bucketFS.root.length, 0);
+				// delete file from bucket fs
+				fs.deleteFile(file.blobKey, function() {
+					fs.deleteFileFromBucketFS(file.blobKey, bucketFS, bucket, function() {
+						equal(bucketFS.root.length, 0);
 
-								// test getAllBuckets
-								fs.getBuckets(function(bucketPointers) {
-									ok(bucketPointers);
-									ok(bucketPointers.length >= 1);
+						// test getAllBuckets
+						fs.getBuckets(function(bucketPointers) {
+							ok(bucketPointers);
+							ok(bucketPointers.length >= 1);
 
-									// remove the created bucket
-									fs.removeBucket(bucket, function(resp) {
-										equal(resp, "");
+							// remove the created bucket
+							fs.removeBucket(bucket, function(resp) {
+								equal(resp, "");
 
-										start();
-									});
-								});
+								start();
 							});
 						});
 					});

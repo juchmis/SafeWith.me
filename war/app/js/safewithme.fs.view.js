@@ -102,24 +102,23 @@ function FSView() {
 	 */
 	this.displayBucket = function(bucket, index, numBuckets) {
 		// get bucket FS
-		self.presenter.getBucketFS(bucket.fsBlobKey, function(bucketFS) {
+		var bucketFS = self.presenter.getBucketFS(bucket.encryptedFS);
 			
-			// cache local user buckets and fs
-			self.presenter.cacheBucket(bucket, bucketFS);
-			
-			// add bucket to accordion
-			var html = '<li class="nav-header">' + bucketFS.name + '</li>';
-			// var html = '<div>' +
-			// 				'<h3><a href="#">' + bucketFS.name + '</a></h3>' +
-			// 				'<ol id="docList"></ol>' +
-			// 			'</div>';
-			$('#buckets').append(html);
-			
-			// display file links
-			for (var i=0; i < bucketFS.root.length; i++) {
-				self.addLinkToList(bucketFS.root[i]);
-			}
-		});
+		// cache local user buckets and fs
+		self.presenter.cacheBucket(bucket, bucketFS);
+		
+		// add bucket to accordion
+		var html = '<li class="nav-header">' + bucketFS.name + '</li>';
+		// var html = '<div>' +
+		// 				'<h3><a href="#">' + bucketFS.name + '</a></h3>' +
+		// 				'<ol id="docList"></ol>' +
+		// 			'</div>';
+		$('#buckets').append(html);
+		
+		// display file links
+		for (var i=0; i < bucketFS.root.length; i++) {
+			self.addLinkToList(bucketFS.root[i]);
+		}
 	};
 	
 	/**
@@ -150,10 +149,10 @@ function FSView() {
 		// share document
 		var shareSelector = '#shareItem[href="' + blobKey + '"]';
 		$(shareSelector).popover({
-			title : 'share document',
+			title : 'encrypted share',
 			trigger : 'manual',
 			content : '<form class="form-inline">' + 
-						'<input type="text" class="input-medium" placeholder="recipient\'s gmail user"/>' + 
+						'<input type="text" class="input-medium" placeholder="recipient\'s email"/>' + 
 						'<button type="submit" class="btn">share</button>' + 
 					  '</form>'
 		});
