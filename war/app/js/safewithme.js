@@ -57,6 +57,9 @@ function SafeWithMe() {
 		}, function() {
 			// show disclaimer
 			$('#disclaimerModal').modal('show');
+		}, function() {
+			var msg = '<h1 class="alert alert-success">Completed!</h1>';
+			$('#disclaimerModal [class="modal-body"]').html(msg);
 		});
 	});
 

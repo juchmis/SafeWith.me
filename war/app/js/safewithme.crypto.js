@@ -36,7 +36,7 @@ function Crypto() {
 	/**
 	 * Initializes the crypto system by reading the user's pgp keys from localstorage
 	 */
-	this.init = function(loginInfo, server, callback, displayCallback) {
+	this.init = function(loginInfo, server, callback, displayCallback, finishCallback) {
 		// check server for user's public key ID
 		self.initPublicKey(loginInfo, server, function(keyId) {
 			
@@ -44,14 +44,14 @@ function Crypto() {
 			self.readKeys(loginInfo.email, keyId);
 			callback();
 			
-		}, displayCallback);
+		}, displayCallback, finishCallback);
 	};
 	
 	/**
 	 * Check if user already has a public key on the server and if not,
 	 * generate a new keypait for the user
 	 */
-	this.initPublicKey = function(loginInfo, server, callback, displayCallback) {
+	this.initPublicKey = function(loginInfo, server, callback, displayCallback, finishCallback) {
 		// check if user already has a key on the server
 		if (loginInfo.publicKeyId) {
 			// decode base 64 key ID
@@ -68,6 +68,7 @@ function Crypto() {
 			// wait a short time for the message to appear
 			setTimeout(function() {
 				self.createAndPersistKey(loginInfo.email, server, callback);
+				finishCallback();
 			}, 500);
 		
 		} else {
