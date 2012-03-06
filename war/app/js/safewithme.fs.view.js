@@ -164,7 +164,10 @@ function FSView() {
 			}
 			
 			self.presenter.shareFile(file, 'shared by ' + senderEmail , shareEmail, function(sharedBucket) {
+				$('#encryptModal').modal('hide');
+			}, function() {
 				$('#shareModal').modal('hide');
+				$('#encryptModal').modal('show');
 			});
 
 			return false;

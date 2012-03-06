@@ -221,9 +221,14 @@ function FS(crypto, server) {
 		});
 	};
 	
-	this.shareFile = function(file, shareBucketName, shareEmail, callback) {
+	this.shareFile = function(file, shareBucketName, shareEmail, callback, displayCallback) {
 		// get recipient's public
 		server.call('GET', '/app/publicKeys?email=' + shareEmail, function(recipientKey) {
+			
+			// display message if recipient's public key is available
+			if (recipientKey && displayCallback) {
+				displayCallback();
+			}
 			
 			// create a new bucket for the recipient
 			server.call('POST', '/app/buckets', function(shareBucket) {
