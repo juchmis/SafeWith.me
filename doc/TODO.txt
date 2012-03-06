@@ -7,8 +7,8 @@ put up warning when using unsupported browser (e.g. window.crypto.getRandomValue
 seperate unit tests (with server stubs) from integration tests (login required)
 create unit test for sharing
 redesign user interface for directory/tree structure
-add handler for multiple files + redo pogressbar/modals
 error handling between REST calls
+add handler for multiple files + redo pogressbar/modals
 review code for parsing of data... escaping in server and client (XSS & Injection attacks)
 Bugfix: deletion of a shared file should lower the sender's used storage, not the recipients
 
@@ -27,7 +27,7 @@ Add other OpenID Providers: Facebook, Yahoo
 
 --- potential features ---
 
-send private key to ühone as QR-code -> Readable through PhoneGap Plugin
+send private key to phone as QR-code -> Readable through PhoneGap Plugin
 refactor to true REST convention e.g. with Restlets
 look at signing of files
 put crypto logic in web worker
