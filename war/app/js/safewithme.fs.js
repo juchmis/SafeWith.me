@@ -86,7 +86,7 @@ function FS(crypto, server) {
 			var data = event.target.result;			
 			
 			// encrypt file locally
-			var cipher = crypto.encrypt(data, crypto.getPublicKey());
+			var cipher = crypto.encrypt(data);
 
 			// upload the encrypted blob to the server
 			server.uploadBlob(cipher, function(blobKey) {
@@ -104,7 +104,7 @@ function FS(crypto, server) {
 	this.getFile = function(blobKey, callback) {
 		var uri = blobServicePrefix + blobKey;
 		server.call('GET', uri, function(download) {
-			var decrypted = crypto.decrypt(download, crypto.getPrivateKey(), crypto.getPassphrase());
+			var decrypted = crypto.decrypt(download);
 			callback(decrypted);
 		});
 	};
@@ -132,7 +132,7 @@ function FS(crypto, server) {
 	 * Get bucket FS from bucket and decrypt it
 	 */
 	this.getBucketFS = function(encryptedFS) {
-		var jsonFS =  crypto.decrypt(encryptedFS, crypto.getPrivateKey(), crypto.getPassphrase());
+		var jsonFS =  crypto.decrypt(encryptedFS);
 		var bucketFS = JSON.parse(jsonFS);
 		
 		return bucketFS;
@@ -179,7 +179,7 @@ function FS(crypto, server) {
 		if (publicKey) {
 			encryptedFS = crypto.encrypt(jsonFS, publicKey);
 		} else {
-			encryptedFS = crypto.encrypt(jsonFS, crypto.getPublicKey());
+			encryptedFS = crypto.encrypt(jsonFS);
 		}
 		
 		// update bucket

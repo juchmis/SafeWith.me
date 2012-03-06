@@ -1,6 +1,6 @@
 module("Crypto");
 
-test("Generate Keys", 4, function() {
+test("Generate keys without passphrase", 4, function() {
 	var crypto = new Crypto();
 	var email = "test@asdf.com";
 	
@@ -12,16 +12,27 @@ test("Generate Keys", 4, function() {
 	var keyId = keys.privateKey.getKeyId();
 	crypto.readKeys(email, keyId);
 	
-	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair)');
+	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair, passphrase "undefined")');
 	ok(crypto.getPrivateKey());
 	ok(crypto.getPrivateKey().indexOf('-----BEGIN PGP PRIVATE KEY BLOCK-----') === 0);
 	ok(crypto.getPublicKey());
 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
 });
 
-test("Read Keystore", 4, function() {
+test("Generate keys with passphrase", 4, function() {
 	var crypto = new Crypto();
-	crypto.readKeys("test@asdf.com");
+	var email = "test@yxcv.com";
+	var passphrase = 'yxcv';
+
+	var start = (new Date).getTime();
+	var keySize = 2048;
+	var keys = crypto.generateKeys(keySize, email, passphrase);
+	var diff = (new Date).getTime() - start;
+
+	var keyId = keys.privateKey.getKeyId();
+	crypto.readKeys(email, keyId);
+
+	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair, passphrase "'+ passphrase + '")');
 	ok(crypto.getPrivateKey());
 	ok(crypto.getPrivateKey().indexOf('-----BEGIN PGP PRIVATE KEY BLOCK-----') === 0);
 	ok(crypto.getPublicKey());
@@ -60,10 +71,10 @@ function helperEncrDecr(plaintext) {
 	var crypto = new Crypto();
 	crypto.readKeys("test@asdf.com");
 
-	var cipher = crypto.encrypt(plaintext, crypto.getPublicKey());
+	var cipher = crypto.encrypt(plaintext);
 	ok(cipher, "cipher");
 
-	var decrypted =  crypto.decrypt(cipher, crypto.getPrivateKey(), '');
+	var decrypted =  crypto.decrypt(cipher);
 	ok(decrypted, "decrypted");
 
 	equal(decrypted, plaintext, "Decrypted should be the same as the plaintext");
@@ -90,7 +101,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 	console.log('blob size [bytes]: ' + bigBlob.length*2);
 	
 	var start = (new Date).getTime();
-	var bigBlobCipher = crypto.encrypt(bigBlob, crypto.getPublicKey());
+	var bigBlobCipher = crypto.encrypt(bigBlob);
 	var diff = (new Date).getTime() - start;
 	
 	console.log('Time taken for encryption [ms]: ' + diff);
@@ -98,7 +109,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 	console.log('blob cipher size [bytes]: ' + bigBlobCipher.length*2);
 	
 	var decrStart = (new Date).getTime();
-	var bigBlobDecrypted =  crypto.decrypt(bigBlobCipher, crypto.getPrivateKey(), '');
+	var bigBlobDecrypted =  crypto.decrypt(bigBlobCipher);
 	var decrDiff = (new Date).getTime() - decrStart;
 	
 	console.log('Time taken for decryption [ms]: ' + decrDiff);

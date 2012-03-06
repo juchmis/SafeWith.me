@@ -3,6 +3,7 @@ module("FS");
 asyncTest("Create, Get, Delete Bucket", 10, function() {
 	var crypto = new Crypto();
 	crypto.readKeys("test@asdf.com");
+	
 	var server = new Server();
 	var fs = new FS(crypto, server);
 
@@ -50,16 +51,16 @@ asyncTest("Create, Get, Delete Bucket", 10, function() {
 	});
 });
 
-asyncTest("Share bucket", function() {
-	var crypto = new Crypto();
-	crypto.readKeys("test@example.com");
-	var server = new Server();
-	var fs = new FS(crypto, server);
-	
-	fs.shareBucket(bucket, bucketFS, function() {
-		
-	});
-
-	
-	start();
-});
+// asyncTest("Share bucket", function() {
+// 	var crypto = new Crypto();
+// 	crypto.readKeys("test@example.com");
+// 	var server = new Server();
+// 	var fs = new FS(crypto, server);
+// 	
+// 	fs.shareBucket(bucket, bucketFS, function() {
+// 		
+// 	});
+// 
+// 	
+// 	start();
+// });

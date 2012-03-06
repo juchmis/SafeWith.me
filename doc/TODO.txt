@@ -10,13 +10,15 @@ redesign user interface for directory/tree structure
 add handler for multiple files + redo pogressbar/modals
 error handling between REST calls
 review code for parsing of data... escaping in server and client (XSS & Injection attacks)
-Fix bug: deletion of a shared file should lower the sender's used storage, not the recipients
+Bugfix: deletion of a shared file should lower the sender's used storage, not the recipients
 
 --- beta ---
 
 Add Create/Delete bucket option
 delete user file blobs before deleting bucket
-fix memory leak during encryption
+Bugfix: memory leak during encryption
+Bugfix: private and public key ID diverge sometimes when generating with passphrase
+Integrate passphrase usage into unit tests and application
 Add file name to data url (e.g. download attribute on anchor)
 add warning when drag and drop large files
 main page: create explanatory images of BucketFS and describe what the server knows (privacy), explain two factor authentication with google account

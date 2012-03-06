@@ -31,6 +31,7 @@ function Crypto() {
 	var self = this;
 	var privateKey;		// user's private key
 	var publicKey;		// user's public key
+	var passphrase;		// user's passphrase used for decryption
 	
 	/**
 	 * Initializes the crypto system by reading the user's pgp keys from localstorage
@@ -102,13 +103,14 @@ function Crypto() {
 	 * Generate a key pair for the user
 	 * @param numBits [int] number of bits for the key creation. (should be 1024+, generally)
 	 * @email [string] user's email address
+	 * @pass [string] a passphrase used to protect the private key
 	 */
-	this.generateKeys = function(numBits, email) {
+	this.generateKeys = function(numBits, email, pass) {
 		var userId = 'SafeWith.me User <' + email + '>';
-		var keys = openpgp.generate_key_pair(1, numBits, userId); // keytype 1=RSA
+		var keys = openpgp.generate_key_pair(1, numBits, userId, pass); // keytype 1=RSA
 
 		// store keys in html5 local storage
-		openpgp.keyring.importPrivateKey(keys.privateKeyArmored, self.getPassphrase());
+		openpgp.keyring.importPrivateKey(keys.privateKeyArmored, pass);
 		openpgp.keyring.importPublicKey(keys.publicKeyArmored);
 		openpgp.keyring.store();
 
@@ -176,16 +178,23 @@ function Crypto() {
 	/**
 	 * Get the user's passphrase for decrypting their private key
 	 */
-	this.getPassphrase = function() {
-		// TODO: get passphrase in a user dialog
-		return '';
+	this.setPassphrase = function(pass) {
+		passphrase = pass;
 	};
 	
 	/**
 	 * Encrypt a string
 	 */
-	this.encrypt = function(plaintext, publicKey) {
-		var pub_key = openpgp.read_publicKey(publicKey);
+	this.encrypt = function(plaintext, customPubKey) {
+		var pub_key = null;
+		if (customPubKey) {
+			// use a custom set public for e.g. or sharing
+			pub_key = openpgp.read_publicKey(customPubKey);
+		} else {
+			// use the user's local public key
+			pub_key = openpgp.read_publicKey(publicKey.armored);
+		}
+		
 		var cipher = openpgp.write_encrypted_message(pub_key, plaintext);
 
 		return cipher;
@@ -194,8 +203,8 @@ function Crypto() {
 	/**
 	 * Decrypt a string
 	 */
-	this.decrypt = function(cipher, privateKey, password) {
-		var priv_key = openpgp.read_privateKey(privateKey);
+	this.decrypt = function(cipher) {
+		var priv_key = openpgp.read_privateKey(privateKey.armored);
 	
 	    var msg = openpgp.read_message(cipher);
 	    var keymat = null;
@@ -217,8 +226,8 @@ function Crypto() {
 	    	}
 	    }
 	    if (keymat != null) {
-	    	if (!keymat.keymaterial.decryptSecretMPIs(password)) {
-	    		util.print_error("Password for secrect key was incorrect!");
+	    	if (!keymat.keymaterial.decryptSecretMPIs(passphrase)) {
+	    		util.print_error("Passphrase for secrect key was incorrect!");
 	    		return null;
 	    	}
 	    	
