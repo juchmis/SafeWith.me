@@ -149,7 +149,6 @@
         </div>
       </div>
 
-      <!-- Modal dialogs -->
       <div class="modal fade" id="decryptModal">
         <div class="modal-header">
           <h3>Please wait, our trained bunnies are decrypting your file...</h3>
@@ -158,6 +157,18 @@
           <div class="progress progress-danger progress-striped active">
             <div class="bar" style="width: 100%;"></div>
           </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="shareModal">
+        <div class="modal-header">
+          <h3>Encrypted sharing...</h3>
+        </div>
+        <div class="modal-body">
+          <form id="shareForm" class="form-inline">
+      		  <input type="text" class="input-medium" placeholder="recipient's email"/>
+      		  <button type="submit" class="btn-success">share</button>
+      		</form>
         </div>
       </div>
 

@@ -159,11 +159,12 @@ function FSView() {
 		
 		$(shareSelector).click(function(e) {
 			e.preventDefault();
+			$('#shareModal').modal('show');
 			// $(shareSelector).popover('toggle');	
 			
-			self.presenter.shareFile(file, 'shareBucketName', "test@example.com", function(sharedBucket) {
-				alert('Sharing successful!');
-			});
+			// self.presenter.shareFile(file, 'shareBucketName', "test@example.com", function(sharedBucket) {
+			// 	alert('Sharing successful!');
+			// });
 		});
 		
 		// $('#submitForm[href="' + blobKey + '"]').submit(function() {
