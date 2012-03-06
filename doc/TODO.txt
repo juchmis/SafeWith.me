@@ -1,10 +1,10 @@
 
 --- alpha ---
 
-filesharing
 key import/export as ascii armored text file
 put up warning when using unsupported browser (e.g. window.crypto.getRandomValues in FireFox)
 seperate unit tests (with server stubs) from integration tests (login required)
+create unit test for sharing
 redesign user interface for directory/tree structure
 add handler for multiple files + redo pogressbar/modals
 error handling between REST calls

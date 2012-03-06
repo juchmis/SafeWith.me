@@ -147,42 +147,35 @@ function FSView() {
 		});
 		
 		// share document
-		var shareSelector = '#shareItem[href="' + blobKey + '"]';
-		// $(shareSelector).popover({
-		// 	title : 'encrypted share',
-		// 	trigger : 'manual',
-		// 	content : '<form id="submitForm" href="' + blobKey + '" class="form-inline">' + 
-		// 				'<input type="text" class="input-medium" placeholder="recipient\'s email"/>' + 
-		// 				'<button type="submit" class="btn">share</button>' + 
-		// 			  '</form>'
-		// });
-		
-		$(shareSelector).click(function(e) {
+		$('#shareItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
 			$('#shareModal').modal('show');
-			// $(shareSelector).popover('toggle');	
+		});	
 			
-			// self.presenter.shareFile(file, 'shareBucketName', "test@example.com", function(sharedBucket) {
-			// 	alert('Sharing successful!');
-			// });
+		$('#shareForm').submit(function(e) {
+			e.preventDefault();
+			
+			var senderEmail = $('#login a').html();
+			var shareEmail = $('#shareEmail').val();
+			
+			if (!shareEmail || shareEmail === '') {
+				alert('You must specify the recipient\'s email!');
+				return false;
+			}
+			
+			self.presenter.shareFile(file, 'shared by ' + senderEmail , shareEmail, function(sharedBucket) {
+				$('#shareModal').modal('hide');
+			});
+
+			return false;
 		});
-		
-		// $('#submitForm[href="' + blobKey + '"]').submit(function() {
-		// 	
-		// 	var shareEmail = $("input:first").val();
-		// 	self.presenter(file, 'shareBucketName', shareEmail, function(sharedBucket) {
-		// 		alert('Sharing successful!');
-		// 	});	
-		// 	
-		// 	return false;
-		// });
+
 	};
 
 	/**
 	 * Downloads the encrypted document, decrypt it and display it
 	 */
 	this.showDocItem = function(blobKey) {
-		
 		// show progress bar
 		$('#decryptModal').modal('show');
 
@@ -197,8 +190,6 @@ function FSView() {
 
 		}, 500);
 		
-		
-		// prevent default bahavior: dont open href in new window
 		return false;
 	};
 	

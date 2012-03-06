@@ -74,6 +74,11 @@ public class PublicKeyServlet extends HttpServlet {
 					return;
 				}
 				
+				if (pk == null) {
+					resp.sendError(404, "Cannot find a public key for the specified email. Perhaps that user hasn't yet looged into the service.");
+					return;
+				}
+				
 				PublicKeyMsg pkMsg = PublicKeyDAO.key2dto(pk);
 				String json = new GsonBuilder().create().toJson(pkMsg);
 				
