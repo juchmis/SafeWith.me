@@ -2,7 +2,6 @@
 --- alpha ---
 
 filesharing
-integrate openpgp.js patch for private key passphrase
 key import/export as ascii armored text file
 put up warning when using unsupported browser (e.g. window.crypto.getRandomValues in FireFox)
 seperate unit tests (with server stubs) from integration tests (login required)
