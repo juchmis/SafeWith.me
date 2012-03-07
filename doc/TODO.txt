@@ -18,7 +18,6 @@ let user share multiple files -> one recipient bucket
 Add Create/Delete bucket option
 delete user file blobs before deleting bucket
 Bugfix: memory leak during encryption
-Bugfix: private and public key ID diverge sometimes when generating with passphrase
 Integrate passphrase usage into unit tests and application
 Add file name to data url (e.g. download attribute on anchor)
 add warning when drag and drop large files
