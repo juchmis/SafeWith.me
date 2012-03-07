@@ -6,14 +6,15 @@ key import/export as ascii armored text file
 put up warning when using unsupported browser (e.g. window.crypto.getRandomValues in FireFox)
 seperate unit tests (with server stubs) from integration tests (login required)
 create unit test for sharing
-redesign user interface for directory/tree structure
 error handling between REST calls
-add handler for multiple files + redo pogressbar/modals
 review code for parsing of data... escaping in server and client (XSS & Injection attacks)
 Bugfix: deletion of a shared file should lower the sender's used storage, not the recipients
 
 --- beta ---
 
+redesign user interface for directory/tree structure
+add handler for multiple files + redo pogressbar/modals
+let user share multiple files -> one recipient bucket
 Add Create/Delete bucket option
 delete user file blobs before deleting bucket
 Bugfix: memory leak during encryption
