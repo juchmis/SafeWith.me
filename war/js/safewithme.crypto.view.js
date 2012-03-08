@@ -43,9 +43,15 @@ function CryptoView() {
 			$('#disclaimerModal').modal('show');
 			
 		}, function() {
-			// show completion message
-			var msg = '<h1 class="alert alert-success">Completed!</h1>';
-			$('#disclaimerModal [class="modal-body"]').html(msg);
+			// create export keys link
+			self.presenter.exportKeys(function(url) {
+				
+				// show completion message
+				var anchor = '<a download="safewithme.keys.txt" href="' + url + '">Export Keys</a>';
+				var msg = '<h1 class="alert alert-success">Completed!</h1>' + anchor;
+				$('#disclaimerModal [class="modal-body"]').html(msg);
+			});
+			
 		});
 	};
 }

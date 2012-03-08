@@ -51,10 +51,13 @@ function Crypto() {
 		if(displayCallback) {
 			// display message
 			displayCallback();
+			
 			// wait a short time for the message to appear
 			setTimeout(function() {
-				self.createAndPersistKey(loginInfo.email, server, callback);
-				finishCallback();
+				self.createAndPersistKey(loginInfo.email, server, function(keyId) {
+					callback(keyId);
+					finishCallback();
+				});
 			}, 500);
 		
 		} else {
