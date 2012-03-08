@@ -35,8 +35,29 @@ function CryptoView() {
 		self.presenter.initPublicKey(loginInfo, server, function(keyId) {
 
 			// read corresponding keys from localstorage
-			self.presenter.readKeys(loginInfo.email, keyId);
-			callback();
+			self.presenter.readKeys(loginInfo.email, keyId, callback, function() {
+				$('#importKeysModal').modal('show');
+				
+				$('#importBtn').click(function() {
+					var keyText = $('#keyTextArea').val();
+					var privKeyBoarder = '-----BEGIN PGP PRIVATE KEY BLOCK-----';
+					var privateKey = privKeyBoarder + keyText.split(privKeyBoarder)[1];
+					var publicKey = keyText.split(privKeyBoarder)[0];
+					
+					var passphrase = $('#passphrase').val();
+					self.presenter.importKeys(publicKey, privateKey, passphrase);
+					
+					// try to read the keys again after import
+					self.presenter.readKeys(loginInfo.email, keyId, function() {
+						// success
+						$('#importKeysModal').modal('hide');
+						callback();
+					}, function() {
+						// error
+						alert('The keys you imported do not match your public key ID on the server!');
+					});
+				});
+			});
 
 		}, function() {
 			// show disclaimer during key generation
@@ -51,7 +72,6 @@ function CryptoView() {
 				var msg = '<h2 class="alert alert-success">Completed! ' + anchor + '</h2>';
 				$('#keygenStatus').html(msg);
 			});
-			
 		});
 	};
 }

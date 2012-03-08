@@ -187,9 +187,25 @@
           </div>
         </div>
         <div class="modal-footer">
-          
           <p>Thanks for taking the time to check out SafeWith.me. This is a prerelease alpha version, created so that feedback can be acquired before release. Please do not use this version for production purposes.</p>
           <p>SafeWith.me comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; for details see the <a href="https://github.com/tanx/SafeWith.me/blob/master/LICENSE.txt">license terms</a>.</p>
+        </div>
+      </div>
+      
+      <div class="modal fade" id="importKeysModal">
+        <div class="modal-header">
+          <h3>Please import your keys</h3>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info">
+            <h4 class="alert-heading">Paste your exported PGP keys here!</h4>
+          </div>
+          <form>
+            <textarea id="keyTextArea" class="input-xlarge" rows="8"></textarea>
+            <label>Passphrase:</label>
+            <input id="passphrase" type="password"></input>
+            <div><a id="importBtn" class="btn btn-primary btn-large">Import</a></div>
+          </form>
         </div>
       </div>
 

@@ -112,7 +112,7 @@ function Crypto() {
 	 * @email [string] user's email address
 	 * @keyId [string] the public key ID in unicode (not base 64)
 	 */
-	this.readKeys = function(email, keyId) {
+	this.readKeys = function(email, keyId, callback, errorCallback) {
 		// read keys from local storage
 		var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(email);
 		var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(email);
@@ -140,7 +140,11 @@ function Crypto() {
 		
 		// check keys
 		if (!publicKey || !privateKey || (publicKey.keyId !== privateKey.keyId)) {
-			throw "It seems as though the local keyring is missing a key!";
+			errorCallback(keyId);
+		} else {
+			if (callback) {
+				callback();
+			}
 		}
 	};
 	
@@ -177,6 +181,16 @@ function Crypto() {
 
 		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 		window.requestFileSystem(window.TEMPORARY, 1024*1024, onInitFs);
+	};
+	
+	/**
+	 * Import the users key into the HTML5 local storage
+	 */
+	this.importKeys = function(publicKeyArmored, privateKeyArmored, pass) {
+		// store keys in html5 local storage
+		openpgp.keyring.importPrivateKey(privateKeyArmored, pass);
+		openpgp.keyring.importPublicKey(publicKeyArmored);
+		openpgp.keyring.store();
 	};
 	
 	/**
