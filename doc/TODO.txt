@@ -4,6 +4,7 @@
 use 'shown' event on modals instead of setTimout
 add export keys in menue
 import only private key and check if key IDs match
+import keys unit test
 seperate unit tests (with server stubs) from integration tests (login required)
 create unit test for sharing
 error handling between REST calls
