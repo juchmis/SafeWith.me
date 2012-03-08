@@ -30,6 +30,12 @@
  */
 function SafeWithMe() {
 
+	// check browser
+	if (navigator.userAgent.indexOf('WebKit') == -1) {
+		alert('Sorry, SafeWith.me is currently only supported on WebKit based browsers (Chrome, Safari, Android and iOS).');
+		return;
+	}
+
 	// init presenters
 	var crypto = new Crypto();
 	var server = new Server();

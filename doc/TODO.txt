@@ -1,9 +1,7 @@
 
 --- alpha ---
 
-create crypto view and move stuff from main js file there
 key import/export as ascii armored text file
-put up warning when using unsupported browser (e.g. window.crypto.getRandomValues in FireFox)
 seperate unit tests (with server stubs) from integration tests (login required)
 create unit test for sharing
 error handling between REST calls
