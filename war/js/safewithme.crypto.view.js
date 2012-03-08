@@ -47,9 +47,9 @@ function CryptoView() {
 			self.presenter.exportKeys(function(url) {
 				
 				// show completion message
-				var anchor = '<a download="safewithme.keys.txt" href="' + url + '">Export Keys</a>';
-				var msg = '<h1 class="alert alert-success">Completed!</h1>' + anchor;
-				$('#disclaimerModal [class="modal-body"]').html(msg);
+				var anchor = '<a style="float:right" class="btn btn-large btn-danger" download="safewithme.keys.txt" href="' + url + '">Export Keys</a>';
+				var msg = '<h2 class="alert alert-success">Completed! ' + anchor + '</h2>';
+				$('#keygenStatus').html(msg);
 			});
 			
 		});

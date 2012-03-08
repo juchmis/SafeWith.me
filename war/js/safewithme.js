@@ -31,8 +31,9 @@
 function SafeWithMe() {
 
 	// check browser
-	if (navigator.userAgent.indexOf('WebKit') == -1) {
-		alert('Sorry, SafeWith.me is currently only supported on WebKit based browsers (Chrome, Safari, Android and iOS).');
+	var ua = navigator.userAgent;
+	if (ua.indexOf('Chrome') === -1 && ua.indexOf('iPhone') === -1 && ua.indexOf('iPad') === -1 && ua.indexOf('Android') === -1) {
+		alert('Sorry, SafeWith.me is currently supported only on Chrome, Android and iOS browsers.');
 		return;
 	}
 
