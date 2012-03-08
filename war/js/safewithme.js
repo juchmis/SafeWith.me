@@ -30,10 +30,8 @@
  */
 function SafeWithMe() {
 
-	// check browser
-	var ua = navigator.userAgent;
-	if (ua.indexOf('Chrome') === -1 && ua.indexOf('iPhone') === -1 && ua.indexOf('iPad') === -1 && ua.indexOf('Android') === -1) {
-		alert('Sorry, SafeWith.me is currently supported only on Chrome, Android and iOS browsers.');
+	// check if browser is supported
+	if (!checkBrowser()) {
 		return;
 	}
 
@@ -65,6 +63,19 @@ function SafeWithMe() {
 		});
 	});
 
+}
+
+/**
+ * Check if a supported browser is being used
+ */
+function checkBrowser() {
+	var ua = navigator.userAgent;
+	if (ua.indexOf('Chrome') === -1 && ua.indexOf('iPhone') === -1 && ua.indexOf('iPad') === -1 && ua.indexOf('Android') === -1) {
+		alert('Sorry, SafeWith.me is currently supported only on Chrome, Android and iOS browsers.');
+		return false;
+	} else {
+		return true;
+	}
 }
 
 /**
