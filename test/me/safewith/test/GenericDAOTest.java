@@ -46,8 +46,6 @@ public class GenericDAOTest {
 	@Test
 	public void testCRUD() {
 		// create
-		
-		
 		ValidUser user1 = new ValidUser();
 		user1.setEmail("test@asdf.com");
 		long initialStorage = 100;
@@ -95,82 +93,9 @@ public class GenericDAOTest {
 		assertEquals(bucket.getId(), readBucket.getId());
 		assertEquals(user.getEmail(), readBucket.getOwnerEmail());
 		
+		// filter by
 		List<Bucket> buckets = new GenericDAO().filterBy(Bucket.class, "ownerEmail", user.getEmail());
 		assertEquals(bucket.getId(), buckets.get(0).getId());
 	}
-
-//	private void testGetEntries() {
-//
-//		List<EventCategory> entries = GenericDAO.get().getEntries(EventCategory.class);		
-//		assertTrue(entries != null && entries.size() == 3);
-//		
-//		List<EventCategory> entries2 = GenericDAO.get().getEntries(EventCategory.class, userId);		
-//		assertTrue(entries2 != null && entries2.size() == 2);
-//		
-//		List<EventCategory> entries3 = GenericDAO.get().getEntries(EventCategory.class, null);		
-//		assertTrue(entries3 != null && entries3.size() == 1);
-//	}
-//	
-//	private void testSearchByField() {
-//		
-//		try {
-//			
-//			List<EventCategory> entries = GenericDAO.get().searchByField(EventCategory.class, "name", "test", null);
-//			assertTrue(entries.size() == 1);
-//			
-//			List<EventCategory> entries2 = GenericDAO.get().searchByField(EventCategory.class, "name", "test", userId);
-//			assertTrue(entries2.size() == 1);
-//			
-//		} catch (Exception e) {
-//			fail(e.getMessage());
-//		}		
-//	}
-//
-//	private void testGetEntry() {
-//		
-//		try {
-//			
-//			EventCategory ec = GenericDAO.get().getEntry(EventCategory.class, entry1ID);
-//			assertTrue(ec != null && ec.getId().equals(entry1ID));
-//			
-//		} catch (Exception e) {
-//			fail(e.getMessage());
-//		} 
-//	}
-//
-//	private void testUpdateEntry() {
-//		
-//		try {
-//			
-//			EventCategory ec = GenericDAO.get().getEntry(EventCategory.class, entry1ID);
-//			assertTrue(ec != null);
-//			
-//			String s = "Modified Test Entry";			
-//			ec.setName(s);
-//			EventCategory gen = GenericDAO.get().makePersistent(ec);			
-//			assertTrue(gen.getName().equals(s));
-//			
-//			EventCategory ec2 = GenericDAO.get().getEntry(EventCategory.class, entry1ID);
-//			assertTrue(ec2 != null);
-//			
-//			assertTrue(ec2.getName().equals(s));
-//			
-//		} catch (Exception e) {
-//			fail(e.getMessage());
-//		} 
-//	}
-//
-//	private void testDeleteEntry() {
-//		try {
-//			
-//			assertTrue(GenericDAO.get().deleteEntry(EventCategory.class, entry1ID));
-//			assertTrue(GenericDAO.get().deleteEntry(EventCategory.class, entry2ID));
-//			assertTrue(GenericDAO.get().deleteEntry(EventCategory.class, entry3ID));
-//			assertTrue(GenericDAO.get().getEntries(EventCategory.class, userId).size() == 0);
-//			
-//		} catch (Exception e) {
-//			fail(e.getMessage());
-//		}
-//	}
 
 }
