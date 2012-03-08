@@ -34,20 +34,6 @@ function Crypto() {
 	var passphrase;		// user's passphrase used for decryption
 	
 	/**
-	 * Initializes the crypto system by reading the user's pgp keys from localstorage
-	 */
-	this.init = function(loginInfo, server, callback, displayCallback, finishCallback) {
-		// check server for user's public key ID
-		self.initPublicKey(loginInfo, server, function(keyId) {
-			
-			// read corresponding keys from localstorage
-			self.readKeys(loginInfo.email, keyId);
-			callback();
-			
-		}, displayCallback, finishCallback);
-	};
-	
-	/**
 	 * Check if user already has a public key on the server and if not,
 	 * generate a new keypait for the user
 	 */

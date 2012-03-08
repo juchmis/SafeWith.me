@@ -36,7 +36,7 @@ function SafeWithMe() {
 	var menu = new Menu();
 	var fs = new FS(crypto, server);
 
-	// init views
+	// init menu view
 	var menuView = new MenuView();
 	menuView.presenter = menu;
 	menuView.init('/', function(loginInfo) {
@@ -46,20 +46,15 @@ function SafeWithMe() {
 			return;
 		}
 
-		// init crypto for logged in user
-		crypto.init(loginInfo, server, function() {
+		// init crypto view for logged in user
+		var cryptoView = new CryptoView();
+		cryptoView.presenter = crypto;
+		cryptoView.init(loginInfo, server, function() {
 
 			// init fs view after menu/login
 			var fsView = new FSView();
 			fsView.presenter = fs;
 			fsView.init();
-
-		}, function() {
-			// show disclaimer
-			$('#disclaimerModal').modal('show');
-		}, function() {
-			var msg = '<h1 class="alert alert-success">Completed!</h1>';
-			$('#disclaimerModal [class="modal-body"]').html(msg);
 		});
 	});
 
