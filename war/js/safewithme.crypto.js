@@ -142,6 +142,48 @@ function Crypto() {
 	};
 	
 	/**
+	 * Export the keys by using the HTML5 FileWriter
+	 */
+	this.exportKeys = function(callback) {
+		// initial file system api
+		function onInitFs(fs) {
+			fs.root.getFile('safewithme.keys.txt', {create: true}, function(fileEntry) {
+				
+				// Create a FileWriter object for our FileEntry
+				fileEntry.createWriter(function(fileWriter) {
+					fileWriter.onwriteend = function(e) {
+						var url = fileEntry.toURL();
+						callback(url);
+					};
+
+					fileWriter.onerror = function(e) {
+					  console.log('Write failed: ' + e.toString());
+					};
+
+					// Create a new Blob and write it to log.txt.
+					window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
+					var bb = new BlobBuilder();
+					
+					// append public and private keys
+					bb.append(publicKey.armored);
+					bb.append(privateKey.armored);
+					fileWriter.write(bb.getBlob('text/plain'));
+				});
+			});
+		}
+
+		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+		window.requestFileSystem(window.TEMPORARY, 1024*1024, onInitFs);
+	};
+	
+	/**
+	 * Get the current user's private key
+	 */
+	this.getPrivateKey = function() {
+		return privateKey.armored;
+	};
+
+	/**
 	 * Get the current user's public key
 	 */
 	this.getPublicKey = function() {
@@ -153,13 +195,6 @@ function Crypto() {
 	 */
 	this.getPublicKeyIdBase64 = function() {
 		return window.btoa(publicKey.keyId);
-	};
-
-	/**
-	 * Get the current user's private key
-	 */
-	this.getPrivateKey = function() {
-		return privateKey.armored;
 	};
 	
 	/**

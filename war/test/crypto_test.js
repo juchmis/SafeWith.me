@@ -1,8 +1,9 @@
 module("Crypto");
 
+var email = "test@asdf.com";
+
 test("Generate keys without passphrase", 4, function() {
 	var crypto = new Crypto();
-	var email = "test@asdf.com";
 	
 	var start = (new Date).getTime();
 	var keySize = 2048;
@@ -67,9 +68,25 @@ asyncTest("CRUD PublicKey to Server", 4, function() {
 	});
 });
 
+asyncTest("Export keys", 3, function() {
+	var crypto = new Crypto();
+	crypto.readKeys(email);
+
+	crypto.exportKeys(function(url) {
+		ok(url);
+		
+		$.get(url, function(data) {
+			ok(data.indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') !== -1);
+			ok(data.indexOf('-----END PGP PRIVATE KEY BLOCK-----') !== -1);
+			
+			start();
+		});
+	});
+});
+
 function helperEncrDecr(plaintext) {
 	var crypto = new Crypto();
-	crypto.readKeys("test@asdf.com");
+	crypto.readKeys(email);
 
 	var cipher = crypto.encrypt(plaintext);
 	ok(cipher, "cipher");
@@ -90,7 +107,7 @@ test("Encrypt/Decrypt 7KB Image", 3, function() {
 
 test("Encrypt/Decrypt large Blob", 3, function() {
 	var crypto = new Crypto();
-	crypto.readKeys("test@asdf.com");
+	crypto.readKeys(email);
 
 	// generate large string
 	var bigBlob = '';
