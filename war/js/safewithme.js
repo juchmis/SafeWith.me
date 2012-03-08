@@ -69,8 +69,12 @@ function SafeWithMe() {
  * Check if a supported browser is being used
  */
 function checkBrowser() {
-	var ua = navigator.userAgent;
-	if (ua.indexOf('Chrome') === -1 && ua.indexOf('iPhone') === -1 && ua.indexOf('iPad') === -1 && ua.indexOf('Android') === -1) {
+	function check(browser) {
+		// does the user agent contain the name of the browser
+		return navigator.userAgent.indexOf(browser) !== -1;
+	}
+	
+	if (!check('Chrome') && !check('iPhone') && !check('iPad') && !check('Android')) {
 		alert('Sorry, SafeWith.me is currently supported only on Chrome, Android and iOS browsers.');
 		return false;
 	} else {
