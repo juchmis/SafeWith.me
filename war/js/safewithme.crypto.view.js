@@ -36,27 +36,8 @@ function CryptoView() {
 
 			// read corresponding keys from localstorage
 			self.presenter.readKeys(loginInfo.email, keyId, callback, function() {
-				$('#importKeysModal').modal('show');
-				
-				$('#importBtn').click(function() {
-					var keyText = $('#keyTextArea').val();
-					var privKeyBoarder = '-----BEGIN PGP PRIVATE KEY BLOCK-----';
-					var privateKey = privKeyBoarder + keyText.split(privKeyBoarder)[1];
-					var publicKey = keyText.split(privKeyBoarder)[0];
-					
-					var passphrase = $('#passphrase').val();
-					self.presenter.importKeys(publicKey, privateKey, passphrase);
-					
-					// try to read the keys again after import
-					self.presenter.readKeys(loginInfo.email, keyId, function() {
-						// success
-						$('#importKeysModal').modal('hide');
-						callback();
-					}, function() {
-						// error
-						alert('The keys you imported do not match your public key ID on the server!');
-					});
-				});
+				// present import keys ui if no matching keys are found in local storage
+				self.showImportKeys(loginInfo, keyId, callback);
 			});
 
 		}, function() {
@@ -71,6 +52,31 @@ function CryptoView() {
 				var anchor = '<a style="float:right" class="btn btn-large btn-danger" download="safewithme.keys.txt" href="' + url + '">Export Keys</a>';
 				var msg = '<h2 class="alert alert-success">Completed! ' + anchor + '</h2>';
 				$('#keygenStatus').html(msg);
+			});
+		});
+	};
+	
+	this.showImportKeys = function(loginInfo, keyId, callback) {
+		$('#importKeysModal').modal('show');
+		
+		$('#importBtn').click(function() {
+			var keyText = $('#keyTextArea').val();
+			var privKeyBoarder = '-----BEGIN PGP PRIVATE KEY BLOCK-----';
+			var privateKey = privKeyBoarder + keyText.split(privKeyBoarder)[1];
+			var publicKey = keyText.split(privKeyBoarder)[0];
+			
+			var passphrase = $('#passphrase').val();
+			self.presenter.importKeys(publicKey, privateKey, passphrase);
+			
+			// try to read the keys again after import
+			self.presenter.readKeys(loginInfo.email, keyId, function() {
+				// success
+				$('#importKeysModal').modal('hide');
+				callback();
+				
+			}, function() {
+				// error
+				alert('The keys you imported do not match your public key ID on the server!');
 			});
 		});
 	};

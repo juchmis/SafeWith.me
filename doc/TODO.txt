@@ -1,8 +1,11 @@
 
 --- alpha ---
 
+fix key import on Android and iOS
 use 'shown' event on modals instead of setTimout
 add export keys in menue
+only generate keys on desktop
+dont show upload file ui elements on mobile browsers (only consumption for now)
 import only private key and check if key IDs match
 import keys unit test
 seperate unit tests (with server stubs) from integration tests (login required)
@@ -28,6 +31,7 @@ Add other OpenID Providers: Facebook, Yahoo
 
 --- potential features ---
 
+redo mobile UI with jQTouch
 send private key to phone as QR-code -> Readable through PhoneGap Plugin
 refactor to true REST convention e.g. with Restlets
 look at signing of files
