@@ -1,18 +1,24 @@
 
---- alpha ---
+--- alpha (Chrome)---
 
-fix key import on Android and iOS
 use 'shown' event on modals instead of setTimout
 add export keys in menue
-only generate keys on desktop
-dont show upload file ui elements on mobile browsers (only consumption for now)
-import only private key and check if key IDs match
-import keys unit test
+import keys unit test + validation and error handling
 seperate unit tests (with server stubs) from integration tests (login required)
 create unit test for sharing
 error handling between REST calls
 review code for parsing of data... escaping in server and client (XSS & Injection attacks)
 Bugfix: deletion of a shared file should lower the sender's used storage, not the recipients
+
+
+--- alpha (iOS, Android) ---
+
+redo mobile UI with jQTouch
+fix key import on Android and iOS
+only generate keys on desktop
+dont show upload file ui elements on mobile browsers (only consumption for now)
+send private key to phone as QR-code -> Readable through PhoneGap Plugin
+
 
 --- beta ---
 
@@ -29,10 +35,9 @@ main page: create explanatory images of BucketFS and describe what the server kn
 Add facebook, twitter, google+ sharing (with two-clicks for more privacy) on hp
 Add other OpenID Providers: Facebook, Yahoo
 
+
 --- potential features ---
 
-redo mobile UI with jQTouch
-send private key to phone as QR-code -> Readable through PhoneGap Plugin
 refactor to true REST convention e.g. with Restlets
 look at signing of files
 put crypto logic in web worker
