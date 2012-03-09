@@ -2,21 +2,21 @@
 --- alpha (Chrome)---
 
 use 'shown' event on modals instead of setTimout
-add export keys in menue
-import keys unit test + validation and error handling
+add export keys in menu
 seperate unit tests (with server stubs) from integration tests (login required)
 create unit test for sharing
 error handling between REST calls
 review code for parsing of data... escaping in server and client (XSS & Injection attacks)
 Bugfix: deletion of a shared file should lower the sender's used storage, not the recipients
+import keys unit test + validation and error handling
 
 
 --- alpha (iOS, Android) ---
 
-redo mobile UI with jQTouch
-fix key import on Android and iOS
-only generate keys on desktop
-dont show upload file ui elements on mobile browsers (only consumption for now)
+redo mobile UI with mobile toolkit
+ * fix key import on Android and iOS
+ * only generate keys on desktop
+ * dont show upload file ui elements on mobile browsers (only consumption for now)
 send private key to phone as QR-code -> Readable through PhoneGap Plugin
 
 
