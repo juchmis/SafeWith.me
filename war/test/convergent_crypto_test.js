@@ -34,3 +34,29 @@ test("Large blob", 4, function() {
 	
 	equal(pt, message);
 });
+
+asyncTest("Upload blob", 3, function() {
+	var convergentCrypto = new ConvergentCrypto();
+	var server = new Server();
+	
+	var message = '';
+	for (var i=0; i < 147; i++) {
+		message += testImg1Base64;
+	}
+	
+	var ct = convergentCrypto.encrypt(message);
+	server.uploadBlob(ct.ct, function(blobKey) {
+		ok(blobKey);
+		
+		server.call('GET', '/app/blobs?blob-key=' + blobKey, function(download) {
+			equal(ct.ct, download);
+			
+			var pt = convergentCrypto.decrypt(ct.key, download);
+
+			equal(pt, message);
+			
+			start();
+		});
+	});
+	
+});
