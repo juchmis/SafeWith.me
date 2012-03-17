@@ -67,7 +67,7 @@ function Server() {
 	 */
 	this.uploadBlob = function(data, callback) {
 		// calculate the blob's MD5 hash for deduplication on server
-		var dataMd5 = md5(data);
+		var dataMd5 = MD5(data);
 		
 		function postBlob(postUrl) {
 			var boundary = "----WebKitFormBoundaryU4qBHQLW2dP2URYc";
