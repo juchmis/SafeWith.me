@@ -1,7 +1,7 @@
 module("Convergent Crypto");
 
-test("AES", function() {
-	openpgp.init();
+test("Large blob", 4, function() {
+	var convergentCrypto = new ConvergentCrypto();
 	
 	var message = '';
 	for (var i=0; i < 147; i++) {
@@ -10,25 +10,27 @@ test("AES", function() {
 	
 	console.log('blob size [bytes]: ' + message.length*2);
 	
-	var startHash = (new Date).getTime();
-	var sha1 = str_sha1(message);
-	var diffHash = (new Date).getTime() - startHash;
-	
-	console.log('Time taken for hash [ms]: ' + diffHash + ' sha1: ' + key);
-	
-	var key = sha1.substr(0, 16);
-	var prefix = sha1.substr(4, 16);
-	
 	var start = (new Date).getTime();
-	var ct = openpgp_crypto_symmetricEncrypt(prefix, 7, key, message, 0);
+	var ct = convergentCrypto.encrypt(message);
 	var diff = (new Date).getTime() - start;
-	
+
 	console.log('Time taken for encryption [ms]: ' + diff);
+	// console.log('Ciphertext: ' + ct);
+	
+	var ct2 = convergentCrypto.encrypt(message);
+	equal(ct.ct, ct2.ct);
+	equal(ct.locator, ct2.locator);
+	equal(ct.key, ct2.key);
+	
+	console.log('key: "' + ct.key + '", key length: ' + ct.key.length + ', ct lenght: ' + ct.ct.length);
 	
 	var decrStart = (new Date).getTime();
-	var pt = openpgp_crypto_symmetricDecrypt(7, key, ct, 0);
+	var pt = convergentCrypto.decrypt(ct.key, ct.ct);
 	var decrDiff = (new Date).getTime() - decrStart;
 	
-	console.log('Time taken for decryption [ms]: ' + decrDiff);	
+	util.print_debug("bla");
+
+	console.log('Time taken for decryption [ms]: ' + decrDiff);
+	
 	equal(pt, message);
 });

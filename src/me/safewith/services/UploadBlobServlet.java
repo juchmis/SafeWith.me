@@ -1,6 +1,7 @@
 package me.safewith.services;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -14,6 +15,7 @@ import me.safewith.model.ValidUser;
 import me.safewith.services.RequestHelper.Command;
 
 
+import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -32,6 +34,25 @@ public class UploadBlobServlet extends HttpServlet {
 
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
+				
+				// check if blob is already stored by checking MD5 hash
+				String uploadMd5 = req.getParameter("md5");
+				if (uploadMd5 == null) {
+					resp.sendError(400, "No MD5 sum specified!");
+					return;
+				}
+				
+				Iterator<BlobInfo> itInfo = new BlobInfoFactory().queryBlobInfos();
+				while(itInfo.hasNext()) {
+					BlobInfo info = itInfo.next();
+					if (info.getMd5Hash().equals(uploadMd5)) {
+						String json = "{ \"blobKey\" : \"" + info.getBlobKey().getKeyString() + "\" }";
+						resp.setContentType("application/json");
+						resp.getWriter().println(json);
+						resp.getWriter().close();
+						return;
+					}
+				}
 
 				// build upload url for the upload form
 				String uploadUrl = blobstoreService.createUploadUrl("/app/uploadBlob");
@@ -57,26 +78,42 @@ public class UploadBlobServlet extends HttpServlet {
 					return;
 				}
 				
+				// check MD5 hash
+				String uploadMd5 = req.getParameter("md5");
+				if (uploadMd5 == null) {
+					resp.sendError(400, "No MD5 sum specified!");
+					return;
+				}
+				
 				// parse the request for blob data
 				@SuppressWarnings("deprecation")
 				Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(req);
 				BlobKey blobKey = blobs.get("file");
 				
+				if (blobKey == null) {
+					resp.sendError(400, "Could not read the uploaded blob!");
+					return;
+				}
+				
+				// validate the request's MD5 hash
+				BlobInfo info = new BlobInfoFactory().loadBlobInfo(blobKey);
+				if (!uploadMd5.equals(info.getMd5Hash())) {
+					blobstoreService.delete(blobKey);
+					resp.sendError(400, "The specified MD5 hash does not match!");
+					return;
+				}
+				
 				// update user's used storage
-				long blobSize = new BlobInfoFactory().loadBlobInfo(blobKey).getSize();
+				long blobSize = info.getSize();
 				user.updateUsedStorage(blobSize);
 				new GenericDAO().persist(user);
 				
 				// redirect to serveBlobServlet
-				if (blobKey == null) {
-					resp.sendError(500, "Invalid or no blob-key specified!");
-				} else {
-					String json = "{ \"blobKey\" : \"" + blobKey.getKeyString() + "\" }";
-					resp.setStatus(201);
-					resp.setContentType("application/json");
-					resp.getWriter().println(json);
-					resp.getWriter().close();
-				}	
+				String json = "{ \"blobKey\" : \"" + blobKey.getKeyString() + "\" }";
+				resp.setStatus(201);
+				resp.setContentType("application/json");
+				resp.getWriter().println(json);
+				resp.getWriter().close();
 			}
 		});
 	}

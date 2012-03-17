@@ -21,7 +21,7 @@
 'use strict';
 
 /**
- * A wrapper for encryption logic
+ * A wrapper for OpenPGP encryption logic
  */
 function Crypto() {
 

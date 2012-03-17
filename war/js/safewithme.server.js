@@ -66,6 +66,8 @@ function Server() {
 	 * the file data to the specified uri
 	 */
 	this.uploadBlob = function(data, callback) {
+		// calculate the blob's MD5 hash for deduplication on server
+		var dataMd5 = md5(data);
 		
 		function postBlob(postUrl) {
 			var boundary = "----WebKitFormBoundaryU4qBHQLW2dP2URYc";
@@ -80,7 +82,7 @@ function Server() {
 
 			$.ajax({
 				type: 'POST',
-				url: postUrl,
+				url: postUrl + '?md5=' + dataMd5,
 				contentType: "multipart/form-data; boundary="+boundary,
 				data: body,
 				success: function(resp) {
@@ -93,9 +95,15 @@ function Server() {
 		}
 		
 		// first get upload url from blobstore
-		self.call('GET', '/app/uploadBlob', function(resp) {
-			// post data to blobstore
-	    	postBlob(resp.uploadUrl);
+		self.call('GET', '/app/uploadBlob?md5=' + dataMd5, function(resp) {
+			if (resp.blobKey) {
+				// a blob with the same MD5 hash is already present
+				callback(resp.blobKey);
+
+			} else {
+				// post data to blobstore
+		    	postBlob(resp.uploadUrl);
+			}
 		});
 	};
 
