@@ -21,7 +21,6 @@
 package me.safewith.services;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -55,24 +54,25 @@ public class UploadBlobServlet extends HttpServlet {
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
 				
-				// check if blob is already stored by checking MD5 hash
+				// check MD5 hash
 				String uploadMd5 = req.getParameter("md5");
 				if (uploadMd5 == null) {
 					resp.sendError(400, "No MD5 sum specified!");
 					return;
 				}
 				
-				Iterator<BlobInfo> itInfo = new BlobInfoFactory().queryBlobInfos();
-				while(itInfo.hasNext()) {
-					BlobInfo info = itInfo.next();
-					if (info.getMd5Hash().equals(uploadMd5)) {
-						String json = "{ \"blobKey\" : \"" + info.getBlobKey().getKeyString() + "\" }";
-						resp.setContentType("application/json");
-						resp.getWriter().println(json);
-						resp.getWriter().close();
-						return;
-					}
-				}
+//				// deduplicate by sending blob-key of MD5 match
+//				Iterator<BlobInfo> itInfo = new BlobInfoFactory().queryBlobInfos();
+//				while(itInfo.hasNext()) {
+//					BlobInfo info = itInfo.next();
+//					if (info.getMd5Hash().equals(uploadMd5)) {
+//						String json = "{ \"blobKey\" : \"" + info.getBlobKey().getKeyString() + "\" }";
+//						resp.setContentType("application/json");
+//						resp.getWriter().println(json);
+//						resp.getWriter().close();
+//						return;
+//					}
+//				}
 
 				// build upload url for the upload form
 				String uploadUrl = blobstoreService.createUploadUrl("/app/uploadBlob");
