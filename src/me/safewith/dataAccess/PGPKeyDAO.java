@@ -22,13 +22,13 @@ package me.safewith.dataAccess;
 
 import java.util.List;
 
-import me.safewith.model.PublicKey;
+import me.safewith.model.PGPKey;
 import me.safewith.model.PGPKeyMsg;
 
-public class PublicKeyDAO {
+public class PGPKeyDAO {
 	
-	public static PublicKey getKeyForUser(String email) {
-		List<PublicKey> pkList = new GenericDAO().filterBy(PublicKey.class, "ownerEmail", email);
+	public static <T extends PGPKey> T getKeyForUser(Class<T> cl, String email) {
+		List<T> pkList = new GenericDAO().filterBy(cl, "ownerEmail", email);
 
 		if (pkList.size() == 1) {
 			return pkList.get(0); 
@@ -41,8 +41,8 @@ public class PublicKeyDAO {
 		}
 	}
 	
-	public static PublicKey msg2dto(PGPKeyMsg msg) {
-		PublicKey pk = new PublicKey();
+	public static <T extends PGPKey> T msg2dto(Class<T> cl, PGPKeyMsg msg) throws InstantiationException, IllegalAccessException {
+		T pk = cl.newInstance();
 		
 		pk.setKeyId(msg.getKeyId());
 		pk.setOwnerEmail(msg.getOwnerEmail());
@@ -51,7 +51,7 @@ public class PublicKeyDAO {
 		return pk;		
 	}
 	
-	public static PGPKeyMsg key2dto(PublicKey pk) {
+	public static PGPKeyMsg key2dto(PGPKey pk) {
 		PGPKeyMsg msg = new PGPKeyMsg();
 		
 		msg.setKeyId(pk.getKeyId());

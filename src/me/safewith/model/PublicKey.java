@@ -27,7 +27,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Text;
 
 @PersistenceCapable
-public class PublicKey implements DTO {
+public class PublicKey implements PGPKey {
 	
 	/*
 	 * private members
@@ -46,22 +46,27 @@ public class PublicKey implements DTO {
 	 * properties
 	 */
 
+	@Override
 	public String getKeyId() {
 		return keyId;
 	}
 
+	@Override
 	public void setKeyId(String keyId) {
 		this.keyId = keyId;
 	}
 
+	@Override
 	public String getOwnerEmail() {
 		return ownerEmail;
 	}
 
+	@Override
 	public void setOwnerEmail(String ownerEmail) {
 		this.ownerEmail = ownerEmail;
 	}
 
+	@Override
 	public String getAsciiArmored() {
 		if (asciiArmored != null) {
 			return asciiArmored.getValue();
@@ -70,6 +75,7 @@ public class PublicKey implements DTO {
 		}
 	}
 
+	@Override
 	public void setAsciiArmored(String asciiArmored) {
 		this.asciiArmored = new Text(asciiArmored);
 	}

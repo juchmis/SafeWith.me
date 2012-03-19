@@ -3,7 +3,7 @@ package me.safewith.test;
 import static org.junit.Assert.*;
 
 import me.safewith.dataAccess.GenericDAO;
-import me.safewith.dataAccess.PublicKeyDAO;
+import me.safewith.dataAccess.PGPKeyDAO;
 import me.safewith.model.PublicKey;
 
 import org.junit.After;
@@ -15,7 +15,7 @@ import org.junit.Test;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-public class PublicKeyDAOTest {
+public class PGPKeyDAOTest {
 
     private final LocalServiceTestHelper helper =
         new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -42,14 +42,14 @@ public class PublicKeyDAOTest {
 	public void testGetKeyForUser() {
 		String email = "test@asdf.com";
 		
-		assertNull(PublicKeyDAO.getKeyForUser(email));
+		assertNull(PGPKeyDAO.getKeyForUser(PublicKey.class, email));
 		
 		PublicKey pk1 = new PublicKey();
 		pk1.setOwnerEmail(email);
 		pk1.setKeyId("1");
 		new GenericDAO().persist(pk1);
 		
-		assertEquals(pk1.getKeyId(), PublicKeyDAO.getKeyForUser(email).getKeyId());
+		assertEquals(pk1.getKeyId(), PGPKeyDAO.getKeyForUser(PublicKey.class, email).getKeyId());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -67,7 +67,7 @@ public class PublicKeyDAOTest {
 		new GenericDAO().persist(pk2);
 		
 		
-		PublicKeyDAO.getKeyForUser(email);
+		PGPKeyDAO.getKeyForUser(PublicKey.class, email);
 	}
 
 }

@@ -37,7 +37,7 @@ function Crypto() {
 	 * Check if user already has a public key on the server and if not,
 	 * generate a new keypait for the user
 	 */
-	this.initPublicKey = function(loginInfo, server, callback, displayCallback, finishCallback) {
+	this.initKeyPair = function(loginInfo, server, callback, displayCallback, finishCallback) {
 		// check if user already has a key on the server
 		if (loginInfo.publicKeyId) {
 			// decode base 64 key ID
@@ -47,9 +47,9 @@ function Crypto() {
 			
 		} else {
 			// user has no key on the server yet
-			displayCallback(function() {
+			displayCallback(function(passphrase) {
 				// generate new key pair
-				self.createAndPersistKey(loginInfo.email, server, function(keyId) {
+				self.createAndPersistKeys(loginInfo.email, passphrase, server, function(keyId) {
 					callback(keyId);
 					finishCallback();
 				});
@@ -60,9 +60,9 @@ function Crypto() {
 	/**
 	 * Generate a new key pair for the user and persist the public key on the server
 	 */
-	this.createAndPersistKey = function(email, server, callback) {
+	this.createAndPersistKeys = function(email, passphrase, server, callback) {
 		// generate 2048 bit RSA keys
-		var keys = self.generateKeys(2048, email);
+		var keys = self.generateKeys(2048, email, passphrase);
 		
 		// persist public key to server
 		var keyId = keys.privateKey.getKeyId();
@@ -73,11 +73,20 @@ function Crypto() {
 			ownerEmail : email,
 			asciiArmored : keys.publicKeyArmored
 		};
-		var json = JSON.stringify(publicKey);
+		var privateKey = {
+			keyId : encodedKeyId,
+			ownerEmail : email,
+			asciiArmored : keys.privateKeyArmored
+		};
 		
-		server.upload('POST', '/app/publicKeys', 'application/json', json, function(resp) {
-			// read the user's keys from local storage
-			callback(keyId);
+		var jsonPublicKey = JSON.stringify(publicKey);
+		var jsonPrivateKey = JSON.stringify(privateKey);
+		
+		server.upload('POST', '/app/publicKeys', 'application/json', jsonPublicKey, function(resp) {
+			server.upload('POST', '/app/privateKeys', 'application/json', jsonPrivateKey, function(resp) {
+				// read the user's keys from local storage
+				callback(keyId);
+			});
 		});
 	};
 

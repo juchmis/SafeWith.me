@@ -40,7 +40,7 @@ test("Generate keys with passphrase", 4, function() {
 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
 });
 
-asyncTest("CRUD PublicKey to Server", 4, function() {
+asyncTest("CRUD PGP KeyPair to Server", 4, function() {
 	var crypto = new Crypto();
 	var server = new Server();
 	var email = "test@example.com";
@@ -48,7 +48,7 @@ asyncTest("CRUD PublicKey to Server", 4, function() {
 		email : email
 	};
 	
-	crypto.initPublicKey(loginInfo, server, function(keyId) {
+	crypto.initKeyPair(loginInfo, server, function(keyId) {
 		ok(keyId);
 		
 		var base64Key = btoa(keyId);

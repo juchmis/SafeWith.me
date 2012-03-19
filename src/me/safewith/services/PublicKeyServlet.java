@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import me.safewith.dataAccess.GenericDAO;
-import me.safewith.dataAccess.PublicKeyDAO;
+import me.safewith.dataAccess.PGPKeyDAO;
 import me.safewith.model.PublicKey;
 import me.safewith.model.PGPKeyMsg;
 import me.safewith.model.ValidUser;
@@ -87,7 +87,7 @@ public class PublicKeyServlet extends HttpServlet {
 					pk = new GenericDAO().get(PublicKey.class, keyId);
 				
 				} else if (email != null) {
-					pk = PublicKeyDAO.getKeyForUser(email);
+					pk = PGPKeyDAO.getKeyForUser(PublicKey.class, email);
 				
 				} else {
 					resp.sendError(400, "You must specify either an email address or a keyId.");
@@ -99,7 +99,7 @@ public class PublicKeyServlet extends HttpServlet {
 					return;
 				}
 				
-				PGPKeyMsg pkMsg = PublicKeyDAO.key2dto(pk);
+				PGPKeyMsg pkMsg = PGPKeyDAO.key2dto(pk);
 				String json = new GsonBuilder().create().toJson(pkMsg);
 				
 				resp.setContentType("application/json");
@@ -114,15 +114,21 @@ public class PublicKeyServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
-			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
+			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException, InstantiationException, IllegalAccessException {
 				
 				// create new publicKey
 				String json = RequestHelper.readRequestBody(req);
 				PGPKeyMsg pkMsg = new GsonBuilder().create().fromJson(json, PGPKeyMsg.class);
 				
-				PublicKey pk = PublicKeyDAO.msg2dto(pkMsg);
-				new GenericDAO().persist(pk);
+				PublicKey pk = PGPKeyDAO.msg2dto(PublicKey.class, pkMsg);
 				
+				// only users are allowed to create their own keys
+				if (!pk.getOwnerEmail().equals(user.getEmail())) {
+					resp.sendError(403, "You can only create your own public key!");
+					return;
+				}
+				
+				new GenericDAO().persist(pk);
 				resp.getWriter().close();
 			}
 		});

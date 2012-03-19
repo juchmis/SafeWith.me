@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import me.safewith.dataAccess.GenericDAO;
-import me.safewith.dataAccess.PublicKeyDAO;
+import me.safewith.dataAccess.PGPKeyDAO;
 import me.safewith.model.LoginInfo;
 import me.safewith.model.PublicKey;
 import me.safewith.model.ValidUser;
@@ -70,7 +70,7 @@ public class LoginServlet extends HttpServlet {
 				info.setLogoutUrl(userService.createLogoutURL(requestUri));
 				
 				// set user's PGP public keyId if he already has a Key
-				PublicKey pk = PublicKeyDAO.getKeyForUser(user.getEmail());
+				PublicKey pk = PGPKeyDAO.getKeyForUser(PublicKey.class, user.getEmail());
 				if (pk != null) {
 					info.setPublicKeyId(pk.getKeyId());
 				}

@@ -18,7 +18,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<url-pattern>/login</url-pattern>
   </servlet-mapping>
     
-  <!-- Http Servlet for serving buckets -->  
+  <!-- Http Servlet for serving public keys -->  
   <servlet>
     <servlet-name>PublicKeyServlet</servlet-name>
     <servlet-class>me.safewith.services.PublicKeyServlet</servlet-class>
@@ -26,6 +26,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <servlet-mapping>
     <servlet-name>PublicKeyServlet</servlet-name>
     <url-pattern>/app/publicKeys</url-pattern>
+  </servlet-mapping>
+    
+  <!-- Http Servlet for serving private keys -->  
+  <servlet>
+    <servlet-name>PrivateKeyServlet</servlet-name>
+    <servlet-class>me.safewith.services.PrivateKeyServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>PrivateKeyServlet</servlet-name>
+    <url-pattern>/app/privateKeys</url-pattern>
   </servlet-mapping>
     
   <!-- Http Servlet for serving buckets -->  
