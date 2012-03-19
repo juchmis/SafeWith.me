@@ -33,11 +33,21 @@ function CryptoView() {
 	this.init = function(loginInfo, server, callback) {
 
 		// check server for user's public key ID
-		self.presenter.initPublicKey(loginInfo, server, function(keyId) {
+		self.presenter.initKeyPair(loginInfo, server, function(keyId) {
 			// read corresponding keys from localstorage
 			self.presenter.readKeys(loginInfo.email, keyId, callback, function() {
 				// present import keys ui if no matching keys are found in local storage
-				self.showImportKeys(loginInfo, keyId, callback);
+				self.presenter.fetchKeys(loginInfo.email, keyId, undefined, server, function(keys) {
+					// try to read keys from local storage again
+					self.presenter.readKeys(loginInfo.email, keyId, function() {
+						alert('Key import from server succuessful!');
+						callback();
+					}, function() {
+						// error
+						alert('The keys you imported do not match your public key ID on the server!');
+					});
+				});
+				// self.showImportKeys(loginInfo, keyId, callback);
 			});
 			
 		}, function(modalShown) {

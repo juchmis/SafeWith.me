@@ -150,6 +150,24 @@ function Crypto() {
 	};
 	
 	/**
+	 * Get the keypair from the server and import them into localstorage
+	 */
+	this.fetchKeys = function(email, keyId, passphrase, server, callback) {
+		var base64Key = btoa(keyId);
+		var encodedKeyId = encodeURIComponent(base64Key);
+		// GET public key
+		server.call('GET', '/app/publicKeys?keyId=' + encodedKeyId, function(publicKey) {
+			// GET private key
+			server.call('GET', '/app/privateKeys?keyId=' + encodedKeyId, function(privateKey) {
+				// import keys
+				self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, passphrase);
+				
+				callback({ privateKey:privateKey, publicKey:publicKey });
+			});
+		});
+	};
+	
+	/**
 	 * Export the keys by using the HTML5 FileWriter
 	 */
 	this.exportKeys = function(callback) {

@@ -40,7 +40,7 @@ test("Generate keys with passphrase", 4, function() {
 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
 });
 
-asyncTest("CRUD PGP KeyPair to Server", 6, function() {
+asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 	var crypto = new Crypto();
 	var server = new Server();
 	var email = "test@example.com";
@@ -51,25 +51,23 @@ asyncTest("CRUD PGP KeyPair to Server", 6, function() {
 	crypto.initKeyPair(loginInfo, server, function(keyId) {
 		ok(keyId);
 		
-		var base64Key = btoa(keyId);
-		var encodedKeyId = encodeURIComponent(base64Key);
-		server.call('GET', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
+		crypto.fetchKeys(email, keyId, undefined, server, function(keys) {
 			crypto.readKeys(loginInfo.email, keyId);
+
+			equal(keys.publicKey.asciiArmored, crypto.getPublicKey());
+			equal(keys.publicKey.keyId, crypto.getPublicKeyIdBase64());
+			equal(keys.privateKey.asciiArmored, crypto.getPrivateKey());
+			equal(keys.privateKey.keyId, crypto.getPublicKeyIdBase64());
 			
-			equal(resp.asciiArmored, crypto.getPublicKey());
-			equal(resp.keyId, crypto.getPublicKeyIdBase64());
-			
+			var base64Key = btoa(keyId);
+			var encodedKeyId = encodeURIComponent(base64Key);
 			server.call('DELETE', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
 				equal(resp, "");
 				
-				server.call('GET', '/app/privateKeys?keyId=' + encodedKeyId, function(resp) {
-					equal(resp.asciiArmored, crypto.getPrivateKey());
+				server.call('DELETE', '/app/privateKeys?keyId=' + encodedKeyId, function(resp) {
+					equal(resp, "");
 
-					server.call('DELETE', '/app/privateKeys?keyId=' + encodedKeyId, function(resp) {
-						equal(resp, "");
-
-						start();
-					});
+					start();
 				});
 			});
 		});
