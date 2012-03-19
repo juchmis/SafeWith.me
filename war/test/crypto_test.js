@@ -40,7 +40,7 @@ test("Generate keys with passphrase", 4, function() {
 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
 });
 
-asyncTest("CRUD PGP KeyPair to Server", 4, function() {
+asyncTest("CRUD PGP KeyPair to Server", 6, function() {
 	var crypto = new Crypto();
 	var server = new Server();
 	var email = "test@example.com";
@@ -62,7 +62,15 @@ asyncTest("CRUD PGP KeyPair to Server", 4, function() {
 			server.call('DELETE', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
 				equal(resp, "");
 				
-				start();
+				server.call('GET', '/app/privateKeys?keyId=' + encodedKeyId, function(resp) {
+					equal(resp.asciiArmored, crypto.getPrivateKey());
+
+					server.call('DELETE', '/app/privateKeys?keyId=' + encodedKeyId, function(resp) {
+						equal(resp, "");
+
+						start();
+					});
+				});
 			});
 		});
 		
