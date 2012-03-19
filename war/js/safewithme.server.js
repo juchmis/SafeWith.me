@@ -72,11 +72,11 @@ function Server() {
 		function postBlob(postUrl) {
 			var boundary = "----WebKitFormBoundaryU4qBHQLW2dP2URYc";
 			var body = '--' + boundary + '\r\n'
-		             // Parameter name is "file" and local filename is "file.pgp.txt"
+		             // Parameter name is "file" and local filename is "file.crypt"
 		             + 'Content-Disposition: form-data; name="file"; '
-		             + 'filename="file.pgp.txt"\r\n'
+		             + 'filename="file.crypt"\r\n'
 		             // Add the file's mime-type
-		             + 'Content-type: plain/text\r\n\r\n'
+		             + 'Content-type: application/octet-stream\r\n\r\n'
 		             + data
 					 + '\r\n' + '--' + boundary + '--' + '\r\n' ;
 
