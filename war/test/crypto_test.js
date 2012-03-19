@@ -1,4 +1,4 @@
-module("Crypto");
+module("Asymmetric Crypto");
 
 var email = "test@asdf.com";
 
@@ -88,10 +88,10 @@ function helperEncrDecr(plaintext) {
 	var crypto = new Crypto();
 	crypto.readKeys(email);
 
-	var cipher = crypto.encrypt(plaintext);
+	var cipher = crypto.asymmetricEncrypt(plaintext);
 	ok(cipher, "cipher");
 
-	var decrypted =  crypto.decrypt(cipher);
+	var decrypted =  crypto.asymmetricDecrypt(cipher);
 	ok(decrypted, "decrypted");
 
 	equal(decrypted, plaintext, "Decrypted should be the same as the plaintext");
@@ -118,7 +118,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 	console.log('blob size [bytes]: ' + bigBlob.length*2);
 	
 	var start = (new Date).getTime();
-	var bigBlobCipher = crypto.encrypt(bigBlob);
+	var bigBlobCipher = crypto.asymmetricEncrypt(bigBlob);
 	var diff = (new Date).getTime() - start;
 	
 	console.log('Time taken for encryption [ms]: ' + diff);
@@ -126,7 +126,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 	console.log('blob cipher size [bytes]: ' + bigBlobCipher.length*2);
 	
 	var decrStart = (new Date).getTime();
-	var bigBlobDecrypted =  crypto.decrypt(bigBlobCipher);
+	var bigBlobDecrypted =  crypto.asymmetricDecrypt(bigBlobCipher);
 	var decrDiff = (new Date).getTime() - decrStart;
 	
 	console.log('Time taken for decryption [ms]: ' + decrDiff);
@@ -134,4 +134,67 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 	equal(bigBlobDecrypted, bigBlob, "Decrypted should be the same as the plaintext");
 	
 	console.log('decrypted blob size [bytes]: ' + bigBlobDecrypted.length*2);
+});
+
+module("Convergent/Symmetric Crypto");
+
+test("Large blob", 4, function() {
+	var crypto = new Crypto();
+	
+	var message = '';
+	for (var i=0; i < 147; i++) {
+		message += testImg1Base64;
+	}
+	
+	console.log('blob size [bytes]: ' + message.length*2);
+	
+	var start = (new Date).getTime();
+	var ct = crypto.symmetricEncrypt(message);
+	var diff = (new Date).getTime() - start;
+
+	console.log('Time taken for encryption [ms]: ' + diff);
+	// console.log('Ciphertext: ' + ct);
+	
+	var ct2 = crypto.symmetricEncrypt(message);
+	equal(ct.ct, ct2.ct);
+	equal(ct.locator, ct2.locator);
+	equal(ct.key, ct2.key);
+	
+	console.log('key: "' + ct.key + '", key length: ' + ct.key.length + ', ct lenght [bytes]: ' + ct.ct.length*2);
+	
+	var decrStart = (new Date).getTime();
+	var pt = crypto.symmetricDecrypt(ct.key, ct.ct);
+	var decrDiff = (new Date).getTime() - decrStart;
+	
+	util.print_debug("bla");
+
+	console.log('Time taken for decryption [ms]: ' + decrDiff);
+	
+	equal(pt, message);
+});
+
+asyncTest("Upload blob", 3, function() {
+	var crypto = new Crypto();
+	var server = new Server();
+	
+	var message = '';
+	for (var i=0; i < 147; i++) {
+		message += testImg1Base64;
+	}
+	
+	var ct = crypto.symmetricEncrypt(message);
+	server.uploadBlob(ct.ct, function(blobKey) {
+		ok(blobKey);
+		
+		server.call('GET', '/app/blobs?blob-key=' + blobKey, function(download) {
+			equal(ct.ct, download);
+			
+			var pt = crypto.symmetricDecrypt(ct.key, download);
+
+			equal(pt, message);
+			
+			start();
+		});
+	});
+	
 });

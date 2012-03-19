@@ -79,9 +79,9 @@ function FSView() {
 		setTimeout(function() {
 			
 			// read, encrypt and upload encrypted file to server
-			self.presenter.readFile(file, function(blobKey) {
+			self.presenter.readFile(file, function(blobKey, cryptoKey) {
 				// add file to bucket fs
-				var fsFile = new self.presenter.File(file.name, file.size, file.type, blobKey);
+				var fsFile = new self.presenter.File(file.name, file.size, file.type, blobKey, cryptoKey);
 				var bucket = self.presenter.currentBucket();
 				var bucketFS = self.presenter.currentBucketFS();
 
@@ -137,7 +137,7 @@ function FSView() {
 		// show document
 		$('#showItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
-			self.showDocItem(blobKey);
+			self.showDocItem(file);
 		});
 		
 		// delete document
@@ -178,14 +178,14 @@ function FSView() {
 	/**
 	 * Downloads the encrypted document, decrypt it and display it
 	 */
-	this.showDocItem = function(blobKey) {
+	this.showDocItem = function(file) {
 		// show progress bar
 		$('#decryptModal').modal('show');
 
 		// wait for modal to appear, then start encryption
 		setTimeout(function() {
 			
-			self.presenter.getFile(blobKey, function(decrypted) {
+			self.presenter.getFile(file, function(decrypted) {
 				// hide progress bar
 				$('#decryptModal').modal('hide');
 				self.displayDoc(decrypted);

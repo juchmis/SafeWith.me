@@ -44,13 +44,14 @@ function FS(crypto, server) {
 		this.children = [];
 	};
 	
-	this.File = function(name, size, mimeType, blobKey) {
+	this.File = function(name, size, mimeType, blobKey, cryptoKey) {
 		this.type = "file";
 		this.name = name;
-		this.size = size;		// note: this is the unencrypted file size!
+		this.size = size;			// note: this is the unencrypted file size!
 		this.uploaded = new Date().toISOString();
 		this.mimeType = mimeType;
-		this.blobKey = blobKey;	// pointer to the encrypted blob
+		this.blobKey = blobKey;		// pointer to the encrypted blob
+		this.cryptoKey = cryptoKey;	// secret key required to decrypt the file
 	};
 
 	var self = this;
@@ -86,12 +87,12 @@ function FS(crypto, server) {
 			var data = event.target.result;			
 			
 			// encrypt file locally
-			var cipher = crypto.encrypt(data);
+			var fileCt = crypto.symmetricEncrypt(data);
 
 			// upload the encrypted blob to the server
-			server.uploadBlob(cipher, function(blobKey) {
+			server.uploadBlob(fileCt.ct, function(blobKey) {
 				// add link to the file list
-				callback(blobKey);
+				callback(blobKey, fileCt.key);
 			});
 		};
 
@@ -101,10 +102,10 @@ function FS(crypto, server) {
 	/**
 	 * Downloads the encrypted document and decrypt it
 	 */
-	this.getFile = function(blobKey, callback) {
-		var uri = blobServicePrefix + blobKey;
+	this.getFile = function(file, callback) {
+		var uri = blobServicePrefix + file.blobKey;
 		server.call('GET', uri, function(download) {
-			var decrypted = crypto.decrypt(download);
+			var decrypted = crypto.symmetricDecrypt(file.cryptoKey, download);
 			callback(decrypted);
 		});
 	};
@@ -132,7 +133,7 @@ function FS(crypto, server) {
 	 * Get bucket FS from bucket and decrypt it
 	 */
 	this.getBucketFS = function(encryptedFS) {
-		var jsonFS =  crypto.decrypt(encryptedFS);
+		var jsonFS =  crypto.asymmetricDecrypt(encryptedFS);
 		var bucketFS = JSON.parse(jsonFS);
 		
 		return bucketFS;
@@ -177,9 +178,9 @@ function FS(crypto, server) {
 		
 		var encryptedFS = null;
 		if (publicKey) {
-			encryptedFS = crypto.encrypt(jsonFS, publicKey);
+			encryptedFS = crypto.asymmetricEncrypt(jsonFS, publicKey);
 		} else {
-			encryptedFS = crypto.encrypt(jsonFS);
+			encryptedFS = crypto.asymmetricEncrypt(jsonFS);
 		}
 		
 		// update bucket
