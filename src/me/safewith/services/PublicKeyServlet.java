@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import me.safewith.dataAccess.GenericDAO;
 import me.safewith.dataAccess.PublicKeyDAO;
 import me.safewith.model.PublicKey;
-import me.safewith.model.PublicKeyMsg;
+import me.safewith.model.PGPKeyMsg;
 import me.safewith.model.ValidUser;
 import me.safewith.services.RequestHelper.Command;
 
@@ -99,7 +99,7 @@ public class PublicKeyServlet extends HttpServlet {
 					return;
 				}
 				
-				PublicKeyMsg pkMsg = PublicKeyDAO.key2dto(pk);
+				PGPKeyMsg pkMsg = PublicKeyDAO.key2dto(pk);
 				String json = new GsonBuilder().create().toJson(pkMsg);
 				
 				resp.setContentType("application/json");
@@ -118,7 +118,7 @@ public class PublicKeyServlet extends HttpServlet {
 				
 				// create new publicKey
 				String json = RequestHelper.readRequestBody(req);
-				PublicKeyMsg pkMsg = new GsonBuilder().create().fromJson(json, PublicKeyMsg.class);
+				PGPKeyMsg pkMsg = new GsonBuilder().create().fromJson(json, PGPKeyMsg.class);
 				
 				PublicKey pk = PublicKeyDAO.msg2dto(pkMsg);
 				new GenericDAO().persist(pk);

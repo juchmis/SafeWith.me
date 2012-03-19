@@ -23,7 +23,7 @@ package me.safewith.dataAccess;
 import java.util.List;
 
 import me.safewith.model.PublicKey;
-import me.safewith.model.PublicKeyMsg;
+import me.safewith.model.PGPKeyMsg;
 
 public class PublicKeyDAO {
 	
@@ -41,7 +41,7 @@ public class PublicKeyDAO {
 		}
 	}
 	
-	public static PublicKey msg2dto(PublicKeyMsg msg) {
+	public static PublicKey msg2dto(PGPKeyMsg msg) {
 		PublicKey pk = new PublicKey();
 		
 		pk.setKeyId(msg.getKeyId());
@@ -51,8 +51,8 @@ public class PublicKeyDAO {
 		return pk;		
 	}
 	
-	public static PublicKeyMsg key2dto(PublicKey pk) {
-		PublicKeyMsg msg = new PublicKeyMsg();
+	public static PGPKeyMsg key2dto(PublicKey pk) {
+		PGPKeyMsg msg = new PGPKeyMsg();
 		
 		msg.setKeyId(pk.getKeyId());
 		msg.setOwnerEmail(pk.getOwnerEmail());

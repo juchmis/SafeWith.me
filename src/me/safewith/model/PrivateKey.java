@@ -20,29 +20,58 @@
 
 package me.safewith.model;
 
-public class PublicKeyMsg {
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+import com.google.appengine.api.datastore.Text;
+
+@PersistenceCapable
+public class PrivateKey {
 	
+	/*
+	 * private members
+	 */
+	
+	@PrimaryKey
 	private String keyId;
+
+	@Persistent
 	private String ownerEmail;
-	private String asciiArmored;
 	
+	@Persistent
+	private Text asciiArmored;		// the actual PGP key
+	
+	/*
+	 * properties
+	 */
+
 	public String getKeyId() {
 		return keyId;
 	}
+
 	public void setKeyId(String keyId) {
 		this.keyId = keyId;
 	}
+
 	public String getOwnerEmail() {
 		return ownerEmail;
 	}
+
 	public void setOwnerEmail(String ownerEmail) {
 		this.ownerEmail = ownerEmail;
 	}
+
 	public String getAsciiArmored() {
-		return asciiArmored;
+		if (asciiArmored != null) {
+			return asciiArmored.getValue();
+		} else {
+			return null;
+		}
 	}
+
 	public void setAsciiArmored(String asciiArmored) {
-		this.asciiArmored = asciiArmored;
+		this.asciiArmored = new Text(asciiArmored);
 	}
 
 }
