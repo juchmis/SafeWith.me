@@ -82,7 +82,7 @@ function Server() {
 
 			$.ajax({
 				type: 'POST',
-				url: postUrl + '?md5=' + dataMd5,
+				url: postUrl,
 				contentType: "multipart/form-data; boundary="+boundary,
 				data: body,
 				success: function(resp) {

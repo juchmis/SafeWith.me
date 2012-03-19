@@ -40,7 +40,7 @@ function CryptoView() {
 				self.presenter.fetchKeys(loginInfo.email, keyId, undefined, server, function(keys) {
 					// try to read keys from local storage again
 					self.presenter.readKeys(loginInfo.email, keyId, function() {
-						alert('Key import from server succuessful!');
+						alert('Key import from server successful!');
 						callback();
 					}, function() {
 						// error
