@@ -65,7 +65,10 @@ asyncTest("CRUD PublicKey to Server", 4, function() {
 				start();
 			});
 		});
-	});
+		
+	}, function(modalShown) {
+		modalShown();
+	}, function() {});
 });
 
 asyncTest("Export keys", 3, function() {

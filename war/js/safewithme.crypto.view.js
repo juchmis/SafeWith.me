@@ -31,23 +31,27 @@ function CryptoView() {
 	 * init UI
 	 */
 	this.init = function(loginInfo, server, callback) {
+
 		// check server for user's public key ID
 		self.presenter.initPublicKey(loginInfo, server, function(keyId) {
-
 			// read corresponding keys from localstorage
 			self.presenter.readKeys(loginInfo.email, keyId, callback, function() {
 				// present import keys ui if no matching keys are found in local storage
 				self.showImportKeys(loginInfo, keyId, callback);
 			});
+			
+		}, function(modalShown) {
+			// wait for modal to show
+			$('#disclaimerModal').on('shown', function() {
+				modalShown();
+			});
 
-		}, function() {
 			// show disclaimer during key generation
 			$('#disclaimerModal').modal('show');
-			
+
 		}, function() {
 			// create export keys link
 			self.presenter.exportKeys(function(url) {
-				
 				// show completion message
 				var anchor = '<a style="float:right" class="btn btn-large btn-danger" download="safewithme.keys.txt" href="' + url + '">Export Keys</a>';
 				var msg = '<h2 class="alert alert-success">Completed! ' + anchor + '</h2>';

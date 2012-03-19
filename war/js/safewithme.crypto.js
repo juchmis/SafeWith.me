@@ -44,24 +44,16 @@ function Crypto() {
 			var keyId = window.atob(loginInfo.publicKeyId);
 			// read the user's keys from local storage
 			callback(keyId);
-			return;
-		}
-		
-		// user has no key on the server yet
-		if(displayCallback) {
-			// display message
-			displayCallback();
 			
-			// wait a short time for the message to appear
-			setTimeout(function() {
+		} else {
+			// user has no key on the server yet
+			displayCallback(function() {
+				// generate new key pair
 				self.createAndPersistKey(loginInfo.email, server, function(keyId) {
 					callback(keyId);
 					finishCallback();
 				});
-			}, 500);
-		
-		} else {
-			self.createAndPersistKey(loginInfo.email, server, callback);
+			});
 		}
 	};
 	
