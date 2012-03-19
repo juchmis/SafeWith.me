@@ -237,28 +237,15 @@ function FS(crypto, server) {
 				// add all the encrypted files to fs
 				var shareFS = new self.BucketFS(shareBucket.id, shareBucketName, shareEmail);
 						
-				// get file blob from server and decrypt it
-				self.getFile(file.blobKey, function(decryptedBlob) {
-					
-					// encrypt file with recipient's public key
-					var encryptedShare = crypto.encrypt(decryptedBlob, recipientKey.asciiArmored);
-					
-					// upload encrypted file share
-					server.uploadBlob(encryptedShare, function(newBlobKey) {
-						
-						// add file to share FS
-						var shareFile = new self.File(file.name, file.size, file.mimeType, newBlobKey);
-						shareFile.uploaded = file.uploaded;
-						shareFS.root.push(shareFile);
-						
-						// hand bucket ownership over to the recipient
-						shareBucket.ownerEmail = shareEmail;
-						
-						self.persistBucketFS(shareFS, shareBucket, function(updatedShareBucket) {
-							callback(updatedShareBucket);
-						}, recipientKey.asciiArmored);
-					});
-				});
+				// add file to share FS
+				shareFS.root.push(file);
+				
+				// hand bucket ownership over to the recipient
+				shareBucket.ownerEmail = shareEmail;
+				
+				self.persistBucketFS(shareFS, shareBucket, function(updatedShareBucket) {
+					callback(updatedShareBucket);
+				}, recipientKey.asciiArmored);
 			});
 		});
 		
