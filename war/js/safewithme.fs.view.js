@@ -71,12 +71,8 @@ function FSView() {
 	 * Process a file after it has been droped on the droparea
 	 */
 	this.handleFileDrop = function(file) {
-		
-		// show progress bar
-		$('#encryptModal').modal('show');
-		
-		// wait for modal to appear, then start encryption
-		setTimeout(function() {
+		// wait for modal to appear, then start decryption
+		$('#encryptModal').on('shown', function() {
 			
 			// read, encrypt and upload encrypted file to server
 			self.presenter.readFile(file, function(blobKey, cryptoKey) {
@@ -94,7 +90,10 @@ function FSView() {
 				});
 			});
 			
-		}, 500);
+		});
+		
+		// show progress bar
+		$('#encryptModal').modal('show');
 	};
 	
 	/**
@@ -179,11 +178,8 @@ function FSView() {
 	 * Downloads the encrypted document, decrypt it and display it
 	 */
 	this.showDocItem = function(file) {
-		// show progress bar
-		$('#decryptModal').modal('show');
-
-		// wait for modal to appear, then start encryption
-		setTimeout(function() {
+		// wait for modal to appear, then start decryption
+		$('#decryptModal').on('shown', function() {
 			
 			self.presenter.getFile(file, function(decrypted) {
 				// hide progress bar
@@ -191,7 +187,10 @@ function FSView() {
 				self.displayDoc(decrypted);
 			});
 
-		}, 500);
+		});
+		
+		// show progress bar
+		$('#decryptModal').modal('show');
 		
 		return false;
 	};
