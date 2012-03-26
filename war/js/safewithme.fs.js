@@ -146,8 +146,7 @@ function FS(crypto, server, util) {
 	 * Deletes an encrypted file blob and removes it from the bucket FS
 	 */
 	this.deleteFile = function(blobKey, callback) {
-		var uri = '/app/blobs?blob-key=' + blobKey;
-		server.call('DELETE', uri, function(resp) {
+		server.deleteBlob(blobKey, function(resp) {
 			callback();
 		});
 	};

@@ -1,21 +1,35 @@
 module("Server");
 
-asyncTest("Upload, Download, Delete blob", 3, function() {
+asyncTest("Upload, Download, Delete blob", 4, function() {
+	var util = new Util();
 	var server = new Server();
-	var blobServicePrefix = '/app/blobs?blob-key=';
+	
+	// create blob for uploading
+	var ctAB = util.binStr2ArrBuf(testImg1Base64);
+	var bb = new BlobBuilder();
+	bb.append(ctAB);
+	var blob = bb.getBlob('application/octet-stream');
+	var ctMd5 = md5(testImg1Base64);
 
-	server.uploadBlob(testImg1Base64, function(blobKey) {
+	server.uploadBlob(blob, ctMd5, function(blobKey) {
 		ok(blobKey);
 		
-		var uri = blobServicePrefix + blobKey;
-		server.call('GET', uri, function(download) {
-			equal(download, testImg1Base64);
+		server.downloadBlob(blobKey, function(download) {
+			ok(download);
 			
-			server.call('DELETE', uri, function(resp) {
-				equal(resp, "");
-				
-				start();
-			});
+			// read blob as binary string
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				var encrStr = event.target.result;
+				equal(encrStr, testImg1Base64);
+
+				server.deleteBlob(blobKey, function(resp) {
+					equal(resp, "");
+
+					start();
+				});
+			};
+			reader.readAsBinaryString(download);
 		});
 	});
 });

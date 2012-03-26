@@ -1,6 +1,7 @@
 module("FS");
 
 asyncTest("Create, Get, Delete Bucket", 10, function() {
+	var util = new Util();
 	var crypto = new Crypto();
 	crypto.readKeys("test@asdf.com");
 	
@@ -20,7 +21,16 @@ asyncTest("Create, Get, Delete Bucket", 10, function() {
 		equal(bucketFS.id, bucket.id);
 		
 		// add file to bucket fs
-		server.uploadBlob("Hello, World!", function(fileBlobKey) {
+		var ct = "Hello, World!";
+		var ctAB = util.binStr2ArrBuf(ct);
+
+		// create blob for uploading
+		var bb = new BlobBuilder();
+		bb.append(ctAB);
+		var blob = bb.getBlob('application/octet-stream');
+		var ctMd5 = md5(ct);
+		
+		server.uploadBlob(blob, ctMd5, function(fileBlobKey) {
 			var file = new fs.File("test file.pdf", "1024", "application/pdf", fileBlobKey);
 			fs.addFileToBucketFS(file, bucketFS, bucket, function(updatedBucket) {
 				

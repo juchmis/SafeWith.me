@@ -183,7 +183,7 @@ test("Large blob", 4, function() {
 	equal(pt, message);
 });
 
-asyncTest("Upload blob", 3, function() {
+asyncTest("Upload blob", 4, function() {
 	var util = new Util();
 	var crypto = new Crypto();
 	var server = new Server();
@@ -221,8 +221,13 @@ asyncTest("Upload blob", 3, function() {
 				// symmetrically decrypt the string
 				var pt = crypto.symmetricDecrypt(ct.key, encrStr);
 				equal(pt, message);
+				
+				// delete blob again
+				server.deleteBlob(blobKey, function(resp) {
+					equal(resp, "");
 
-				start();
+					start();
+				});
 			};
 
 			reader.readAsBinaryString(blob);

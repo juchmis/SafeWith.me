@@ -27,6 +27,10 @@ function Server() {
 	
 	var self = this;
 	
+	//
+	// Generic REST service requests
+	//
+	
 	/**
 	 * Make a REST service call
 	 */
@@ -60,6 +64,10 @@ function Server() {
 			}
 		});
 	};
+
+	//
+	// BlobStore specific service requests
+	//
 	
 	/**
 	 * Upload a file by first getting an upload url and then posting
@@ -121,6 +129,16 @@ function Server() {
 		};
 
 		xhr.send();
+	};
+	
+	/**
+	 * Deletes a blob from the blobstore
+	 */
+	this.deleteBlob = function(blobKey, callback) {
+		var uri = '/app/blobs?blob-key=' + blobKey;
+		self.call('DELETE', uri, function(resp) {
+			callback(resp);
+		});
 	};
 
 }
