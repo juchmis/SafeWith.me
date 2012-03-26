@@ -25,6 +25,13 @@
  * I/O between the browser's HTML5 File Apis and the application.
  */
 function FS(crypto, server, util) {
+	
+	// check for BlobBuilder support
+	window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
+	if (!window.BlobBuilder) {
+		alert('Your browser has no BlobBuilder support!');
+		return;
+	}
 
 	this.BucketFS = function(id, name, ownerEmail) {
 		this.version = "1.0";
@@ -86,11 +93,12 @@ function FS(crypto, server, util) {
 			
 			// symmetrically encrypt the string
 			var ct = crypto.symmetricEncrypt(data);
+			// convert binary string to ArrayBuffer
+			var ctAB = util.binStr2ArrBuf(ct.ct);
 			
 			// create blob for uploading
-			window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 			var bb = new BlobBuilder();
-			bb.append(ct.ct);
+			bb.append(ctAB);
 			var blob = bb.getBlob('application/octet-stream');
 			
 			// upload the encrypted blob to the server
@@ -108,14 +116,9 @@ function FS(crypto, server, util) {
 	 */
 	this.getFile = function(file, callback) {
 		// get encrypted ArrayBuffer from server
-		server.downloadBlob(file.blobKey, function(buf) {
-			// build Blob from ArrayBuffer
-			window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
-			var bb = new BlobBuilder();
-			bb.append(buf);
-			var blob = bb.getBlob('application/octet-stream');
+		server.downloadBlob(file.blobKey, function(blob) {
 			
-			// convert ArrayBuffer to binary string
+			// read blob as binary string
 			var reader = new FileReader();
 			reader.onload = function(event) {
 				var encrStr = event.target.result;

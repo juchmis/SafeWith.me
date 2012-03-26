@@ -18,7 +18,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-function Util() {
+function Util() {	
+	
+	/**
+	 * Converts a binary String from the FileReader Api to an ArrayBuffer
+	 */
+	this.binStr2ArrBuf = function(str) {
+		var b = new ArrayBuffer(str.length);
+		var buf = new Uint8Array(b);
+		
+		for(var i = 0; i < b.byteLength; i++){
+			buf[i] = str.charCodeAt(i)%256;
+		}
+
+		return b;
+	};
 
 	/**
 	 * Converts a UTF16 String to an ArrayBuffer
@@ -34,22 +48,6 @@ function Util() {
 		    x /= 256;
 			dv.setUint8(i, x);
 			dv.setUint8(i+1, a);
-		}
-
-		return b;
-	};
-	
-	/**
-	 * Converts a binary String from the FileReader Api to an ArrayBuffer
-	 */
-	this.binStr2ArrBuf = function(str) {
-		var b = new ArrayBuffer(str.length);
-		var buf = new Uint8Array(b);
-		
-		for(var i = 0; i < b.byteLength; i++){
-		    var x = str.charCodeAt(i);
-			x = x%256;
-			buf[i] = x;
 		}
 
 		return b;

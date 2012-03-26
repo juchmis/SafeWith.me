@@ -109,9 +109,11 @@ function Server() {
 
 		xhr.onload = function(e) {
 			if (this.status == 200) {
-				// return ArrayBuffer
-				var buf = this.response;
-				callback(buf);
+				var bb = new BlobBuilder();
+				bb.append(this.response);
+				var blob = bb.getBlob('application/octet-stream');
+				
+				callback(blob);
 			} else {
 				alert('Error downloading blob: ' + this.status);
 			}

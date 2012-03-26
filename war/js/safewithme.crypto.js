@@ -291,7 +291,7 @@ function Crypto(util) {
 		// encrypt using 256 bit AES (9)
 		var ct = openpgp_crypto_symmetricEncrypt(prefixrandom, 9, key, data, 0);
 
-		return { key: btoa(key), ct: btoa(ct) };
+		return { key: btoa(key), ct: ct };
 	};
 
 	/**
@@ -299,7 +299,7 @@ function Crypto(util) {
 	 */
 	this.symmetricDecrypt = function(key, ciphertext) {
 		// decrypt using 256 bit AES (9)
-		var pt = openpgp_crypto_symmetricDecrypt(9, atob(key), atob(ciphertext), 0);
+		var pt = openpgp_crypto_symmetricDecrypt(9, atob(key), ciphertext, 0);
 		return pt;
 	};
 
