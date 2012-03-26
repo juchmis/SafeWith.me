@@ -84,8 +84,6 @@ function FS(crypto, server, util) {
 		reader.onload = function(event) {
 			var data = event.target.result;
 			
-			// convert ArrayBuffer to UTF16 string
-			//var dataStr = util.arrBuf2Str(data);
 			// symmetrically encrypt the string
 			var ct = crypto.symmetricEncrypt(data);
 			
@@ -93,7 +91,6 @@ function FS(crypto, server, util) {
 			window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 			var bb = new BlobBuilder();
 			bb.append(ct.ct);
-			ct.ct.length;
 			var blob = bb.getBlob('application/octet-stream');
 			
 			// upload the encrypted blob to the server
@@ -112,17 +109,17 @@ function FS(crypto, server, util) {
 	this.getFile = function(file, callback) {
 		// get encrypted ArrayBuffer from server
 		server.downloadBlob(file.blobKey, function(buf) {
-			// convert ArrayBuffer to binary string
+			// build Blob from ArrayBuffer
 			window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 			var bb = new BlobBuilder();
 			bb.append(buf);
 			var blob = bb.getBlob('application/octet-stream');
 			
+			// convert ArrayBuffer to binary string
 			var reader = new FileReader();
-
 			reader.onload = function(event) {
 				var encrStr = event.target.result;
-				encrStr.length;
+				
 				// symmetrically decrypt the string
 				var pt = crypto.symmetricDecrypt(file.cryptoKey, encrStr);
 
@@ -131,11 +128,10 @@ function FS(crypto, server, util) {
 				bb2.append(ptAB);
 				var blob2 = bb2.getBlob(file.mimeType);
 
+				// return either data url or filesystem url
 				util.createUrl(file.name, blob2, function(url) {
-					// return either data url or filesystem url
 					callback(url);
 				});
-				
 			};
 
 			reader.readAsBinaryString(blob);
