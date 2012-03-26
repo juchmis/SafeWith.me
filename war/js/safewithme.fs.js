@@ -84,19 +84,93 @@ function FS(crypto, server) {
 		var reader = new FileReader();
 
 		reader.onload = function(event) {
-			var data = event.target.result;			
+			var data = event.target.result;
 			
-			// encrypt file locally
-			var fileCt = crypto.symmetricEncrypt(data);
+			var start = (new Date).getTime();
+			
+			var myUtil = new Util();
+			var dataStr = myUtil.arrBuf2Str(data);
+			dataStr.length;
+			var ct = crypto.symmetricEncrypt(dataStr);
+			ct.ct.length;
+			var pt = crypto.symmetricDecrypt(ct.key, ct.ct);
+			var ptAB = myUtil.str2ArrBuf(pt);
+			
+			var diff = (new Date).getTime() - start;
+			console.log('Time taken for encryption [ms]: ' + diff + ' ' + data.length + ' ' + ct.ct.length*2);
+			
+			// create encrypted blob
+			window.BlobBuilder = window.MozBlobBuilder || window.WebKitBlobBuilder || window.BlobBuilder;
+			
+			var bb = new BlobBuilder();
+			bb.append(ptAB);
+			var blob = bb.getBlob(file.type);
+			
+			var reader2 = new FileReader();
+			reader2.onload = function(event) {
+				var url = event.target.result;
+				//window.location.href = url;
+			};
+			reader2.readAsDataURL(blob);
+			
+			return;
+			
+			var encryptedBB = new BlobBuilder();
+			encryptedBB.append(ct.ct);
+			var encryptedBlob = encryptedBB.getBlob('application/octet-stream');
+			
+			// upload blob to blobstore
+			server.call('GET', '/app/uploadBlob', function(resp) {
+				var formData = new FormData();
+				formData.append('file', encryptedBlob);
 
-			// upload the encrypted blob to the server
-			server.uploadBlob(fileCt.ct, function(blobKey) {
-				// add link to the file list
-				callback(blobKey, fileCt.key);
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST', resp.uploadUrl, true);
+				xhr.onload = function(e) {
+					if (this.status == 201) {
+						
+						// get encrypted blob
+						var xhr2 = new XMLHttpRequest();
+						var blobKey = JSON.parse(this.response).blobKey;
+						xhr2.open('GET', '/app/blobs?blob-key=' + blobKey, true);
+						xhr2.responseType = 'arraybuffer';
+
+						xhr2.onload = function(e) {
+						  if (this.status == 200) {
+							var uInt8Array = new Uint8Array(this.response);
+						  }
+						};
+
+						xhr2.send();
+					}
+
+				};
+				xhr.send(formData);  // multipart/form-data
 			});
+			
+			
+			//var pt = crypto.symmetricDecrypt(ct.key, ct.ct);
+			
+			//var diff = (new Date).getTime() - start;
+
+			//console.log('Time taken for encryption [ms]: ' + diff + ' ' + data.length + ' ' + pt.length);
+			
+					
+			
+			// // encrypt file locally
+			// var fileCt = crypto.symmetricEncrypt(data);
+			// 
+			// // upload the encrypted blob to the server
+			// server.uploadBlob(fileCt.ct, function(blobKey) {
+			// 	// add link to the file list
+			// 	callback(blobKey, fileCt.key);
+			// });
 		};
 
-		reader.readAsDataURL(file);
+		// read as binary string since OpenPGP.js cannot yet process ArrayBuffers
+		reader.readAsArrayBuffer(file);
+		//reader.readAsBinaryString(file);
+		//reader.readAsDataURL(file);
 	};
 	
 	/**

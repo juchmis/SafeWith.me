@@ -54,12 +54,12 @@ public class UploadBlobServlet extends HttpServlet {
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
 				
-				// check MD5 hash
-				String uploadMd5 = req.getParameter("md5");
-				if (uploadMd5 == null) {
-					resp.sendError(400, "No MD5 sum specified!");
-					return;
-				}
+//				// check MD5 hash
+//				String uploadMd5 = req.getParameter("md5");
+//				if (uploadMd5 == null) {
+//					resp.sendError(400, "No MD5 sum specified!");
+//					return;
+//				}
 				
 //				// deduplicate by sending blob-key of MD5 match
 //				Iterator<BlobInfo> itInfo = new BlobInfoFactory().queryBlobInfos();
