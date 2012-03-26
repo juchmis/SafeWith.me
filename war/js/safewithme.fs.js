@@ -101,8 +101,9 @@ function FS(crypto, server, util) {
 			bb.append(ctAB);
 			var blob = bb.getBlob('application/octet-stream');
 			
+			var ctMd5 = md5(ct.ct);
 			// upload the encrypted blob to the server
-			server.uploadBlob(blob, function(blobKey) {
+			server.uploadBlob(blob, ctMd5, function(blobKey) {
 				// add link to the file list
 				callback(blobKey, ct.key);
 			});

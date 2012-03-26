@@ -65,12 +65,13 @@ function Server() {
 	 * Upload a file by first getting an upload url and then posting
 	 * the file data to the specified uri
 	 */
-	this.uploadBlob = function(blob, callback) {
+	this.uploadBlob = function(blob, md5, callback) {
 		
 		// upload blob to blobstore
 		function postBlob(postUrl) {
 			var formData = new FormData();
 			formData.append('file', blob);
+			formData.append('md5', md5);
 
 			var xhr = new XMLHttpRequest();
 			xhr.open('POST', postUrl, true);
@@ -87,7 +88,7 @@ function Server() {
 		}
 		
 		// first get upload url from blobstore
-		self.call('GET', '/app/uploadBlob', function(resp) {
+		self.call('GET', '/app/uploadBlob?md5=' + md5, function(resp) {
 			if (resp.blobKey) {
 				// a blob with the same MD5 hash is already present
 				callback(resp.blobKey);

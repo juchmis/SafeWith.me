@@ -54,12 +54,12 @@ public class UploadBlobServlet extends HttpServlet {
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
 				
-//				// check MD5 hash
-//				String uploadMd5 = req.getParameter("md5");
-//				if (uploadMd5 == null) {
-//					resp.sendError(400, "No MD5 sum specified!");
-//					return;
-//				}
+				// check MD5 hash
+				String uploadMd5 = req.getParameter("md5");
+				if (uploadMd5 == null) {
+					resp.sendError(400, "No MD5 sum specified!");
+					return;
+				}
 				
 //				// deduplicate by sending blob-key of MD5 match
 //				Iterator<BlobInfo> itInfo = new BlobInfoFactory().queryBlobInfos();
@@ -98,12 +98,12 @@ public class UploadBlobServlet extends HttpServlet {
 					return;
 				}
 				
-//				// check MD5 hash
-//				String uploadMd5 = req.getParameter("md5");
-//				if (uploadMd5 == null) {
-//					resp.sendError(400, "No MD5 sum specified!");
-//					return;
-//				}
+				// check MD5 hash
+				String uploadMd5 = req.getParameter("md5");
+				if (uploadMd5 == null) {
+					resp.sendError(400, "No MD5 sum specified!");
+					return;
+				}
 				
 				// parse the request for blob data
 				@SuppressWarnings("deprecation")
@@ -117,11 +117,11 @@ public class UploadBlobServlet extends HttpServlet {
 				
 				// validate the request's MD5 hash
 				BlobInfo info = new BlobInfoFactory().loadBlobInfo(blobKey);
-//				if (!uploadMd5.equals(info.getMd5Hash())) {
-//					blobstoreService.delete(blobKey);
-//					resp.sendError(400, "The specified MD5 hash does not match!");
-//					return;
-//				}
+				if (!uploadMd5.equals(info.getMd5Hash())) {
+					blobstoreService.delete(blobKey);
+					resp.sendError(400, "The specified MD5 hash does not match!");
+					return;
+				}
 				
 				// update user's used storage
 				long blobSize = info.getSize();
