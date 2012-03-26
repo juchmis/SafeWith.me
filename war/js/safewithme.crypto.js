@@ -23,7 +23,7 @@
 /**
  * A wrapper for OpenPGP encryption logic
  */
-function Crypto() {
+function Crypto(util) {
 
 	// initialize OpenPGP.js
 	openpgp.init();
@@ -171,35 +171,15 @@ function Crypto() {
 	 * Export the keys by using the HTML5 FileWriter
 	 */
 	this.exportKeys = function(callback) {
-		// initial file system api
-		function onInitFs(fs) {
-			fs.root.getFile('safewithme.keys.txt', {create: true}, function(fileEntry) {
-				
-				// Create a FileWriter object for our FileEntry
-				fileEntry.createWriter(function(fileWriter) {
-					fileWriter.onwriteend = function(e) {
-						var url = fileEntry.toURL();
-						callback(url);
-					};
-
-					fileWriter.onerror = function(e) {
-					  console.log('Write failed: ' + e.toString());
-					};
-
-					// Create a new Blob and write it to log.txt.
-					window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
-					var bb = new BlobBuilder();
-					
-					// append public and private keys
-					bb.append(publicKey.armored);
-					bb.append(privateKey.armored);
-					fileWriter.write(bb.getBlob('text/plain'));
-				});
-			});
-		}
-
-		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-		window.requestFileSystem(window.TEMPORARY, 1024*1024, onInitFs);
+		// Create a new Blob and write it to log.txt.
+		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
+		var bb = new BlobBuilder();
+		
+		// append public and private keys
+		bb.append(publicKey.armored);
+		bb.append(privateKey.armored);
+		
+		util.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
 	};
 	
 	/**
@@ -311,7 +291,7 @@ function Crypto() {
 		// encrypt using 256 bit AES (9)
 		var ct = openpgp_crypto_symmetricEncrypt(prefixrandom, 9, key, data, 0);
 
-		return { key: key, ct: ct };
+		return { key: btoa(key), ct: btoa(ct) };
 	};
 
 	/**
@@ -319,7 +299,7 @@ function Crypto() {
 	 */
 	this.symmetricDecrypt = function(key, ciphertext) {
 		// decrypt using 256 bit AES (9)
-		var pt = openpgp_crypto_symmetricDecrypt(9, key, ciphertext, 0);
+		var pt = openpgp_crypto_symmetricDecrypt(9, atob(key), atob(ciphertext), 0);
 		return pt;
 	};
 

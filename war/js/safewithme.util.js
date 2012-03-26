@@ -77,4 +77,52 @@ function Util() {
 
 		return s;
 	};
+	
+	/**
+	 * Creates a url for a blob
+	 * @param fileName [String] the name of the file to display
+	 * @param blob [Blob] a file blob built with the BlobBuilder Api
+	 * @return url [String] either a data url or a filesystem url
+	 */
+	this.createUrl = function(fileName, blob, callback) {
+		
+		// try using HTML5 filesystem api
+		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+		if (window.requestFileSystem) {
+			
+			// open file with filesystem apis
+			function onInitFs(fs) {
+				fs.root.getFile(fileName, {create: true}, function(fileEntry) {
+
+					// Create a FileWriter object for our FileEntry
+					fileEntry.createWriter(function(fileWriter) {
+						fileWriter.onwriteend = function(e) {
+							var url = fileEntry.toURL();
+							callback(url);
+						};
+
+						fileWriter.onerror = function(e) {
+						  console.log('Write failed: ' + e.toString());
+						};
+
+						fileWriter.write(blob);
+					});
+				});
+			}
+			
+			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
+			
+		} else {
+			
+			// open file as data url
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				var url = event.target.result;
+				callback(url);
+			};
+			reader.readAsDataURL(blob);
+			
+		}
+	};
+	
 }

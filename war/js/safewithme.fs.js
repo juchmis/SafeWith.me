@@ -24,9 +24,7 @@
  * This class implements all logic required for filesystem and
  * I/O between the browser's HTML5 File Apis and the application.
  */
-function FS(crypto, server) {
-	
-	var blobServicePrefix = '/app/blobs?blob-key=';
+function FS(crypto, server, util) {
 
 	this.BucketFS = function(id, name, ownerEmail) {
 		this.version = "1.0";
@@ -86,101 +84,61 @@ function FS(crypto, server) {
 		reader.onload = function(event) {
 			var data = event.target.result;
 			
-			var start = (new Date).getTime();
+			// convert ArrayBuffer to UTF16 string
+			//var dataStr = util.arrBuf2Str(data);
+			// symmetrically encrypt the string
+			var ct = crypto.symmetricEncrypt(data);
 			
-			var myUtil = new Util();
-			var dataStr = myUtil.arrBuf2Str(data);
-			dataStr.length;
-			var ct = crypto.symmetricEncrypt(dataStr);
-			ct.ct.length;
-			var pt = crypto.symmetricDecrypt(ct.key, ct.ct);
-			var ptAB = myUtil.str2ArrBuf(pt);
-			
-			var diff = (new Date).getTime() - start;
-			console.log('Time taken for encryption [ms]: ' + diff + ' ' + data.length + ' ' + ct.ct.length*2);
-			
-			// create encrypted blob
-			window.BlobBuilder = window.MozBlobBuilder || window.WebKitBlobBuilder || window.BlobBuilder;
-			
+			// create blob for uploading
+			window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 			var bb = new BlobBuilder();
-			bb.append(ptAB);
-			var blob = bb.getBlob(file.type);
+			bb.append(ct.ct);
+			ct.ct.length;
+			var blob = bb.getBlob('text/plain; charset=x-user-defined');
 			
-			var reader2 = new FileReader();
-			reader2.onload = function(event) {
-				var url = event.target.result;
-				//window.location.href = url;
-			};
-			reader2.readAsDataURL(blob);
-			
-			return;
-			
-			var encryptedBB = new BlobBuilder();
-			encryptedBB.append(ct.ct);
-			var encryptedBlob = encryptedBB.getBlob('application/octet-stream');
-			
-			// upload blob to blobstore
-			server.call('GET', '/app/uploadBlob', function(resp) {
-				var formData = new FormData();
-				formData.append('file', encryptedBlob);
-
-				var xhr = new XMLHttpRequest();
-				xhr.open('POST', resp.uploadUrl, true);
-				xhr.onload = function(e) {
-					if (this.status == 201) {
-						
-						// get encrypted blob
-						var xhr2 = new XMLHttpRequest();
-						var blobKey = JSON.parse(this.response).blobKey;
-						xhr2.open('GET', '/app/blobs?blob-key=' + blobKey, true);
-						xhr2.responseType = 'arraybuffer';
-
-						xhr2.onload = function(e) {
-						  if (this.status == 200) {
-							var uInt8Array = new Uint8Array(this.response);
-						  }
-						};
-
-						xhr2.send();
-					}
-
-				};
-				xhr.send(formData);  // multipart/form-data
+			// upload the encrypted blob to the server
+			server.uploadBlob(blob, function(blobKey) {
+				// add link to the file list
+				callback(blobKey, ct.key);
 			});
-			
-			
-			//var pt = crypto.symmetricDecrypt(ct.key, ct.ct);
-			
-			//var diff = (new Date).getTime() - start;
-
-			//console.log('Time taken for encryption [ms]: ' + diff + ' ' + data.length + ' ' + pt.length);
-			
-					
-			
-			// // encrypt file locally
-			// var fileCt = crypto.symmetricEncrypt(data);
-			// 
-			// // upload the encrypted blob to the server
-			// server.uploadBlob(fileCt.ct, function(blobKey) {
-			// 	// add link to the file list
-			// 	callback(blobKey, fileCt.key);
-			// });
 		};
-
-		// read as binary string since OpenPGP.js cannot yet process ArrayBuffers
-		reader.readAsArrayBuffer(file);
-		//reader.readAsBinaryString(file);
-		//reader.readAsDataURL(file);
+		
+		reader.readAsBinaryString(file);
 	};
 	
 	/**
 	 * Downloads the encrypted document and decrypt it
 	 */
 	this.getFile = function(file, callback) {
-		var uri = blobServicePrefix + file.blobKey;
-		server.call('GET', uri, function(download) {
-			var decrypted = crypto.symmetricDecrypt(file.cryptoKey, download);
-			callback(decrypted);
+		// get encrypted ArrayBuffer from server
+		server.downloadBlob(file.blobKey, function(buf) {
+			// convert ArrayBuffer to binary string
+			window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
+			var bb = new BlobBuilder();
+			bb.append(buf);
+			var blob = bb.getBlob('text/plain; charset=x-user-defined');
+			
+			var reader = new FileReader();
+
+			reader.onload = function(event) {
+				var encrStr = event.target.result;
+				encrStr.length;
+				// symmetrically decrypt the string
+				var pt = crypto.symmetricDecrypt(file.cryptoKey, encrStr);
+
+				var ptAB = util.binStr2ArrBuf(pt);
+				var bb2 = new BlobBuilder();
+				bb2.append(ptAB);
+				var blob2 = bb2.getBlob(file.mimeType);
+
+				util.createUrl(file.name, blob2, function(url) {
+					// return either data url or filesystem url
+					callback(url);
+				});
+				
+			};
+
+			reader.readAsBinaryString(blob);
 		});
 	};
 	
@@ -188,7 +146,7 @@ function FS(crypto, server) {
 	 * Deletes an encrypted file blob and removes it from the bucket FS
 	 */
 	this.deleteFile = function(blobKey, callback) {
-		var uri = blobServicePrefix + blobKey;
+		var uri = '/app/blobs?blob-key=' + blobKey;
 		server.call('DELETE', uri, function(resp) {
 			callback();
 		});

@@ -65,37 +65,29 @@ function Server() {
 	 * Upload a file by first getting an upload url and then posting
 	 * the file data to the specified uri
 	 */
-	this.uploadBlob = function(data, callback) {
-		// calculate the blob's MD5 hash for deduplication on server
-		var dataMd5 = md5(data);
+	this.uploadBlob = function(blob, callback) {
 		
+		// upload blob to blobstore
 		function postBlob(postUrl) {
-			var boundary = "----WebKitFormBoundaryU4qBHQLW2dP2URYc";
-			var body = '--' + boundary + '\r\n'
-		             // Parameter name is "file" and local filename is "file.crypt"
-		             + 'Content-Disposition: form-data; name="file"; '
-		             + 'filename="file.crypt"\r\n'
-		             // Add the file's mime-type
-		             + 'Content-type: application/octet-stream\r\n\r\n'
-		             + data
-					 + '\r\n' + '--' + boundary + '--' + '\r\n' ;
+			var formData = new FormData();
+			formData.append('file', blob);
 
-			$.ajax({
-				type: 'POST',
-				url: postUrl,
-				contentType: "multipart/form-data; boundary="+boundary,
-				data: body,
-				success: function(resp) {
-					callback(resp.blobKey);
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					alert('Error uploading blob: ' + errorThrown);
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', postUrl, true);
+			xhr.onload = function(e) {
+				if (this.status == 201) {
+					// parse blob-key
+					var blobKey = JSON.parse(this.response).blobKey;
+					callback(blobKey);
+				} else {
+					alert('Error uploading blob: ' + this.status);
 				}
-			});
+			};
+			xhr.send(formData);  // multipart/form-data
 		}
 		
 		// first get upload url from blobstore
-		self.call('GET', '/app/uploadBlob?md5=' + dataMd5, function(resp) {
+		self.call('GET', '/app/uploadBlob', function(resp) {
 			if (resp.blobKey) {
 				// a blob with the same MD5 hash is already present
 				callback(resp.blobKey);
@@ -105,6 +97,27 @@ function Server() {
 		    	postBlob(resp.uploadUrl);
 			}
 		});
+	};
+	
+	/**
+	 * Download a blob from the blobstore
+	 */
+	this.downloadBlob = function(blobKey, callback) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', '/app/blobs?blob-key=' + blobKey, true);
+		xhr.responseType = 'arraybuffer';
+
+		xhr.onload = function(e) {
+			if (this.status == 200) {
+				// return ArrayBuffer
+				var buf = this.response;
+				callback(buf);
+			} else {
+				alert('Error downloading blob: ' + this.status);
+			}
+		};
+
+		xhr.send();
 	};
 
 }

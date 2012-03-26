@@ -31,15 +31,16 @@
 function SafeWithMe() {
 
 	// check if browser is supported
-	if (!checkBrowser()) {
-		return;
-	}
+	// if (!checkBrowser()) {
+	// 	return;
+	// }
 
 	// init presenters
-	var crypto = new Crypto();
+	var util = new Util();
+	var crypto = new Crypto(util);
 	var server = new Server();
 	var menu = new Menu();
-	var fs = new FS(crypto, server);
+	var fs = new FS(crypto, server, util);
 
 	// init menu view
 	var menuView = new MenuView();

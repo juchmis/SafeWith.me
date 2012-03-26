@@ -78,7 +78,8 @@ asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 });
 
 asyncTest("Export keys", 3, function() {
-	var crypto = new Crypto();
+	var util = new Util();
+	var crypto = new Crypto(util);
 	crypto.readKeys(email);
 
 	crypto.exportKeys(function(url) {
