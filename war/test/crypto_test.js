@@ -125,7 +125,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 		bigBlob += testImg1Base64;
 	}
 	
-	console.log('blob size [bytes]: ' + bigBlob.length*2);
+	console.log('blob size [bytes]: ' + bigBlob.length);
 	
 	var start = (new Date).getTime();
 	var bigBlobCipher = crypto.asymmetricEncrypt(bigBlob);
@@ -133,7 +133,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 	
 	console.log('Time taken for encryption [ms]: ' + diff);
 	ok(bigBlobCipher, "cipher: see console output for benchmark");
-	console.log('blob cipher size [bytes]: ' + bigBlobCipher.length*2);
+	console.log('blob cipher size [bytes]: ' + bigBlobCipher.length);
 	
 	var decrStart = (new Date).getTime();
 	var bigBlobDecrypted =  crypto.asymmetricDecrypt(bigBlobCipher);
@@ -143,7 +143,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 	ok(bigBlobDecrypted, "decrypted: see console output for benchmark");
 	equal(bigBlobDecrypted, bigBlob, "Decrypted should be the same as the plaintext");
 	
-	console.log('decrypted blob size [bytes]: ' + bigBlobDecrypted.length*2);
+	console.log('decrypted blob size [bytes]: ' + bigBlobDecrypted.length);
 });
 
 module("Convergent/Symmetric Crypto");
@@ -156,7 +156,7 @@ test("Large blob", 4, function() {
 		message += testImg1Base64;
 	}
 	
-	console.log('blob size [bytes]: ' + message.length*2);
+	console.log('blob size [bytes]: ' + message.length);
 	
 	var start = (new Date).getTime();
 	var ct = crypto.symmetricEncrypt(message);
@@ -170,7 +170,7 @@ test("Large blob", 4, function() {
 	equal(ct.locator, ct2.locator);
 	equal(ct.key, ct2.key);
 	
-	console.log('key: "' + ct.key + '", key length: ' + ct.key.length + ', ct lenght [bytes]: ' + ct.ct.length*2);
+	console.log('key: "' + ct.key + '", key length: ' + ct.key.length + ', ct lenght [bytes]: ' + ct.ct.length);
 	
 	var decrStart = (new Date).getTime();
 	var pt = crypto.symmetricDecrypt(ct.key, ct.ct);
@@ -184,26 +184,48 @@ test("Large blob", 4, function() {
 });
 
 asyncTest("Upload blob", 3, function() {
+	var util = new Util();
 	var crypto = new Crypto();
 	var server = new Server();
 	
+	// build test message
 	var message = '';
 	for (var i=0; i < 147; i++) {
 		message += testImg1Base64;
 	}
 	
+	// symmetrically encrypt the string
 	var ct = crypto.symmetricEncrypt(message);
-	server.uploadBlob(ct.ct, function(blobKey) {
+	// convert binary string to ArrayBuffer
+	var ctAB = util.binStr2ArrBuf(ct.ct);
+	
+	// create blob for uploading
+	var bb = new BlobBuilder();
+	bb.append(ctAB);
+	var blob = bb.getBlob('application/octet-stream');
+	
+	var ctMd5 = md5(ct.ct);
+	// upload the encrypted blob to the server
+	server.uploadBlob(blob, ctMd5, function(blobKey) {
 		ok(blobKey);
 		
-		server.call('GET', '/app/blobs?blob-key=' + blobKey, function(download) {
-			equal(ct.ct, download);
+		// download blob
+		server.downloadBlob(blobKey, function(blob) {
+			ok(blob);
 			
-			var pt = crypto.symmetricDecrypt(ct.key, download);
+			// read blob as binary string
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				var encrStr = event.target.result;
+				
+				// symmetrically decrypt the string
+				var pt = crypto.symmetricDecrypt(ct.key, encrStr);
+				equal(pt, message);
 
-			equal(pt, message);
-			
-			start();
+				start();
+			};
+
+			reader.readAsBinaryString(blob);
 		});
 	});
 	
