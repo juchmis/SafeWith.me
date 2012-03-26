@@ -44,12 +44,12 @@ function Util() {
 	 */
 	this.binStr2ArrBuf = function(str) {
 		var b = new ArrayBuffer(str.length);
-		var dv = new DataView(b);
+		var buf = new Uint8Array(b);
 		
 		for(var i = 0; i < b.byteLength; i++){
 		    var x = str.charCodeAt(i);
 			x = x%256;
-			dv.setUint8(i, x);
+			buf[i] = x;
 		}
 
 		return b;
