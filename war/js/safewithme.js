@@ -31,9 +31,9 @@
 function SafeWithMe() {
 
 	// check if browser is supported
-	// if (!checkBrowser()) {
-	// 	return;
-	// }
+	if (!checkBrowser()) {
+		return;
+	}
 
 	// init presenters
 	var util = new Util();
@@ -75,8 +75,8 @@ function checkBrowser() {
 		return navigator.userAgent.indexOf(browser) !== -1;
 	}
 	
-	if (!check('Chrome') && !check('iPhone') && !check('iPad') && !check('Android')) {
-		alert('Sorry, SafeWith.me is currently supported only on Chrome, Android and iOS browsers.');
+	if (!check('Chrome')) {
+		alert('Sorry, SafeWith.me is currently supported only on Chrome.');
 		return false;
 	} else {
 		return true;
