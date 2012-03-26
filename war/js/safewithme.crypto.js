@@ -23,7 +23,7 @@
 /**
  * A wrapper for OpenPGP encryption logic
  */
-function Crypto(util) {
+function Crypto(myUtil) {
 
 	// initialize OpenPGP.js
 	openpgp.init();
@@ -179,7 +179,7 @@ function Crypto(util) {
 		bb.append(publicKey.armored);
 		bb.append(privateKey.armored);
 		
-		util.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
+		myUtil.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
 	};
 	
 	/**

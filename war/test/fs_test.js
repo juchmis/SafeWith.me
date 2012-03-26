@@ -4,6 +4,7 @@ asyncTest("Create, Get, Delete Bucket", 10, function() {
 	var util = new Util();
 	var crypto = new Crypto();
 	crypto.readKeys("test@asdf.com");
+	crypto.setPassphrase('yxcv');
 	
 	var server = new Server();
 	var fs = new FS(crypto, server);

@@ -1,36 +1,18 @@
 module("Asymmetric Crypto");
 
 var email = "test@asdf.com";
-
-test("Generate keys without passphrase", 4, function() {
-	var crypto = new Crypto();
-	
-	var start = (new Date).getTime();
-	var keySize = 2048;
-	var keys = crypto.generateKeys(keySize, email);
-	var diff = (new Date).getTime() - start;
-	
-	var keyId = keys.privateKey.getKeyId();
-	crypto.readKeys(email, keyId);
-	
-	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair, passphrase "undefined")');
-	ok(crypto.getPrivateKey());
-	ok(crypto.getPrivateKey().indexOf('-----BEGIN PGP PRIVATE KEY BLOCK-----') === 0);
-	ok(crypto.getPublicKey());
-	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
-});
+var keyId = 'wrong ID';
+var passphrase = 'yxcv';
 
 test("Generate keys with passphrase", 4, function() {
 	var crypto = new Crypto();
-	var email = "test@yxcv.com";
-	var passphrase = 'yxcv';
 
 	var start = (new Date).getTime();
 	var keySize = 2048;
 	var keys = crypto.generateKeys(keySize, email, passphrase);
 	var diff = (new Date).getTime() - start;
 
-	var keyId = keys.privateKey.getKeyId();
+	keyId = keys.privateKey.getKeyId();
 	crypto.readKeys(email, keyId);
 
 	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair, passphrase "'+ passphrase + '")');
@@ -38,6 +20,60 @@ test("Generate keys with passphrase", 4, function() {
 	ok(crypto.getPrivateKey().indexOf('-----BEGIN PGP PRIVATE KEY BLOCK-----') === 0);
 	ok(crypto.getPublicKey());
 	ok(crypto.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
+});
+
+function helperEncrDecr(plaintext) {
+	var crypto = new Crypto();
+	crypto.readKeys(email, keyId);
+	crypto.setPassphrase(passphrase);
+
+	var cipher = crypto.asymmetricEncrypt(plaintext);
+	ok(cipher, "cipher");
+
+	var decrypted =  crypto.asymmetricDecrypt(cipher);
+	ok(decrypted, "decrypted");
+
+	equal(decrypted, plaintext, "Decrypted should be the same as the plaintext");
+}
+
+test("Encrypt/Decrypt Text", 3, function() {
+	helperEncrDecr("Hello, World!");
+});
+
+test("Encrypt/Decrypt 7KB Image", 3, function() {
+	helperEncrDecr(testImg1Base64);
+});
+
+test("Encrypt/Decrypt large Blob", 3, function() {
+	var crypto = new Crypto();
+	crypto.readKeys(email, keyId);
+	crypto.setPassphrase(passphrase);
+
+	// generate large string
+	var bigBlob = '';
+	for (var i=0; i < 147; i++) {
+		bigBlob += testImg1Base64;
+	}
+	
+	console.log('blob size [bytes]: ' + bigBlob.length);
+	
+	var start = (new Date).getTime();
+	var bigBlobCipher = crypto.asymmetricEncrypt(bigBlob);
+	var diff = (new Date).getTime() - start;
+	
+	console.log('Time taken for encryption [ms]: ' + diff);
+	ok(bigBlobCipher, "cipher: see console output for benchmark");
+	console.log('blob cipher size [bytes]: ' + bigBlobCipher.length);
+	
+	var decrStart = (new Date).getTime();
+	var bigBlobDecrypted =  crypto.asymmetricDecrypt(bigBlobCipher);
+	var decrDiff = (new Date).getTime() - decrStart;
+	
+	console.log('Time taken for decryption [ms]: ' + decrDiff);
+	ok(bigBlobDecrypted, "decrypted: see console output for benchmark");
+	equal(bigBlobDecrypted, bigBlob, "Decrypted should be the same as the plaintext");
+	
+	console.log('decrypted blob size [bytes]: ' + bigBlobDecrypted.length);
 });
 
 asyncTest("CRUD PGP KeyPair to Server", 7, function() {
@@ -80,7 +116,7 @@ asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 asyncTest("Export keys", 3, function() {
 	var util = new Util();
 	var crypto = new Crypto(util);
-	crypto.readKeys(email);
+	crypto.readKeys(email, keyId);
 
 	crypto.exportKeys(function(url) {
 		ok(url);
@@ -92,58 +128,6 @@ asyncTest("Export keys", 3, function() {
 			start();
 		});
 	});
-});
-
-function helperEncrDecr(plaintext) {
-	var crypto = new Crypto();
-	crypto.readKeys(email);
-
-	var cipher = crypto.asymmetricEncrypt(plaintext);
-	ok(cipher, "cipher");
-
-	var decrypted =  crypto.asymmetricDecrypt(cipher);
-	ok(decrypted, "decrypted");
-
-	equal(decrypted, plaintext, "Decrypted should be the same as the plaintext");
-}
-
-test("Encrypt/Decrypt Text", 3, function() {
-	helperEncrDecr("Hello, World!");
-});
-
-test("Encrypt/Decrypt 7KB Image", 3, function() {
-	helperEncrDecr(testImg1Base64);
-});
-
-test("Encrypt/Decrypt large Blob", 3, function() {
-	var crypto = new Crypto();
-	crypto.readKeys(email);
-
-	// generate large string
-	var bigBlob = '';
-	for (var i=0; i < 147; i++) {
-		bigBlob += testImg1Base64;
-	}
-	
-	console.log('blob size [bytes]: ' + bigBlob.length);
-	
-	var start = (new Date).getTime();
-	var bigBlobCipher = crypto.asymmetricEncrypt(bigBlob);
-	var diff = (new Date).getTime() - start;
-	
-	console.log('Time taken for encryption [ms]: ' + diff);
-	ok(bigBlobCipher, "cipher: see console output for benchmark");
-	console.log('blob cipher size [bytes]: ' + bigBlobCipher.length);
-	
-	var decrStart = (new Date).getTime();
-	var bigBlobDecrypted =  crypto.asymmetricDecrypt(bigBlobCipher);
-	var decrDiff = (new Date).getTime() - decrStart;
-	
-	console.log('Time taken for decryption [ms]: ' + decrDiff);
-	ok(bigBlobDecrypted, "decrypted: see console output for benchmark");
-	equal(bigBlobDecrypted, bigBlob, "Decrypted should be the same as the plaintext");
-	
-	console.log('decrypted blob size [bytes]: ' + bigBlobDecrypted.length);
 });
 
 module("Convergent/Symmetric Crypto");
