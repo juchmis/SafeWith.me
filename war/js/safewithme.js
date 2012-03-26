@@ -75,8 +75,8 @@ function checkBrowser() {
 		return navigator.userAgent.indexOf(browser) !== -1;
 	}
 	
-	if (!check('Chrome')) {
-		alert('Sorry, SafeWith.me is currently supported only on Chrome.');
+	if (!check('Chrome') && !check('Android')) {
+		alert('Sorry, SafeWith.me is currently supported only on Chrome and Android.');
 		return false;
 	} else {
 		return true;
