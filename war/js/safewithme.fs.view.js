@@ -208,8 +208,8 @@ function FSView() {
 	/**
 	 * Displays the document in the main view
 	 */
-	this.displayDoc = function(dataUrl) {
-		window.location.href = dataUrl;
+	this.displayDoc = function(url) {
+		window.location.href = url;
 	};
 	
 }

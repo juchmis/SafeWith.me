@@ -83,9 +83,11 @@ function Util() {
 	 * @return url [String] either a data url or a filesystem url
 	 */
 	this.createUrl = function(fileName, blob, callback) {
+		// check browser support
+		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+		window.URL = window.URL || window.webkitURL || window.mozURL;
 		
 		// try using HTML5 filesystem api
-		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 		if (window.requestFileSystem) {
 			
 			// open file with filesystem apis
@@ -109,6 +111,12 @@ function Util() {
 			}
 			
 			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
+			
+		} else if (window.URL) {
+			
+			// use blob URL api
+			var url = window.URL.createObjectURL(blob);
+			callback(url);
 			
 		} else {
 			
