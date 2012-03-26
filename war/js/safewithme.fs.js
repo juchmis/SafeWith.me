@@ -94,7 +94,7 @@ function FS(crypto, server, util) {
 			var bb = new BlobBuilder();
 			bb.append(ct.ct);
 			ct.ct.length;
-			var blob = bb.getBlob('text/plain; charset=x-user-defined');
+			var blob = bb.getBlob('application/octet-stream');
 			
 			// upload the encrypted blob to the server
 			server.uploadBlob(blob, function(blobKey) {
@@ -116,7 +116,7 @@ function FS(crypto, server, util) {
 			window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 			var bb = new BlobBuilder();
 			bb.append(buf);
-			var blob = bb.getBlob('text/plain; charset=x-user-defined');
+			var blob = bb.getBlob('application/octet-stream');
 			
 			var reader = new FileReader();
 
