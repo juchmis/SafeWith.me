@@ -47,9 +47,9 @@ function Crypto(myUtil) {
 			
 		} else {
 			// user has no key on the server yet
-			displayCallback(function(passphrase) {
+			displayCallback(function(pass) {
 				// generate new key pair
-				self.createAndPersistKeys(loginInfo.email, passphrase, server, function(keyId) {
+				self.createAndPersistKeys(loginInfo.email, pass, server, function(keyId) {
 					callback(keyId);
 					finishCallback();
 				});
@@ -60,9 +60,9 @@ function Crypto(myUtil) {
 	/**
 	 * Generate a new key pair for the user and persist the public key on the server
 	 */
-	this.createAndPersistKeys = function(email, passphrase, server, callback) {
+	this.createAndPersistKeys = function(email, pass, server, callback) {
 		// generate 2048 bit RSA keys
-		var keys = self.generateKeys(2048, email, passphrase);
+		var keys = self.generateKeys(2048, email, pass);
 		
 		// persist public key to server
 		var keyId = keys.privateKey.getKeyId();
@@ -152,7 +152,7 @@ function Crypto(myUtil) {
 	/**
 	 * Get the keypair from the server and import them into localstorage
 	 */
-	this.fetchKeys = function(email, keyId, passphrase, server, callback) {
+	this.fetchKeys = function(email, keyId, pass, server, callback) {
 		var base64Key = btoa(keyId);
 		var encodedKeyId = encodeURIComponent(base64Key);
 		// GET public key
@@ -160,7 +160,7 @@ function Crypto(myUtil) {
 			// GET private key
 			server.call('GET', '/app/privateKeys?keyId=' + encodedKeyId, function(privateKey) {
 				// import keys
-				self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, passphrase);
+				self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, pass);
 				
 				callback({ privateKey:privateKey, publicKey:publicKey });
 			});
