@@ -1,7 +1,6 @@
 module("Asymmetric Crypto");
 
 var email = "test@asdf.com";
-var keyId = 'wrong ID';
 var passphrase = 'yxcv';
 
 test("Generate keys with passphrase", 4, function() {
@@ -12,7 +11,7 @@ test("Generate keys with passphrase", 4, function() {
 	var keys = crypto.generateKeys(keySize, email, passphrase);
 	var diff = (new Date).getTime() - start;
 
-	keyId = keys.privateKey.getKeyId();
+	var keyId = keys.privateKey.getKeyId();
 	crypto.readKeys(email, keyId);
 
 	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair, passphrase "'+ passphrase + '")');
@@ -24,7 +23,7 @@ test("Generate keys with passphrase", 4, function() {
 
 function helperEncrDecr(plaintext) {
 	var crypto = new Crypto();
-	crypto.readKeys(email, keyId);
+	crypto.readKeys(email);
 	crypto.setPassphrase(passphrase);
 
 	var cipher = crypto.asymmetricEncrypt(plaintext);
@@ -46,7 +45,7 @@ test("Encrypt/Decrypt 7KB Image", 3, function() {
 
 test("Encrypt/Decrypt large Blob", 3, function() {
 	var crypto = new Crypto();
-	crypto.readKeys(email, keyId);
+	crypto.readKeys(email);
 	crypto.setPassphrase(passphrase);
 
 	// generate large string
@@ -116,7 +115,7 @@ asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 asyncTest("Export keys", 3, function() {
 	var util = new Util();
 	var crypto = new Crypto(util);
-	crypto.readKeys(email, keyId);
+	crypto.readKeys(email);
 
 	crypto.exportKeys(function(url) {
 		ok(url);
