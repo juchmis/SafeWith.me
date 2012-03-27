@@ -1,7 +1,5 @@
 module("Util");
 
-window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
-
 test("JQuery and basic requirements", 8, function() {
 	ok( Array.prototype.push, "Array.push()" );
 	ok( Function.prototype.apply, "Function.apply()" );
@@ -10,19 +8,18 @@ test("JQuery and basic requirements", 8, function() {
 	ok( RegExp, "RegExp" );
 	ok( jQuery, "jQuery" );
 	ok( $, "$" );
-	ok(window.BlobBuilder, "BlobBuilder");
+	ok( new Util().arrBuf2Blob('', ''), "BlobBuilder" );
 });
 
-asyncTest("String -> ArrayBuffer -> String", 2, function() {
+asyncTest("String -> ArrayBuffer -> String", 3, function() {
 	var util = new Util();
 	
 	var input = "asdf";
 	var buf = util.binStr2ArrBuf(input);
 	ok(buf);
 	
-	var bb = new BlobBuilder();
-	bb.append(buf);
-	var blob = bb.getBlob('application/octet-stream');
+	var blob = util.arrBuf2Blob(buf, 'application/octet-stream');
+	ok(blob);
 	
 	var reader = new FileReader();
 	reader.onload = function(event) {
@@ -38,9 +35,7 @@ asyncTest("Create URL", 2, function() {
 	var util = new Util();
 	
 	// Create a new Blob and write it to log.txt.
-	var bb = new BlobBuilder();
-	bb.append('asdf');
-	var blob = bb.getBlob('text/plain');
+	var blob = util.arrBuf2Blob('asdf', 'text/plain');
 	
 	util.createUrl('test.txt', blob, function(url) {
 		ok(url, url);

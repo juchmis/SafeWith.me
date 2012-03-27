@@ -25,13 +25,6 @@
  * I/O between the browser's HTML5 File Apis and the application.
  */
 function FS(crypto, server, util) {
-	
-	// check for BlobBuilder support
-	window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
-	if (!window.BlobBuilder) {
-		alert('Your browser has no BlobBuilder support!');
-		return;
-	}
 
 	this.BucketFS = function(id, name, ownerEmail) {
 		this.version = "1.0";
@@ -95,11 +88,8 @@ function FS(crypto, server, util) {
 			var ct = crypto.symmetricEncrypt(data);
 			// convert binary string to ArrayBuffer
 			var ctAB = util.binStr2ArrBuf(ct.ct);
-			
 			// create blob for uploading
-			var bb = new BlobBuilder();
-			bb.append(ctAB);
-			var blob = bb.getBlob('application/octet-stream');
+			var blob = util.arrBuf2Blob(ctAB, 'application/octet-stream');
 			
 			var ctMd5 = md5(ct.ct);
 			// upload the encrypted blob to the server
@@ -126,11 +116,8 @@ function FS(crypto, server, util) {
 				
 				// symmetrically decrypt the string
 				var pt = crypto.symmetricDecrypt(file.cryptoKey, encrStr);
-
 				var ptAB = util.binStr2ArrBuf(pt);
-				var bb2 = new BlobBuilder();
-				bb2.append(ptAB);
-				var blob2 = bb2.getBlob(file.mimeType);
+				var blob2 = util.arrBuf2Blob(ptAB, file.mimeType);
 
 				// return either data url or filesystem url
 				util.createUrl(file.name, blob2, function(url) {

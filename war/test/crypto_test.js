@@ -169,7 +169,7 @@ test("Large blob", 4, function() {
 asyncTest("Upload blob", 4, function() {
 	var util = new Util();
 	var crypto = new Crypto();
-	var server = new Server();
+	var server = new Server(util);
 	
 	// build test message
 	var message = '';

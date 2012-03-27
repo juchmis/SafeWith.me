@@ -23,7 +23,7 @@
 /**
  * This class handles all communication with the server
  */
-function Server() {
+function Server(util) {
 	
 	var self = this;
 	
@@ -118,10 +118,7 @@ function Server() {
 
 		xhr.onload = function(e) {
 			if (this.status == 200) {
-				var bb = new BlobBuilder();
-				bb.append(this.response);
-				var blob = bb.getBlob('application/octet-stream');
-				
+				var blob = util.arrBuf2Blob(this.response, 'application/octet-stream');
 				callback(blob);
 			} else {
 				alert('Error downloading blob: ' + this.status);

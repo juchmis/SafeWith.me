@@ -21,7 +21,9 @@
 function Util() {	
 	
 	/**
-	 * Converts a binary String from the FileReader Api to an ArrayBuffer [UInt8]
+	 * Converts a binary String (e.g. from the FileReader Api) to an ArrayBuffer
+	 * @param str [String] a binary string with integer values (0..255) per character
+	 * @return [ArrayBuffer] either a data url or a filesystem url
 	 */
 	this.binStr2ArrBuf = function(str) {
 		var b = new ArrayBuffer(str.length);
@@ -35,10 +37,30 @@ function Util() {
 	};
 	
 	/**
+	 * Creates a Blob from an ArrayBuffer using the BlobBuilder Api
+	 * @param str [String] a binary string with integer values (0..255) per character
+	 * @return [ArrayBuffer] either a data url or a filesystem url
+	 */
+	this.arrBuf2Blob = function(buf, mimeType) {
+		
+		// check for BlobBuilder support
+		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
+		if (!window.BlobBuilder) {
+			throw 'BlobBuilder Api not supported!';
+		}
+		
+		var bb = new BlobBuilder();
+		bb.append(buf);
+		var blob = bb.getBlob(mimeType);
+		
+		return blob;
+	};
+	
+	/**
 	 * Creates a url for a blob
 	 * @param fileName [String] the name of the file to display
 	 * @param blob [Blob] a file blob built with the BlobBuilder Api
-	 * @return url [String] either a data url or a filesystem url
+	 * @return [String] either a data url or a filesystem url
 	 */
 	this.createUrl = function(fileName, blob, callback) {
 		// check browser support

@@ -2,13 +2,11 @@ module("Server");
 
 asyncTest("Upload, Download, Delete blob", 4, function() {
 	var util = new Util();
-	var server = new Server();
+	var server = new Server(util);
 	
 	// create blob for uploading
 	var ctAB = util.binStr2ArrBuf(testImg1Base64);
-	var bb = new BlobBuilder();
-	bb.append(ctAB);
-	var blob = bb.getBlob('application/octet-stream');
+	var blob = util.arrBuf2Blob(ctAB, 'application/octet-stream');
 	var ctMd5 = md5(testImg1Base64);
 
 	server.uploadBlob(blob, ctMd5, function(blobKey) {

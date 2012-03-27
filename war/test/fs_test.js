@@ -7,7 +7,7 @@ asyncTest("Create, Get, Delete Bucket", 10, function() {
 	crypto.setPassphrase('yxcv');
 	
 	var server = new Server();
-	var fs = new FS(crypto, server);
+	var fs = new FS(crypto, server, util);
 
 	var name = 'Test Bucket';
 	// create
@@ -21,17 +21,14 @@ asyncTest("Create, Get, Delete Bucket", 10, function() {
 		equal(bucketFS.name, name);
 		equal(bucketFS.id, bucket.id);
 		
-		// add file to bucket fs
+		// create blob for uploading
 		var ct = "Hello, World!";
 		var ctAB = util.binStr2ArrBuf(ct);
-
-		// create blob for uploading
-		var bb = new BlobBuilder();
-		bb.append(ctAB);
-		var blob = bb.getBlob('application/octet-stream');
+		var blob = util.arrBuf2Blob(ctAB, 'application/octet-stream');
 		var ctMd5 = md5(ct);
 		
 		server.uploadBlob(blob, ctMd5, function(fileBlobKey) {
+			// add file to bucket fs
 			var file = new fs.File("test file.pdf", "1024", "application/pdf", fileBlobKey);
 			fs.addFileToBucketFS(file, bucketFS, bucket, function(updatedBucket) {
 				
