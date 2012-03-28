@@ -62,7 +62,7 @@ function Crypto(myUtil) {
 	 */
 	this.createAndPersistKeys = function(email, server, callback) {
 		// generate 2048 bit RSA keys
-		var keys = self.generateKeys(2048, email, passphrase);
+		var keys = self.generateKeys(2048, email);
 		
 		// persist public key to server
 		var keyId = keys.privateKey.getKeyId();
@@ -97,6 +97,9 @@ function Crypto(myUtil) {
 	 * @pass [string] a passphrase used to protect the private key
 	 */
 	this.generateKeys = function(numBits, email) {
+		// check passphrase
+		if (!passphrase) { throw 'No passphrase set!'; }
+		
 		var userId = 'SafeWith.me User <' + email + '>';
 		var keys = openpgp.generate_key_pair(1, numBits, userId, passphrase); // keytype 1=RSA
 
@@ -172,9 +175,7 @@ function Crypto(myUtil) {
 			// keys found -> read passphrase from local storage
 			passphrase = window.localStorage.getItem(email + 'Passphrase');
 			
-			if (callback) {
-				callback();
-			}
+			if (callback) { callback(); }
 		}
 	};
 	
