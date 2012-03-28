@@ -100,12 +100,37 @@ function Crypto(myUtil) {
 		var userId = 'SafeWith.me User <' + email + '>';
 		var keys = openpgp.generate_key_pair(1, numBits, userId, passphrase); // keytype 1=RSA
 
-		// store keys in html5 local storage
-		openpgp.keyring.importPrivateKey(keys.privateKeyArmored, passphrase);
-		openpgp.keyring.importPublicKey(keys.publicKeyArmored);
-		openpgp.keyring.store();
+		self.importKeys(keys.publicKeyArmored, keys.privateKeyArmored, email);
 
 		return keys;
+	};
+
+	/**
+	 * Import the users key into the HTML5 local storage
+	 */
+	this.importKeys = function(publicKeyArmored, privateKeyArmored, email) {
+		// store keys in html5 local storage
+		openpgp.keyring.importPrivateKey(privateKeyArmored, passphrase);
+		openpgp.keyring.importPublicKey(publicKeyArmored);
+		openpgp.keyring.store();
+		
+		// store the passphrase in local storage
+		window.localStorage.setItem(email + 'Passphrase', passphrase);
+	};
+
+	/**
+	 * Export the keys by using the HTML5 FileWriter
+	 */
+	this.exportKeys = function(callback) {
+		// Create a new Blob and write it to log.txt.
+		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
+		var bb = new BlobBuilder();
+
+		// append public and private keys
+		bb.append(publicKey.armored);
+		bb.append(privateKey.armored);
+
+		myUtil.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
 	};
 	
 	/**
@@ -141,8 +166,12 @@ function Crypto(myUtil) {
 		
 		// check keys
 		if (!publicKey || !privateKey || (publicKey.keyId !== privateKey.keyId)) {
+			// error
 			errorCallback(keyId);
 		} else {
+			// keys found -> read passphrase from local storage
+			passphrase = window.localStorage.getItem(email + 'Passphrase');
+			
 			if (callback) {
 				callback();
 			}
@@ -165,31 +194,6 @@ function Crypto(myUtil) {
 				callback({ privateKey:privateKey, publicKey:publicKey });
 			});
 		});
-	};
-	
-	/**
-	 * Export the keys by using the HTML5 FileWriter
-	 */
-	this.exportKeys = function(callback) {
-		// Create a new Blob and write it to log.txt.
-		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
-		var bb = new BlobBuilder();
-		
-		// append public and private keys
-		bb.append(publicKey.armored);
-		bb.append(privateKey.armored);
-		
-		myUtil.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
-	};
-	
-	/**
-	 * Import the users key into the HTML5 local storage
-	 */
-	this.importKeys = function(publicKeyArmored, privateKeyArmored) {
-		// store keys in html5 local storage
-		openpgp.keyring.importPrivateKey(privateKeyArmored, passphrase);
-		openpgp.keyring.importPublicKey(publicKeyArmored);
-		openpgp.keyring.store();
 	};
 	
 	/**
