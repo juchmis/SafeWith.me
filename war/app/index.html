@@ -173,13 +173,12 @@
           <div class="modal hide fade" id="disclaimerModal">
             <div class="modal-header">
               <a class="close" data-dismiss="modal">×</a>
-              <h3>Generating your personal keys...</h3>
+              <h3>Generate your personal keypair...</h3>
             </div>
             <div class="modal-body">
               <div id="keygenStatus">
-                <div class="progress progress-danger progress-striped active">
-                  <div class="bar" style="width: 100%;"></div>
-                </div>
+            		  <input id="passphrase" type="password" class="input-medium"/>
+            		  <button id="genKeysBtn" class="btn btn-success">Generate Keypair</button>
               </div>
               <div class="alert alert-block">
                 <h4 class="alert-heading">Important!</h4>

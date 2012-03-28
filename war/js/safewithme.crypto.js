@@ -47,9 +47,9 @@ function Crypto(myUtil) {
 			
 		} else {
 			// user has no key on the server yet
-			displayCallback(function(pass) {
+			displayCallback(function() {
 				// generate new key pair
-				self.createAndPersistKeys(loginInfo.email, pass, server, function(keyId) {
+				self.createAndPersistKeys(loginInfo.email, server, function(keyId) {
 					callback(keyId);
 					finishCallback();
 				});
@@ -60,9 +60,9 @@ function Crypto(myUtil) {
 	/**
 	 * Generate a new key pair for the user and persist the public key on the server
 	 */
-	this.createAndPersistKeys = function(email, pass, server, callback) {
+	this.createAndPersistKeys = function(email, server, callback) {
 		// generate 2048 bit RSA keys
-		var keys = self.generateKeys(2048, email, pass);
+		var keys = self.generateKeys(2048, email, passphrase);
 		
 		// persist public key to server
 		var keyId = keys.privateKey.getKeyId();
@@ -96,12 +96,12 @@ function Crypto(myUtil) {
 	 * @email [string] user's email address
 	 * @pass [string] a passphrase used to protect the private key
 	 */
-	this.generateKeys = function(numBits, email, pass) {
+	this.generateKeys = function(numBits, email) {
 		var userId = 'SafeWith.me User <' + email + '>';
-		var keys = openpgp.generate_key_pair(1, numBits, userId, pass); // keytype 1=RSA
+		var keys = openpgp.generate_key_pair(1, numBits, userId, passphrase); // keytype 1=RSA
 
 		// store keys in html5 local storage
-		openpgp.keyring.importPrivateKey(keys.privateKeyArmored, pass);
+		openpgp.keyring.importPrivateKey(keys.privateKeyArmored, passphrase);
 		openpgp.keyring.importPublicKey(keys.publicKeyArmored);
 		openpgp.keyring.store();
 
@@ -152,7 +152,7 @@ function Crypto(myUtil) {
 	/**
 	 * Get the keypair from the server and import them into localstorage
 	 */
-	this.fetchKeys = function(email, keyId, pass, server, callback) {
+	this.fetchKeys = function(email, keyId, server, callback) {
 		var base64Key = btoa(keyId);
 		var encodedKeyId = encodeURIComponent(base64Key);
 		// GET public key
@@ -160,7 +160,7 @@ function Crypto(myUtil) {
 			// GET private key
 			server.call('GET', '/app/privateKeys?keyId=' + encodedKeyId, function(privateKey) {
 				// import keys
-				self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, pass);
+				self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, passphrase);
 				
 				callback({ privateKey:privateKey, publicKey:publicKey });
 			});
@@ -185,9 +185,9 @@ function Crypto(myUtil) {
 	/**
 	 * Import the users key into the HTML5 local storage
 	 */
-	this.importKeys = function(publicKeyArmored, privateKeyArmored, pass) {
+	this.importKeys = function(publicKeyArmored, privateKeyArmored) {
 		// store keys in html5 local storage
-		openpgp.keyring.importPrivateKey(privateKeyArmored, pass);
+		openpgp.keyring.importPrivateKey(privateKeyArmored, passphrase);
 		openpgp.keyring.importPublicKey(publicKeyArmored);
 		openpgp.keyring.store();
 	};

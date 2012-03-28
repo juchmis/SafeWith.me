@@ -1,6 +1,6 @@
 module("Util");
 
-test("JQuery and basic requirements", 8, function() {
+test("JQuery and basic requirements", 10, function() {
 	ok( Array.prototype.push, "Array.push()" );
 	ok( Function.prototype.apply, "Function.apply()" );
 	ok( document.getElementById, "getElementById" );
@@ -8,7 +8,9 @@ test("JQuery and basic requirements", 8, function() {
 	ok( RegExp, "RegExp" );
 	ok( jQuery, "jQuery" );
 	ok( $, "$" );
-	ok( new Util().arrBuf2Blob('', ''), "BlobBuilder" );
+	ok( new Util().arrBuf2Blob('', ''), "BlobBuilder Api" );
+	ok( window.requestFileSystem || window.webkitRequestFileSystem, "FileSystem Api" );
+	ok( window.URL || window.webkitURL || window.mozURL, "ObjectURL Api" );
 });
 
 asyncTest("String -> ArrayBuffer -> String", 3, function() {

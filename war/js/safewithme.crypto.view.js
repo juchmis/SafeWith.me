@@ -36,8 +36,8 @@ function CryptoView() {
 		self.presenter.initKeyPair(loginInfo, server, function(keyId) {
 			// read corresponding keys from localstorage
 			self.presenter.readKeys(loginInfo.email, keyId, callback, function() {
-				// present import keys ui if no matching keys are found in local storage
-				self.presenter.fetchKeys(loginInfo.email, keyId, undefined, server, function(keys) {
+				// import keys from server if no matching keys are found in local storage
+				self.presenter.fetchKeys(loginInfo.email, keyId, server, function(keys) {
 					// try to read keys from local storage again
 					self.presenter.readKeys(loginInfo.email, keyId, function() {
 						alert('Key import from server successful!');
@@ -50,10 +50,17 @@ function CryptoView() {
 				// self.showImportKeys(loginInfo, keyId, callback);
 			});
 			
-		}, function(modalShown) {
-			// wait for modal to show
-			$('#disclaimerModal').on('shown', function() {
-				modalShown();
+		}, function(genKeysCallback) {
+			
+			$('#genKeysBtn').click(function() {
+				// read passphrase
+				var passphrase = $('#passphrase').val();
+				self.presenter.setPassphrase(passphrase);
+				// display progressbar
+				var pogressbar = '<div class="progress progress-danger progress-striped active"><div class="bar" style="width: 100%;"></div></div>';
+				$('#keygenStatus').html(pogressbar);
+				// generate keys
+				genKeysCallback();
 			});
 
 			// show disclaimer during key generation
@@ -80,7 +87,8 @@ function CryptoView() {
 			var publicKey = keyText.split(privKeyBoarder)[0];
 			
 			var passphrase = $('#passphrase').val();
-			self.presenter.importKeys(publicKey, privateKey, passphrase);
+			self.presenter.setPassphrase(passphrase);
+			self.presenter.importKeys(publicKey, privateKey);
 			
 			// try to read the keys again after import
 			self.presenter.readKeys(loginInfo.email, keyId, function() {

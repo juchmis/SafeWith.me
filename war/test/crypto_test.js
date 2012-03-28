@@ -5,10 +5,11 @@ var passphrase = 'yxcv';
 
 test("Generate keys with passphrase", 4, function() {
 	var crypto = new Crypto();
+	crypto.setPassphrase(passphrase);
 
 	var start = (new Date).getTime();
 	var keySize = 2048;
-	var keys = crypto.generateKeys(keySize, email, passphrase);
+	var keys = crypto.generateKeys(keySize, email);
 	var diff = (new Date).getTime() - start;
 
 	var keyId = keys.privateKey.getKeyId();
@@ -77,6 +78,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 
 asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 	var crypto = new Crypto();
+	crypto.setPassphrase(passphrase);
 	var server = new Server();
 	var email = "test@example.com";
 	var loginInfo = {
@@ -86,7 +88,7 @@ asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 	crypto.initKeyPair(loginInfo, server, function(keyId) {
 		ok(keyId);
 		
-		crypto.fetchKeys(email, keyId, undefined, server, function(keys) {
+		crypto.fetchKeys(email, keyId, server, function(keys) {
 			crypto.readKeys(loginInfo.email, keyId);
 
 			equal(keys.publicKey.asciiArmored, crypto.getPublicKey());
