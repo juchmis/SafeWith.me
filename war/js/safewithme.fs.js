@@ -79,13 +79,11 @@ function FS(crypto, server, util) {
 	 * and upload encrypted blob to server
 	 */
 	this.readFile = function(file, callback) {
-		var reader = new FileReader();
-
-		reader.onload = function(event) {
-			var data = event.target.result;
+		// convert file/blob to binary string
+		util.blob2BinStr(file, function(binStr) {
 			
 			// symmetrically encrypt the string
-			var ct = crypto.symmetricEncrypt(data);
+			var ct = crypto.symmetricEncrypt(binStr);
 			// convert binary string to ArrayBuffer
 			var ctAB = util.binStr2ArrBuf(ct.ct);
 			// create blob for uploading
@@ -97,9 +95,7 @@ function FS(crypto, server, util) {
 				// add link to the file list
 				callback(blobKey, ct.key);
 			});
-		};
-		
-		reader.readAsBinaryString(file);
+		});
 	};
 	
 	/**
@@ -108,11 +104,8 @@ function FS(crypto, server, util) {
 	this.getFile = function(file, callback) {
 		// get encrypted ArrayBuffer from server
 		server.downloadBlob(file.blobKey, function(blob) {
-			
 			// read blob as binary string
-			var reader = new FileReader();
-			reader.onload = function(event) {
-				var encrStr = event.target.result;
+			util.blob2BinStr(blob, function(encrStr) {
 				
 				// symmetrically decrypt the string
 				var pt = crypto.symmetricDecrypt(file.cryptoKey, encrStr);
@@ -122,10 +115,8 @@ function FS(crypto, server, util) {
 				// return either data url or filesystem url
 				util.createUrl(file.name, blob2, function(url) {
 					callback(url);
-				});
-			};
-
-			reader.readAsBinaryString(blob);
+				});	
+			});
 		});
 	};
 	

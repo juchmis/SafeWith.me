@@ -42,7 +42,6 @@ function Util() {
 	 * @return [ArrayBuffer] either a data url or a filesystem url
 	 */
 	this.arrBuf2Blob = function(buf, mimeType) {
-		
 		// check for BlobBuilder support
 		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 		if (!window.BlobBuilder) {
@@ -54,6 +53,21 @@ function Util() {
 		var blob = bb.getBlob(mimeType);
 		
 		return blob;
+	};
+	
+	/**
+	 * Creates a binary String from a Blob using the FileReader Api
+	 * @param blob [Blob/File] a blob containing the the binary data
+	 * @return [String] a binary string with integer values (0..255) per character
+	 */
+	this.blob2BinStr = function(blob, callback) {
+		var reader = new FileReader();
+
+		reader.onload = function(event) {
+			callback(event.target.result);
+		};
+
+		reader.readAsBinaryString(blob);
 	};
 	
 	/**

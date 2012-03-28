@@ -23,14 +23,11 @@ asyncTest("String -> ArrayBuffer -> String", 3, function() {
 	var blob = util.arrBuf2Blob(buf, 'application/octet-stream');
 	ok(blob);
 	
-	var reader = new FileReader();
-	reader.onload = function(event) {
-		var output = event.target.result;
+	util.blob2BinStr(blob, function(output) {
 		equal(output, input);
-		
+	
 		start();
-	};
-	reader.readAsBinaryString(blob);
+	});
 });
 
 asyncTest("Create URL", 2, function() {

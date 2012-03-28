@@ -197,9 +197,7 @@ asyncTest("Upload blob", 4, function() {
 			ok(blob);
 			
 			// read blob as binary string
-			var reader = new FileReader();
-			reader.onload = function(event) {
-				var encrStr = event.target.result;
+			util.blob2BinStr(blob, function(encrStr) {
 				
 				// symmetrically decrypt the string
 				var pt = crypto.symmetricDecrypt(ct.key, encrStr);
@@ -211,9 +209,7 @@ asyncTest("Upload blob", 4, function() {
 
 					start();
 				});
-			};
-
-			reader.readAsBinaryString(blob);
+			});
 		});
 	});
 	
