@@ -1,11 +1,10 @@
 module("Asymmetric Crypto");
 
 var email = "test@asdf.com";
-var passphrase = 'yxcv';
 
 test("Generate keys", 4, function() {
 	var crypto = new Crypto();
-	crypto.setPassphrase(passphrase);
+	crypto.setPassphrase('yxcvasdfqwer');
 
 	var start = (new Date).getTime();
 	var keySize = 2048;
@@ -76,7 +75,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 
 asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 	var crypto = new Crypto();
-	crypto.setPassphrase(passphrase);
+	crypto.setPassphrase('asdfasdf');
 	
 	var server = new Server();
 	var email = "test@example.com";

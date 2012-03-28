@@ -112,6 +112,9 @@ function Crypto(myUtil) {
 	 * Import the users key into the HTML5 local storage
 	 */
 	this.importKeys = function(publicKeyArmored, privateKeyArmored, email) {
+		// check passphrase
+		if (!passphrase) { throw 'No passphrase set!'; }
+		
 		// store keys in html5 local storage
 		openpgp.keyring.importPrivateKey(privateKeyArmored, passphrase);
 		openpgp.keyring.importPublicKey(publicKeyArmored);
@@ -169,14 +172,18 @@ function Crypto(myUtil) {
 		
 		// check keys
 		if (!publicKey || !privateKey || (publicKey.keyId !== privateKey.keyId)) {
-			// error
-			errorCallback(keyId);
-		} else {
-			// keys found -> read passphrase from local storage
-			passphrase = window.localStorage.getItem(email + 'Passphrase');
-			
-			if (callback) { callback(); }
+			errorCallback();
+			return;
 		}
+
+		// read passphrase from local storage
+		passphrase = window.localStorage.getItem(email + 'Passphrase');
+		if (!passphrase) {
+			throw 'No passphrase for that user in localstorage!';
+		}
+		
+		// keys found
+		if (callback) { callback(); }
 	};
 	
 	/**
@@ -270,16 +277,14 @@ function Crypto(myUtil) {
 	    }
 	    if (keymat != null) {
 	    	if (!keymat.keymaterial.decryptSecretMPIs(passphrase)) {
-	    		util.print_error("Passphrase for secrect key was incorrect!");
-	    		return null;
+	    		throw "Passphrase for secrect key was incorrect!";
 	    	}
 	    	
 	    	var decrypted = msg[0].decrypt(keymat, sesskey);
 			return decrypted;
 	    	
 	    } else {
-	    	util.print_error("No private key found!");
-			return null;
+	    	throw "No private key found!";
 	    }  
 	};
 	

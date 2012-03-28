@@ -38,21 +38,21 @@ function CryptoView() {
 			self.presenter.readKeys(loginInfo.email, keyId, callback, function() {
 				// import keys from server if no matching keys are found in local storage
 				self.presenter.fetchKeys(loginInfo.email, keyId, server, function(keys) {
+					// TODO: display dialog asking the user for his passphrase
+					
 					// try to read keys from local storage again
 					self.presenter.readKeys(loginInfo.email, keyId, function() {
 						alert('Key import from server successful!');
 						callback();
-					}, function() {
-						// error
-						alert('The keys you imported do not match your public key ID on the server!');
 					});
 				});
-				// self.showImportKeys(loginInfo, keyId, callback);
 			});
 			
 		}, function(genKeysCallback) {
 			
-			$('#genKeysBtn').click(function() {
+			$('#genKeysForm').submit(function(e) {
+				e.preventDefault();
+				
 				// read passphrase
 				var passphrase = $('#passphrase').val();
 				self.presenter.setPassphrase(passphrase);
