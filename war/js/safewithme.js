@@ -36,7 +36,7 @@ $(function (window, navigator, menuView, cryptoView, fsView) {
 	}
 
 	// init menu
-	menuView.init('/', function(loginInfo) {
+	menuView.init('http://safewith.me', function(loginInfo) {
 		// check if user is logged in
 		if (!loginInfo.loggedIn || !loginInfo.email) {
 			return;
