@@ -158,17 +158,13 @@
     <script src="js/jquery-1.7.1.min.js"></script>
     <script src="js/bootstrap-2.0.1.min.js"></script>
     
-    <script src="js/safewithme.menu.view.js"></script>
     <script src="js/safewithme.menu.js"></script>
+    <script src="js/safewithme.menu.view.js"></script>
     
     <script>
-      $(function() {
-        // init login link
-        var menu = new Menu();
-      	var menuView = new MenuView();
-      	menuView.presenter = menu;
+      $(function(menuView) {
       	menuView.init('/app/', function(loginInfo) { });
-      });
+      }(MENUVIEW));
     </script>
 
   </body>
