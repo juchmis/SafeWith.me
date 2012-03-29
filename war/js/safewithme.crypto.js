@@ -23,7 +23,7 @@
 /**
  * A wrapper for OpenPGP encryption logic
  */
-var CRYPTO = (function (window, openpgp, UTIL, SERVER) {
+var CRYPTO = (function (window, openpgp, util, server) {
 	var self = {};
 	
 	var privateKey;		// user's private key
@@ -36,7 +36,7 @@ var CRYPTO = (function (window, openpgp, UTIL, SERVER) {
 	 * Check if user already has a public key on the server and if not,
 	 * generate a new keypait for the user
 	 */
-	self.initKeyPair = function(loginInfo, server, callback, displayCallback, finishCallback) {
+	self.initKeyPair = function(loginInfo, callback, displayCallback, finishCallback) {
 		// check if user already has a key on the server
 		if (loginInfo.publicKeyId) {
 			// decode base 64 key ID
@@ -48,7 +48,7 @@ var CRYPTO = (function (window, openpgp, UTIL, SERVER) {
 			// user has no key on the server yet
 			displayCallback(function() {
 				// generate new key pair
-				self.createAndPersistKeys(loginInfo.email, server, function(keyId) {
+				self.createAndPersistKeys(loginInfo.email, function(keyId) {
 					callback(keyId);
 					finishCallback();
 				});
@@ -59,7 +59,7 @@ var CRYPTO = (function (window, openpgp, UTIL, SERVER) {
 	/**
 	 * Generate a new key pair for the user and persist the public key on the server
 	 */
-	self.createAndPersistKeys = function(email, server, callback) {
+	self.createAndPersistKeys = function(email, callback) {
 		// generate 2048 bit RSA keys
 		var keys = self.generateKeys(2048, email);
 		
@@ -135,7 +135,7 @@ var CRYPTO = (function (window, openpgp, UTIL, SERVER) {
 		bb.append(publicKey.armored);
 		bb.append(privateKey.armored);
 
-		UTIL.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
+		util.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
 	};
 	
 	/**
@@ -188,7 +188,7 @@ var CRYPTO = (function (window, openpgp, UTIL, SERVER) {
 	/**
 	 * Get the keypair from the server and import them into localstorage
 	 */
-	self.fetchKeys = function(email, keyId, server, callback) {
+	self.fetchKeys = function(email, keyId, callback) {
 		var base64Key = window.btoa(keyId);
 		var encodedKeyId = encodeURIComponent(base64Key);
 		// GET public key

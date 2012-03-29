@@ -29,14 +29,14 @@ var CRYPTOVIEW = (function (window, $) {
 	/**
 	 * init UI
 	 */
-	self.init = function(loginInfo, server, callback) {
+	self.init = function(loginInfo, callback) {
 
 		// check server for user's public key ID
-		self.presenter.initKeyPair(loginInfo, server, function(keyId) {
+		self.presenter.initKeyPair(loginInfo, function(keyId) {
 			// read corresponding keys from localstorage
 			self.presenter.readKeys(loginInfo.email, keyId, callback, function() {
 				// import keys from server if no matching keys are found in local storage
-				self.presenter.fetchKeys(loginInfo.email, keyId, server, function(keys) {
+				self.presenter.fetchKeys(loginInfo.email, keyId, function(keys) {
 					// TODO: display dialog asking the user for his passphrase
 					
 					// try to read keys from local storage again

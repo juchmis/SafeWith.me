@@ -46,7 +46,7 @@ var SAFEWITHME = (function (window, navigator, UTIL, MENU, MENUVIEW, SERVER, CRY
 
 		// init crypto view for logged in user
 		CRYPTOVIEW.presenter = CRYPTO;
-		CRYPTOVIEW.init(loginInfo, SERVER, function() {
+		CRYPTOVIEW.init(loginInfo, function() {
 
 			// init fs view after menu/login
 			FSVIEW.presenter = FS;
