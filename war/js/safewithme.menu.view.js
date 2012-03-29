@@ -23,14 +23,14 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var MENUVIEW = (function ($) {
+var MENUVIEW = (function ($, menu) {
 	var self = {};
 
 	/**
 	 * init UI
 	 */
 	self.init = function(goal, callback) {
-		self.presenter.getLoginInfo(goal, function(loginInfo) {
+		menu.getLoginInfo(goal, function(loginInfo) {
 			self.updateLogin(loginInfo);
 			callback(loginInfo);
 		});
@@ -52,4 +52,4 @@ var MENUVIEW = (function ($) {
 	};
 	
 	return self;
-}($));
+}($, MENU));

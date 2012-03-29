@@ -23,7 +23,7 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var CRYPTOVIEW = (function (window, $) {
+var CRYPTOVIEW = (function (window, $, crypto) {
 	var self = {};
 
 	/**
@@ -32,15 +32,15 @@ var CRYPTOVIEW = (function (window, $) {
 	self.init = function(loginInfo, callback) {
 
 		// check server for user's public key ID
-		self.presenter.initKeyPair(loginInfo, function(keyId) {
+		crypto.initKeyPair(loginInfo, function(keyId) {
 			// read corresponding keys from localstorage
-			self.presenter.readKeys(loginInfo.email, keyId, callback, function() {
+			crypto.readKeys(loginInfo.email, keyId, callback, function() {
 				// import keys from server if no matching keys are found in local storage
-				self.presenter.fetchKeys(loginInfo.email, keyId, function(keys) {
+				crypto.fetchKeys(loginInfo.email, keyId, function(keys) {
 					// TODO: display dialog asking the user for his passphrase
 					
 					// try to read keys from local storage again
-					self.presenter.readKeys(loginInfo.email, keyId, function() {
+					crypto.readKeys(loginInfo.email, keyId, function() {
 						alert('Key import from server successful!');
 						callback();
 					});
@@ -54,7 +54,7 @@ var CRYPTOVIEW = (function (window, $) {
 				
 				// read passphrase
 				var passphrase = $('#passphrase').val();
-				self.presenter.setPassphrase(passphrase);
+				crypto.setPassphrase(passphrase);
 				// display progressbar
 				var pogressbar = '<div class="progress progress-danger progress-striped active"><div class="bar" style="width: 100%;"></div></div>';
 				$('#keygenStatus').html(pogressbar);
@@ -67,7 +67,7 @@ var CRYPTOVIEW = (function (window, $) {
 
 		}, function() {
 			// create export keys link
-			self.presenter.exportKeys(function(url) {
+			crypto.exportKeys(function(url) {
 				// show completion message
 				var anchor = '<a style="float:right" class="btn btn-large btn-danger" download="safewithme.keys.txt" href="' + url + '">Export Keys</a>';
 				var msg = '<h2 class="alert alert-success">Completed! ' + anchor + '</h2>';
@@ -86,11 +86,11 @@ var CRYPTOVIEW = (function (window, $) {
 			var publicKey = keyText.split(privKeyBoarder)[0];
 			
 			var passphrase = $('#passphrase').val();
-			self.presenter.setPassphrase(passphrase);
-			self.presenter.importKeys(publicKey, privateKey);
+			crypto.setPassphrase(passphrase);
+			crypto.importKeys(publicKey, privateKey);
 			
 			// try to read the keys again after import
-			self.presenter.readKeys(loginInfo.email, keyId, function() {
+			crypto.readKeys(loginInfo.email, keyId, function() {
 				// success
 				$('#importKeysModal').modal('hide');
 				callback();
@@ -103,4 +103,4 @@ var CRYPTOVIEW = (function (window, $) {
 	};
 	
 	return self;
-}(window, $));
+}(window, $, CRYPTO));

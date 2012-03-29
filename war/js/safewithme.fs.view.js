@@ -23,8 +23,7 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var FSVIEW = (function (window, document, $) {
-	
+var FSVIEW = (function (window, document, $, fs) {
 	var self = {};
 	
 	/**
@@ -53,10 +52,10 @@ var FSVIEW = (function (window, document, $) {
 		document.getElementById('files').addEventListener('change', handleFileSelect, false);
 		
 		// get user's bucket if logged in
-		self.presenter.getBuckets(function(buckets) {
+		fs.getBuckets(function(buckets) {
 			// if the user does not have any buckets create a default bucket for him
 			if (buckets.length === 0) {
-				self.presenter.createBucket('Personal Documents', function(bucket) {
+				fs.createBucket('Personal Documents', function(bucket) {
 					self.displayBucket(bucket, 0, 1);
 				});
 			} else {
@@ -75,13 +74,13 @@ var FSVIEW = (function (window, document, $) {
 		$('#encryptModal').on('shown', function() {
 			
 			// read, encrypt and upload encrypted file to server
-			self.presenter.readFile(file, function(blobKey, cryptoKey) {
+			fs.readFile(file, function(blobKey, cryptoKey) {
 				// add file to bucket fs
-				var fsFile = new self.presenter.File(file.name, file.size, file.type, blobKey, cryptoKey);
-				var bucket = self.presenter.currentBucket();
-				var bucketFS = self.presenter.currentBucketFS();
+				var fsFile = new fs.File(file.name, file.size, file.type, blobKey, cryptoKey);
+				var bucket = fs.currentBucket();
+				var bucketFS = fs.currentBucketFS();
 
-				self.presenter.addFileToBucketFS(fsFile, bucketFS, bucket, function() {
+				fs.addFileToBucketFS(fsFile, bucketFS, bucket, function() {
 					// hide progress bar
 					$('#encryptModal').modal('hide');
 					
@@ -101,10 +100,10 @@ var FSVIEW = (function (window, document, $) {
 	 */
 	self.displayBucket = function(bucket, index, numBuckets) {
 		// get bucket FS
-		var bucketFS = self.presenter.getBucketFS(bucket.encryptedFS);
+		var bucketFS = fs.getBucketFS(bucket.encryptedFS);
 			
 		// cache local user buckets and fs
-		self.presenter.cacheBucket(bucket, bucketFS);
+		fs.cacheBucket(bucket, bucketFS);
 		
 		// add bucket to accordion
 		var html = '<li class="nav-header">' + bucketFS.name + '</li>';
@@ -162,7 +161,7 @@ var FSVIEW = (function (window, document, $) {
 				return false;
 			}
 			
-			self.presenter.shareFile(file, 'shared by ' + senderEmail , shareEmail, function(sharedBucket) {
+			fs.shareFile(file, 'shared by ' + senderEmail , shareEmail, function(sharedBucket) {
 				$('#encryptModal').modal('hide');
 			}, function() {
 				$('#shareModal').modal('hide');
@@ -181,7 +180,7 @@ var FSVIEW = (function (window, document, $) {
 		// wait for modal to appear, then start decryption
 		$('#decryptModal').on('shown', function() {
 			
-			self.presenter.getFile(file, function(decrypted) {
+			fs.getFile(file, function(decrypted) {
 				// hide progress bar
 				$('#decryptModal').modal('hide');
 				self.displayDoc(decrypted);
@@ -196,10 +195,10 @@ var FSVIEW = (function (window, document, $) {
 	};
 	
 	self.deleteDocItem = function(blobKey) {
-		self.presenter.deleteFile(blobKey, function() {
-			var bucket = self.presenter.currentBucket();
-			var bucketFS = self.presenter.currentBucketFS();
-			self.presenter.deleteFileFromBucketFS(blobKey, bucketFS, bucket, function() {
+		fs.deleteFile(blobKey, function() {
+			var bucket = fs.currentBucket();
+			var bucketFS = fs.currentBucketFS();
+			fs.deleteFileFromBucketFS(blobKey, bucketFS, bucket, function() {
 				$('[href="' + blobKey + '"]').remove();
 			});
 		});
@@ -213,4 +212,4 @@ var FSVIEW = (function (window, document, $) {
 	};
 	
 	return self;
-}(window, document, $));
+}(window, document, $, FS));
