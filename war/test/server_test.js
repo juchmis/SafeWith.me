@@ -1,8 +1,8 @@
 module("Server");
 
 asyncTest("Upload, Download, Delete blob", 4, function() {
-	var util = new Util();
-	var server = new Server(util);
+	var util = UTIL;
+	var server = SERVER;
 	
 	// create blob for uploading
 	var ctAB = util.binStr2ArrBuf(testImg1Base64);

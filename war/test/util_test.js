@@ -8,13 +8,13 @@ test("JQuery and basic requirements", 10, function() {
 	ok( RegExp, "RegExp" );
 	ok( jQuery, "jQuery" );
 	ok( $, "$" );
-	ok( new Util().arrBuf2Blob('', ''), "BlobBuilder Api" );
+	ok( UTIL.arrBuf2Blob('', ''), "BlobBuilder Api" );
 	ok( window.requestFileSystem || window.webkitRequestFileSystem, "FileSystem Api" );
 	ok( window.URL || window.webkitURL || window.mozURL, "ObjectURL Api" );
 });
 
 asyncTest("String -> ArrayBuffer -> String", 3, function() {
-	var util = new Util();
+	var util = UTIL;
 	
 	var input = "asdf";
 	var buf = util.binStr2ArrBuf(input);
@@ -31,7 +31,7 @@ asyncTest("String -> ArrayBuffer -> String", 3, function() {
 });
 
 asyncTest("Create URL", 2, function() {
-	var util = new Util();
+	var util = UTIL;
 	
 	// Create a new Blob and write it to log.txt.
 	var blob = util.arrBuf2Blob('asdf', 'text/plain');
