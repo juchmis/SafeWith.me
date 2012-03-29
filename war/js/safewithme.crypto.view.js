@@ -23,14 +23,13 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-function CryptoView() {
-
-	var self = this;
+var CRYPTOVIEW = (function (window, $) {
+	var self = {};
 
 	/**
 	 * init UI
 	 */
-	this.init = function(loginInfo, server, callback) {
+	self.init = function(loginInfo, server, callback) {
 
 		// check server for user's public key ID
 		self.presenter.initKeyPair(loginInfo, server, function(keyId) {
@@ -77,7 +76,7 @@ function CryptoView() {
 		});
 	};
 	
-	this.showImportKeys = function(loginInfo, keyId, callback) {
+	self.showImportKeys = function(loginInfo, keyId, callback) {
 		$('#importKeysModal').modal('show');
 		
 		$('#importBtn').click(function() {
@@ -102,4 +101,6 @@ function CryptoView() {
 			});
 		});
 	};
-}
+	
+	return self;
+}(window, $));

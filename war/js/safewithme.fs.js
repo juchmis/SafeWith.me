@@ -24,9 +24,12 @@
  * This class implements all logic required for filesystem and
  * I/O between the browser's HTML5 File Apis and the application.
  */
-function FS(crypto, server, util) {
+var FS = (function (crypto, server, util) {
+	var self = {};	
+	
+	var bucketCache = [];	// a cache for bucket pointer and their respectable fs
 
-	this.BucketFS = function(id, name, ownerEmail) {
+	self.BucketFS = function(id, name, ownerEmail) {
 		this.version = "1.0";
 		this.id = id;
 		this.name = name;
@@ -35,14 +38,14 @@ function FS(crypto, server, util) {
 		this.root = [];	// format the fs :)
 	};
 	
-	this.Directory = function(name) {
+	self.Directory = function(name) {
 		this.type = "dir";
 		this.name = name;
 		this.created = new Date().toISOString();
 		this.children = [];
 	};
 	
-	this.File = function(name, size, mimeType, blobKey, cryptoKey) {
+	self.File = function(name, size, mimeType, blobKey, cryptoKey) {
 		this.type = "file";
 		this.name = name;
 		this.size = size;			// note: this is the unencrypted file size!
@@ -52,10 +55,7 @@ function FS(crypto, server, util) {
 		this.cryptoKey = cryptoKey;	// secret key required to decrypt the file
 	};
 
-	var self = this;
-	var bucketCache = [];	// a cache for bucket pointer and their respectable fs
-
-	this.cacheBucket = function(bucket, bucketFS) {
+	self.cacheBucket = function(bucket, bucketFS) {
 		var pair = {
 			bucket : bucket,
 			bucketFS : bucketFS
@@ -63,12 +63,12 @@ function FS(crypto, server, util) {
 		bucketCache.push(pair);
 	};
 
-	this.currentBucket = function() {
+	self.currentBucket = function() {
 		// at the moment each user only has one
 		return bucketCache[0].bucket;
 	};
 
-	this.currentBucketFS = function() {
+	self.currentBucketFS = function() {
 		// at the moment each user only has one
 		return bucketCache[0].bucketFS;
 	};
@@ -78,7 +78,7 @@ function FS(crypto, server, util) {
 	 * using the HTML5 FileReader Api, encrypts the file locally
 	 * and upload encrypted blob to server
 	 */
-	this.readFile = function(file, callback) {
+	self.readFile = function(file, callback) {
 		// convert file/blob to binary string
 		util.blob2BinStr(file, function(binStr) {
 			
@@ -101,7 +101,7 @@ function FS(crypto, server, util) {
 	/**
 	 * Downloads the encrypted document and decrypt it
 	 */
-	this.getFile = function(file, callback) {
+	self.getFile = function(file, callback) {
 		// get encrypted ArrayBuffer from server
 		server.downloadBlob(file.blobKey, function(blob) {
 			// read blob as binary string
@@ -123,7 +123,7 @@ function FS(crypto, server, util) {
 	/**
 	 * Deletes an encrypted file blob and removes it from the bucket FS
 	 */
-	this.deleteFile = function(blobKey, callback) {
+	self.deleteFile = function(blobKey, callback) {
 		server.deleteBlob(blobKey, function(resp) {
 			callback();
 		});
@@ -132,7 +132,7 @@ function FS(crypto, server, util) {
 	/**
 	 * Get bucket pointers from server
 	 */
-	this.getBuckets = function(callback) {
+	self.getBuckets = function(callback) {
 		server.call('GET', '/app/buckets', function(buckets) {
 			callback(buckets);
 		});
@@ -141,7 +141,7 @@ function FS(crypto, server, util) {
 	/**
 	 * Get bucket FS from bucket and decrypt it
 	 */
-	this.getBucketFS = function(encryptedFS) {
+	self.getBucketFS = function(encryptedFS) {
 		var jsonFS =  crypto.asymmetricDecrypt(encryptedFS);
 		var bucketFS = JSON.parse(jsonFS);
 		
@@ -151,7 +151,7 @@ function FS(crypto, server, util) {
 	/**
 	 * Add a file to the currentyl selected bucket fs
 	 */
-	this.addFileToBucketFS = function(file, bucketFS, bucket, callback) {
+	self.addFileToBucketFS = function(file, bucketFS, bucket, callback) {
 		// at the moment directories are not yet implemented
 		bucketFS.root.push(file);
 		
@@ -164,7 +164,7 @@ function FS(crypto, server, util) {
 	/**
 	 * Delete a file from the currentyl selected bucket fs
 	 */
-	this.deleteFileFromBucketFS = function(fileBlobKey, bucketFS, bucket, callback) {
+	self.deleteFileFromBucketFS = function(fileBlobKey, bucketFS, bucket, callback) {
 		// rm file from root
 		for (var i = 0; i < bucketFS.root.length; i++) {
 			var current = bucketFS.root[i];
@@ -182,7 +182,7 @@ function FS(crypto, server, util) {
 	/**
 	 * Convert BucketFS to a JSON string, encrypt and then upload
 	 */
-	this.persistBucketFS = function(bucketFS, bucket, callback, publicKey) {
+	self.persistBucketFS = function(bucketFS, bucket, callback, publicKey) {
 		var jsonFS = JSON.stringify(bucketFS);
 		
 		var encryptedFS = null;
@@ -208,7 +208,7 @@ function FS(crypto, server, util) {
 	 * The bucket FS is then ecrypted and persited on the server in order to
 	 * get a new blob-key, which is then updated on the bucket pointer.
 	 */
-	this.createBucket = function(name, callback) {
+	self.createBucket = function(name, callback) {
 		server.call('POST', '/app/buckets', function(bucket) {
 			
 			// initialize bucket file system
@@ -222,7 +222,7 @@ function FS(crypto, server, util) {
 	/**
 	 * Delete a bucket from the server.
 	 */
-	this.removeBucket = function(bucket, callback) {
+	self.removeBucket = function(bucket, callback) {
 		// TODO: delete any containing file blobs
 		
 		// delete bucket DTO in datastore
@@ -231,7 +231,10 @@ function FS(crypto, server, util) {
 		});
 	};
 	
-	this.shareFile = function(file, shareBucketName, shareEmail, callback, displayCallback) {
+	/**
+	 * Share a file with another user
+	 */
+	self.shareFile = function(file, shareBucketName, shareEmail, callback, displayCallback) {
 		// get recipient's public
 		server.call('GET', '/app/publicKeys?email=' + shareEmail, function(recipientKey) {
 			
@@ -257,7 +260,7 @@ function FS(crypto, server, util) {
 				}, recipientKey.asciiArmored);
 			});
 		});
-		
 	};
 	
-}
+	return self;
+}(CRYPTO, SERVER, UTIL));

@@ -18,14 +18,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-function Util() {	
+'use strict';
+
+var UTIL = (function (window) {
+	var self = {};
 	
 	/**
 	 * Converts a binary String (e.g. from the FileReader Api) to an ArrayBuffer
 	 * @param str [String] a binary string with integer values (0..255) per character
 	 * @return [ArrayBuffer] either a data url or a filesystem url
 	 */
-	this.binStr2ArrBuf = function(str) {
+	self.binStr2ArrBuf = function(str) {
 		var b = new ArrayBuffer(str.length);
 		var buf = new Uint8Array(b);
 		
@@ -41,7 +44,7 @@ function Util() {
 	 * @param str [String] a binary string with integer values (0..255) per character
 	 * @return [ArrayBuffer] either a data url or a filesystem url
 	 */
-	this.arrBuf2Blob = function(buf, mimeType) {
+	self.arrBuf2Blob = function(buf, mimeType) {
 		// check for BlobBuilder support
 		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 		if (!window.BlobBuilder) {
@@ -60,7 +63,7 @@ function Util() {
 	 * @param blob [Blob/File] a blob containing the the binary data
 	 * @return [String] a binary string with integer values (0..255) per character
 	 */
-	this.blob2BinStr = function(blob, callback) {
+	self.blob2BinStr = function(blob, callback) {
 		var reader = new FileReader();
 
 		reader.onload = function(event) {
@@ -76,44 +79,41 @@ function Util() {
 	 * @param blob [Blob] a file blob built with the BlobBuilder Api
 	 * @return [String] either a data url or a filesystem url
 	 */
-	this.createUrl = function(fileName, blob, callback) {
+	self.createUrl = function(fileName, blob, callback) {
 		// check browser support
 		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 		window.URL = window.URL || window.webkitURL || window.mozURL;
 		
-		// try using HTML5 filesystem api
-		if (window.requestFileSystem) {
-			
-			// open file with filesystem apis
-			function onInitFs(fs) {
-				fs.root.getFile(fileName, {create: true}, function(fileEntry) {
+		// open file with filesystem apis
+		function onInitFs(fs) {
+			fs.root.getFile(fileName, {create: true}, function(fileEntry) {
 
-					// Create a FileWriter object for our FileEntry
-					fileEntry.createWriter(function(fileWriter) {
-						fileWriter.onwriteend = function(e) {
-							var url = fileEntry.toURL();
-							callback(url);
-						};
+				// Create a FileWriter object for our FileEntry
+				fileEntry.createWriter(function(fileWriter) {
+					fileWriter.onwriteend = function(e) {
+						var url = fileEntry.toURL();
+						callback(url);
+					};
 
-						fileWriter.onerror = function(e) {
-						  console.log('Write failed: ' + e.toString());
-						};
+					fileWriter.onerror = function(e) {
+					  console.log('Write failed: ' + e.toString());
+					};
 
-						fileWriter.write(blob);
-					});
+					fileWriter.write(blob);
 				});
-			}
-			
+			});
+		}
+		
+		if (window.requestFileSystem) {
+			// try using HTML5 filesystem api
 			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
 			
 		} else if (window.URL) {
-			
 			// use blob URL api
 			var url = window.URL.createObjectURL(blob);
 			callback(url);
 			
 		} else {
-			
 			// open file as data url
 			var reader = new FileReader();
 			reader.onload = function(event) {
@@ -121,8 +121,8 @@ function Util() {
 				callback(url);
 			};
 			reader.readAsDataURL(blob);
-			
 		}
 	};
 	
-}
+	return self;
+}(window));

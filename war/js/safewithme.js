@@ -28,24 +28,16 @@
  * encrypted before being persisted on the server. This way the server has
  * no knowledge of file meta-data such as filenames.
  */
-function SafeWithMe() {
+var SAFEWITHME = (function (window, navigator, UTIL, MENU, MENUVIEW, SERVER, CRYPTO, CRYPTOVIEW, FS, FSVIEW) {
 
 	// check if browser is supported
 	if (!checkBrowser()) {
 		return;
 	}
 
-	// init presenters
-	var util = new Util();
-	var crypto = new Crypto(util);
-	var server = new Server(util);
-	var menu = new Menu();
-	var fs = new FS(crypto, server, util);
-
 	// init menu view
-	var menuView = new MenuView();
-	menuView.presenter = menu;
-	menuView.init('/', function(loginInfo) {
+	MENUVIEW.presenter = MENU;
+	MENUVIEW.init('/', function(loginInfo) {
 		
 		// check if user is logged in
 		if (!loginInfo.loggedIn || !loginInfo.email) {
@@ -53,39 +45,30 @@ function SafeWithMe() {
 		}
 
 		// init crypto view for logged in user
-		var cryptoView = new CryptoView();
-		cryptoView.presenter = crypto;
-		cryptoView.init(loginInfo, server, function() {
+		CRYPTOVIEW.presenter = CRYPTO;
+		CRYPTOVIEW.init(loginInfo, SERVER, function() {
 
 			// init fs view after menu/login
-			var fsView = new FSView();
-			fsView.presenter = fs;
-			fsView.init();
+			FSVIEW.presenter = FS;
+			FSVIEW.init();
 		});
 	});
 
-}
+	/**
+	 * Check if a supported browser is being used
+	 */
+	function checkBrowser() {
+		function check(browser) {
+			// does the user agent contain the name of the browser
+			return navigator.userAgent.indexOf(browser) !== -1;
+		}
 
-/**
- * Check if a supported browser is being used
- */
-function checkBrowser() {
-	function check(browser) {
-		// does the user agent contain the name of the browser
-		return navigator.userAgent.indexOf(browser) !== -1;
+		if (!check('Chrome') && !check('Android')) {
+			window.alert('Sorry, SafeWith.me is currently supported only on Chrome and Android.');
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
-	if (!check('Chrome') && !check('Android')) {
-		alert('Sorry, SafeWith.me is currently supported only on Chrome and Android.');
-		return false;
-	} else {
-		return true;
-	}
-}
-
-/**
- * Init on document ready
- */
-$(function() {
-	var safeWithMe = new SafeWithMe();
-});
+}(window, navigator, UTIL, MENU, MENUVIEW, SERVER, CRYPTO, CRYPTOVIEW, FS, FSVIEW));

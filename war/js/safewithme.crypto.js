@@ -23,21 +23,20 @@
 /**
  * A wrapper for OpenPGP encryption logic
  */
-function Crypto(myUtil) {
-
-	// initialize OpenPGP.js
-	openpgp.init();
+var CRYPTO = (function (window, openpgp, UTIL, SERVER) {
+	var self = {};
 	
-	var self = this;
 	var privateKey;		// user's private key
 	var publicKey;		// user's public key
 	var passphrase;		// user's passphrase used for decryption
+
+	openpgp.init();		// initialize OpenPGP.js
 	
 	/**
 	 * Check if user already has a public key on the server and if not,
 	 * generate a new keypait for the user
 	 */
-	this.initKeyPair = function(loginInfo, server, callback, displayCallback, finishCallback) {
+	self.initKeyPair = function(loginInfo, server, callback, displayCallback, finishCallback) {
 		// check if user already has a key on the server
 		if (loginInfo.publicKeyId) {
 			// decode base 64 key ID
@@ -60,7 +59,7 @@ function Crypto(myUtil) {
 	/**
 	 * Generate a new key pair for the user and persist the public key on the server
 	 */
-	this.createAndPersistKeys = function(email, server, callback) {
+	self.createAndPersistKeys = function(email, server, callback) {
 		// generate 2048 bit RSA keys
 		var keys = self.generateKeys(2048, email);
 		
@@ -96,7 +95,7 @@ function Crypto(myUtil) {
 	 * @email [string] user's email address
 	 * @pass [string] a passphrase used to protect the private key
 	 */
-	this.generateKeys = function(numBits, email) {
+	self.generateKeys = function(numBits, email) {
 		// check passphrase
 		if (!passphrase) { throw 'No passphrase set!'; }
 		
@@ -111,7 +110,7 @@ function Crypto(myUtil) {
 	/**
 	 * Import the users key into the HTML5 local storage
 	 */
-	this.importKeys = function(publicKeyArmored, privateKeyArmored, email) {
+	self.importKeys = function(publicKeyArmored, privateKeyArmored, email) {
 		// check passphrase
 		if (!passphrase) { throw 'No passphrase set!'; }
 		
@@ -127,7 +126,7 @@ function Crypto(myUtil) {
 	/**
 	 * Export the keys by using the HTML5 FileWriter
 	 */
-	this.exportKeys = function(callback) {
+	self.exportKeys = function(callback) {
 		// Create a new Blob and write it to log.txt.
 		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 		var bb = new BlobBuilder();
@@ -136,7 +135,7 @@ function Crypto(myUtil) {
 		bb.append(publicKey.armored);
 		bb.append(privateKey.armored);
 
-		myUtil.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
+		UTIL.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
 	};
 	
 	/**
@@ -144,7 +143,7 @@ function Crypto(myUtil) {
 	 * @email [string] user's email address
 	 * @keyId [string] the public key ID in unicode (not base 64)
 	 */
-	this.readKeys = function(email, keyId, callback, errorCallback) {
+	self.readKeys = function(email, keyId, callback, errorCallback) {
 		// read keys from local storage
 		var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(email);
 		var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(email);
@@ -189,8 +188,8 @@ function Crypto(myUtil) {
 	/**
 	 * Get the keypair from the server and import them into localstorage
 	 */
-	this.fetchKeys = function(email, keyId, server, callback) {
-		var base64Key = btoa(keyId);
+	self.fetchKeys = function(email, keyId, server, callback) {
+		var base64Key = window.btoa(keyId);
 		var encodedKeyId = encodeURIComponent(base64Key);
 		// GET public key
 		server.call('GET', '/app/publicKeys?keyId=' + encodedKeyId, function(publicKey) {
@@ -207,35 +206,35 @@ function Crypto(myUtil) {
 	/**
 	 * Get the current user's private key
 	 */
-	this.getPrivateKey = function() {
+	self.getPrivateKey = function() {
 		return privateKey.armored;
 	};
 
 	/**
 	 * Get the current user's public key
 	 */
-	this.getPublicKey = function() {
+	self.getPublicKey = function() {
 		return publicKey.armored;
 	};
 
 	/**
 	 * Get the current user's base64 encoded public key ID
 	 */
-	this.getPublicKeyIdBase64 = function() {
+	self.getPublicKeyIdBase64 = function() {
 		return window.btoa(publicKey.keyId);
 	};
 	
 	/**
 	 * Get the user's passphrase for decrypting their private key
 	 */
-	this.setPassphrase = function(pass) {
+	self.setPassphrase = function(pass) {
 		passphrase = pass;
 	};
 	
 	/**
 	 * Encrypt a string
 	 */
-	this.asymmetricEncrypt = function(plaintext, customPubKey) {
+	self.asymmetricEncrypt = function(plaintext, customPubKey) {
 		var pub_key = null;
 		if (customPubKey) {
 			// use a custom set public for e.g. or sharing
@@ -253,7 +252,7 @@ function Crypto(myUtil) {
 	/**
 	 * Decrypt a string
 	 */
-	this.asymmetricDecrypt = function(cipher) {
+	self.asymmetricDecrypt = function(cipher) {
 		var priv_key = openpgp.read_privateKey(privateKey.armored);
 	
 	    var msg = openpgp.read_message(cipher);
@@ -291,7 +290,7 @@ function Crypto(myUtil) {
 	/**
 	 * Deterministic convergent enctryption using SHA-1, SHA-256, and 256 bit AES CFB mode
 	 */
-	this.symmetricEncrypt = function(data) {
+	self.symmetricEncrypt = function(data) {
 		// get sha1 of data
 		var sha1 = str_sha1(data);
 		// generate 256 bit encryption key
@@ -301,23 +300,22 @@ function Crypto(myUtil) {
 		// encrypt using 256 bit AES (9)
 		var ct = openpgp_crypto_symmetricEncrypt(prefixrandom, 9, key, data, 0);
 
-		return { key: btoa(key), ct: ct };
+		return { key: window.btoa(key), ct: ct };
 	};
 
 	/**
 	 * Decrypt using symmetric 256 bit AES CFB mode
 	 */
-	this.symmetricDecrypt = function(key, ciphertext) {
+	self.symmetricDecrypt = function(key, ciphertext) {
 		// decrypt using 256 bit AES (9)
-		var pt = openpgp_crypto_symmetricDecrypt(9, atob(key), ciphertext, 0);
+		var pt = openpgp_crypto_symmetricDecrypt(9, window.atob(key), ciphertext, 0);
 		return pt;
 	};
-
-}
+	
+	return self;
+}(window, openpgp, UTIL, SERVER));
 
 /**
- * This function needs to be implemented, since it is used be the openpgp utils
+ * This function needs to be implemented, since it is used by the openpgp utils
  */
-function showMessages(str) {
-	//$('#debug').append(str);
-}
+function showMessages(str) {}

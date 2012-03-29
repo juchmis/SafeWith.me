@@ -23,14 +23,13 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-function MenuView() {
-
-	var self = this;
+var MENUVIEW = (function ($) {
+	var self = {};
 
 	/**
 	 * init UI
 	 */
-	this.init = function(goal, callback) {
+	self.init = function(goal, callback) {
 		self.presenter.getLoginInfo(goal, function(loginInfo) {
 			self.updateLogin(loginInfo);
 			callback(loginInfo);
@@ -40,7 +39,7 @@ function MenuView() {
 	/**
 	 * Changes the login anchor archording to the login status
 	 */
-	this.updateLogin = function(loginInfo) {
+	self.updateLogin = function(loginInfo) {
 		var anchor = '';
 		if (loginInfo.loggedIn) {
 			anchor = 'Logout <a href="' + loginInfo.logoutUrl + '">' + loginInfo.email + '</a>';
@@ -51,4 +50,6 @@ function MenuView() {
 		
 		$('#login').html(anchor);
 	};
-}
+	
+	return self;
+}($));

@@ -23,9 +23,8 @@
 /**
  * This class handles all communication with the server
  */
-function Server(util) {
-	
-	var self = this;
+var SERVER = (function ($, UTIL) {
+	var self = {};
 	
 	//
 	// Generic REST service requests
@@ -34,7 +33,7 @@ function Server(util) {
 	/**
 	 * Make a REST service call
 	 */
-	this.call = function(httpMethod, uri, callback) {
+	self.call = function(httpMethod, uri, callback) {
 		$.ajax({
 			type: httpMethod,
 			url: uri,
@@ -50,7 +49,7 @@ function Server(util) {
 	/**
 	 * Make a REST service call defining the contents of the HTTP body
 	 */
-	this.upload = function(httpMethod, uri, contentType, body, callback) {
+	self.upload = function(httpMethod, uri, contentType, body, callback) {
 		$.ajax({
 			type: httpMethod,
 			url: uri,
@@ -73,7 +72,7 @@ function Server(util) {
 	 * Upload a file by first getting an upload url and then posting
 	 * the file data to the specified uri
 	 */
-	this.uploadBlob = function(blob, md5, callback) {
+	self.uploadBlob = function(blob, md5, callback) {
 		
 		// upload blob to blobstore
 		function postBlob(postUrl) {
@@ -111,14 +110,14 @@ function Server(util) {
 	/**
 	 * Download a blob from the blobstore
 	 */
-	this.downloadBlob = function(blobKey, callback) {
+	self.downloadBlob = function(blobKey, callback) {
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', '/app/blobs?blob-key=' + blobKey, true);
 		xhr.responseType = 'arraybuffer';
 
 		xhr.onload = function(e) {
 			if (this.status == 200) {
-				var blob = util.arrBuf2Blob(this.response, 'application/octet-stream');
+				var blob = UTIL.arrBuf2Blob(this.response, 'application/octet-stream');
 				callback(blob);
 			} else {
 				alert('Error downloading blob: ' + this.status);
@@ -131,11 +130,12 @@ function Server(util) {
 	/**
 	 * Deletes a blob from the blobstore
 	 */
-	this.deleteBlob = function(blobKey, callback) {
+	self.deleteBlob = function(blobKey, callback) {
 		var uri = '/app/blobs?blob-key=' + blobKey;
 		self.call('DELETE', uri, function(resp) {
 			callback(resp);
 		});
 	};
-
-}
+	
+	return self;
+}($, UTIL));

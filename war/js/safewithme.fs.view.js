@@ -23,14 +23,14 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-function FSView() {
+var FSVIEW = (function (window, document, $) {
 	
-	var self = this;
+	var self = {};
 	
 	/**
 	 * init UI
 	 */
-	this.init = function() {
+	self.init = function() {
 		// drag and drop area
 		var holder = document.getElementById('holder');
 		// holder.ondragover = function () { this.className = 'hover'; return false; };
@@ -70,7 +70,7 @@ function FSView() {
 	/**
 	 * Process a file after it has been droped on the droparea
 	 */
-	this.handleFileDrop = function(file) {
+	self.handleFileDrop = function(file) {
 		// wait for modal to appear, then start decryption
 		$('#encryptModal').on('shown', function() {
 			
@@ -99,7 +99,7 @@ function FSView() {
 	/**
 	 * Display a bucket in the UI
 	 */
-	this.displayBucket = function(bucket, index, numBuckets) {
+	self.displayBucket = function(bucket, index, numBuckets) {
 		// get bucket FS
 		var bucketFS = self.presenter.getBucketFS(bucket.encryptedFS);
 			
@@ -123,7 +123,7 @@ function FSView() {
 	/**
 	 * Add new documents link to the list of available documents
 	 */
-	this.addLinkToList = function(file) {
+	self.addLinkToList = function(file) {
 		var blobKey = file.blobKey;
 		var item = '<li><div>' +
 				   '<a id="deleteItem" href="' + blobKey + '"><i class="icon-remove icon-black"></i></a>' +
@@ -177,7 +177,7 @@ function FSView() {
 	/**
 	 * Downloads the encrypted document, decrypt it and display it
 	 */
-	this.showDocItem = function(file) {
+	self.showDocItem = function(file) {
 		// wait for modal to appear, then start decryption
 		$('#decryptModal').on('shown', function() {
 			
@@ -195,7 +195,7 @@ function FSView() {
 		return false;
 	};
 	
-	this.deleteDocItem = function(blobKey) {
+	self.deleteDocItem = function(blobKey) {
 		self.presenter.deleteFile(blobKey, function() {
 			var bucket = self.presenter.currentBucket();
 			var bucketFS = self.presenter.currentBucketFS();
@@ -208,8 +208,9 @@ function FSView() {
 	/**
 	 * Displays the document in the main view
 	 */
-	this.displayDoc = function(url) {
+	self.displayDoc = function(url) {
 		window.location.href = url;
 	};
 	
-}
+	return self;
+}(window, document, $));

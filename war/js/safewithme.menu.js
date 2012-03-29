@@ -20,9 +20,13 @@
 
 'use strict';
 
-function Menu() {
+var MENU = (function (window) {
+	var self = {};
 	
-	this.getLoginInfo = function(goal, callback) {
+	/**
+	 * Get login status and information from the server
+	 */
+	self.getLoginInfo = function(goal, callback) {
 		// init Login anchor
 		var uri = '/login?requestUri=' + window.location.origin + goal;
 		$.get(uri, function(loginInfo) {
@@ -30,4 +34,5 @@ function Menu() {
 		});
 	};
 	
-}
+	return self;
+}(window));
