@@ -20,7 +20,7 @@
 
 'use strict';
 
-var MENU = (function (window) {
+var MENU = (function () {
 	var self = {};
 	
 	/**
@@ -28,11 +28,11 @@ var MENU = (function (window) {
 	 */
 	self.getLoginInfo = function(goal, callback) {
 		// init Login anchor
-		var uri = '/login?requestUri=' + window.location.origin + goal;
+		var uri = '/login?requestUri=' + goal;
 		$.get(uri, function(loginInfo) {
 			callback(loginInfo);
 		});
 	};
 	
 	return self;
-}(window));
+}());
