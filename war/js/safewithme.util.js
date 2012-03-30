@@ -94,11 +94,9 @@ var UTIL = (function (window) {
 						var url = fileEntry.toURL();
 						callback(url);
 					};
-
 					fileWriter.onerror = function(e) {
 					  console.log('Write failed: ' + e.toString());
 					};
-
 					fileWriter.write(blob);
 				});
 			});
