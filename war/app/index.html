@@ -194,16 +194,15 @@
 
           <div class="modal hide fade" id="importKeysModal">
             <div class="modal-header">
-              <h3>Please import your keys</h3>
+              <h3>Key import</h3>
             </div>
             <div class="modal-body">
               <div class="alert alert-info">
-                <h4 class="alert-heading">Paste your exported PGP keys here!</h4>
+                <h4 class="alert-heading">Please enter your passphrase</h4>
               </div>
               <form>
-                <textarea id="keyTextArea" class="input-xlarge" rows="8"></textarea>
                 <label>Passphrase:</label>
-                <input id="passphrase" type="password"/>
+                <input id="passphraseImport" type="password"/>
                 <div><a id="importBtn" class="btn btn-primary btn-large">Import</a></div>
               </form>
             </div>
@@ -227,9 +226,9 @@
     <script src="../js/bootstrap-2.0.1.min.js"></script>
     <script src="../js/openpgp.min.js"></script>
     
-    <script src="../js/safewithme.min.js"></script>
+    <!--     <script src="../js/safewithme.min.js"></script> -->
     
-    <!-- <script src="../js/safewithme.util.js"></script>
+    <script src="../js/safewithme.util.js"></script>
     <script src="../js/safewithme.menu.js"></script>
     <script src="../js/safewithme.menu.view.js"></script>
     <script src="../js/safewithme.server.js"></script>
@@ -237,7 +236,7 @@
     <script src="../js/safewithme.crypto.view.js"></script>
     <script src="../js/safewithme.fs.js"></script>
     <script src="../js/safewithme.fs.view.js"></script>
-    <script src="../js/safewithme.js"></script> -->
+    <script src="../js/safewithme.js"></script>
 
   </body>
 </html>

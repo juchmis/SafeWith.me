@@ -36,22 +36,13 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 			// read corresponding keys from localstorage
 			crypto.readKeys(loginInfo.email, keyId, callback, function() {
 				// import keys from server if no matching keys are found in local storage
-				crypto.fetchKeys(loginInfo.email, keyId, function(keys) {
-					// TODO: display dialog asking the user for his passphrase
-					
-					// try to read keys from local storage again
-					crypto.readKeys(loginInfo.email, keyId, function() {
-						alert('Key import from server successful!');
-						callback();
-					});
-				});
+				self.showImportKeys(loginInfo, keyId, callback);
 			});
 			
 		}, function(genKeysCallback) {
 			
 			$('#genKeysForm').submit(function(e) {
 				e.preventDefault();
-				
 				// read passphrase
 				var passphrase = $('#passphrase').val();
 				crypto.setPassphrase(passphrase);
@@ -80,24 +71,20 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 		$('#importKeysModal').modal('show');
 		
 		$('#importBtn').click(function() {
-			var keyText = $('#keyTextArea').val();
-			var privKeyBoarder = '-----BEGIN PGP PRIVATE KEY BLOCK-----';
-			var privateKey = privKeyBoarder + keyText.split(privKeyBoarder)[1];
-			var publicKey = keyText.split(privKeyBoarder)[0];
-			
-			var passphrase = $('#passphrase').val();
+			// get passphrase
+			var passphrase = $('#passphraseImport').val();
 			crypto.setPassphrase(passphrase);
-			crypto.importKeys(publicKey, privateKey);
 			
-			// try to read the keys again after import
-			crypto.readKeys(loginInfo.email, keyId, function() {
-				// success
-				$('#importKeysModal').modal('hide');
-				callback();
-				
-			}, function() {
-				// error
-				alert('The keys you imported do not match your public key ID on the server!');
+			crypto.fetchKeys(loginInfo.email, keyId, function(keys) {
+				// try to read keys from local storage again
+				crypto.readKeys(loginInfo.email, keyId, function() {
+					window.alert('Key import from server successful!');
+					$('#importKeysModal').modal('hide');
+					callback();
+				}, function() {
+					window.alert('Key import failed... please check your passphrase!');
+					return;
+				});
 			});
 		});
 	};

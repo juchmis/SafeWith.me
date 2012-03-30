@@ -196,7 +196,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			// GET private key
 			server.call('GET', '/app/privateKeys?keyId=' + encodedKeyId, function(privateKey) {
 				// import keys
-				self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, passphrase);
+				self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, email);
 				
 				callback({ privateKey:privateKey, publicKey:publicKey });
 			});
