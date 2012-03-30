@@ -28,21 +28,30 @@
  * encrypted before being persisted on the server. This way the server has
  * no knowledge of file meta-data such as filenames.
  */
-$(function (window, navigator, menuView, cryptoView, fsView) {
+var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
+	var self = {};
 	
-	// check if browser is supported
-	if (!checkBrowser()) { return; }
+	/**
+	 * Single point of entry for the application
+	 */
+	self.init = function() {
+		// check if browser is supported
+		if (!checkBrowser()) { return; }
 
-	// init views
-	menuView.init('http://safewith.me', function(loginInfo) {
-		// check if user is logged in
-		if (!loginInfo.loggedIn || !loginInfo.email) { return; }
-		// init crypto and fs
-		cryptoView.init(loginInfo, function() {
-			fsView.init();
+		// init views
+		menuView.init('http://safewith.me', function(loginInfo) {
+			// check if user is logged in
+			if (!loginInfo.loggedIn || !loginInfo.email) { return; }
+			// init crypto and fs
+			cryptoView.init(loginInfo, function() {
+				fsView.init();
+			});
 		});
-	});
-
+	};
+	
+	/**
+	 * Checks if the current browser is supported
+	 */
 	function checkBrowser() {
 		function check(browser) {
 			return navigator.userAgent.indexOf(browser) !== -1;
@@ -55,4 +64,9 @@ $(function (window, navigator, menuView, cryptoView, fsView) {
 		}
 	}
 	
+	return self;
 }(window, navigator, MENUVIEW, CRYPTOVIEW, FSVIEW));
+
+$(function() {
+	SAFEWITHME.init();
+});
