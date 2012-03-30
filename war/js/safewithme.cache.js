@@ -27,53 +27,55 @@ var CACHE = (function (window) {
 	// Blob cache using FileSystem Apis
 	//
 	
-	self.save = function(fileName, blob, callback) {
-		initFS(function(fs) {
-			
-			fs.root.getFile(fileName, {create: true}, function(fileEntry) {
-				// Create a FileWriter object for our FileEntry
-				fileEntry.createWriter(function(fileWriter) {
-					fileWriter.onwriteend = function(e) {
-						callback();
-					};
-					fileWriter.onerror = function(e) { errorHandler(e); };
-					fileWriter.write(blob);
-				});
-			}, errorHandler);
-			
+	self.saveBlob = function(fileName, blob, callback) {
+		initFS(fileName, {create: true}, function(fileEntry) {
+			// Create a FileWriter object for our FileEntry
+			fileEntry.createWriter(function(fileWriter) {
+				fileWriter.onwriteend = function(e) {
+					callback(true);
+				};
+				fileWriter.onerror = function(e) { errorHandler(e); };
+				fileWriter.write(blob);
+			});
 		}, errorHandler);
 	};
 	
-	self.read = function(fileName, callback) {
-		initFS(function(fs) {
-			
-			fs.root.getFile(fileName, {}, function(fileEntry) {
-				fileEntry.file(function(file) {
-					callback(file);
-				});
-			}, errorHandler);
-			
-		}, errorHandler);
+	self.readBlob = function(fileName, callback) {
+		initFS(fileName, {}, function(fileEntry) {
+			fileEntry.file(function(file) {
+				// read file successful
+				callback(file);
+			});
+		}, function() {
+			// file cannot be read
+			callback(null);
+		});
 	};
 	
-	self.remove = function(fileName, callback) {
-		initFS(function(fs) {
-
-			fs.root.getFile(fileName, {create: false}, function(fileEntry) {
-				fileEntry.remove(function() {
-					callback();
-				}, errorHandler);
+	self.removeBlob = function(fileName, callback) {
+		initFS(fileName, {create: false}, function(fileEntry) {
+			fileEntry.remove(function() {
+				// deleting successful
+				callback(true);
 			}, errorHandler);
-
-		}, errorHandler);
+		}, function() {
+			// file cannot be deleted
+			callback(false);
+		});
 	};
 	
-	function initFS(onInitFs) {
+	function initFS(fileName, options, callback, errCallback) {
 		// check browser support
 		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 		window.storageInfo = window.storageInfo || window.webkitStorageInfo;
-		
-		window.webkitStorageInfo.requestQuota(window.PERSISTENT, 100*1024*1024, function(grantedBytes) {
+		// fs handler
+		function onInitFs(fs) {
+			fs.root.getFile(fileName, options, function(fileEntry) {
+				callback(fileEntry);
+			}, errCallback);
+		}
+		// request persisten storage quota
+		window.storageInfo.requestQuota(window.PERSISTENT, 100*1024*1024, function(grantedBytes) {
 			window.requestFileSystem(window.PERSISTENT, grantedBytes, onInitFs, errorHandler);
 		}, errorHandler);
 	};
