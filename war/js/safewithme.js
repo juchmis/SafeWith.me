@@ -54,7 +54,7 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 	 */
 	function checkBrowser() {
 		if (!window.BlobBuilder || !window.requestFileSystem || !window.storageInfo) {
-			window.alert('Your browser does not yet support all necessary HTML5 Apis!');
+			window.alert('Sorry, your browser does not yet support all the necessary HTML5 Apis. Try using Chrome.');
 			return false;
 		}
 		return true;
