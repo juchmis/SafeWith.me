@@ -35,13 +35,12 @@ $(function (window, navigator, menuView, cryptoView, fsView) {
 		return;
 	}
 
-	// init menu
+	// init views
 	menuView.init('http://safewith.me', function(loginInfo) {
 		// check if user is logged in
 		if (!loginInfo.loggedIn || !loginInfo.email) {
 			return;
 		}
-		
 		// init crypto and fs
 		cryptoView.init(loginInfo, function() {
 			fsView.init();
