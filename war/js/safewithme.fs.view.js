@@ -74,19 +74,12 @@ var FSVIEW = (function (window, document, $, fs) {
 		$('#encryptModal').on('shown', function() {
 			
 			// read, encrypt and upload encrypted file to server
-			fs.readFile(file, function(blobKey, cryptoKey) {
-				// add file to bucket fs
-				var fsFile = new fs.File(file.name, file.size, file.type, blobKey, cryptoKey);
-				var bucket = fs.currentBucket();
-				var bucketFS = fs.currentBucketFS();
-
-				fs.addFileToBucketFS(fsFile, bucketFS, bucket, function() {
-					// hide progress bar
-					$('#encryptModal').modal('hide');
-					
-					// display link to the file
-					self.addLinkToList(fsFile);
-				});
+			fs.storeFile(file, function() {
+				// hide progress bar
+				$('#encryptModal').modal('hide');
+			}, function(fsFile) {
+				// display link to the file
+				self.addLinkToList(fsFile);
 			});
 			
 		});
@@ -141,7 +134,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		// delete document
 		$('#deleteItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
-			self.deleteDocItem(blobKey);
+			self.deleteDocItem(file);
 		});
 		
 		// share document
@@ -179,13 +172,11 @@ var FSVIEW = (function (window, document, $, fs) {
 	self.showDocItem = function(file) {
 		// wait for modal to appear, then start decryption
 		$('#decryptModal').on('shown', function() {
-			
 			fs.getFile(file, function(decrypted) {
 				// hide progress bar
 				$('#decryptModal').modal('hide');
 				self.displayDoc(decrypted);
 			});
-
 		});
 		
 		// show progress bar
@@ -194,13 +185,9 @@ var FSVIEW = (function (window, document, $, fs) {
 		return false;
 	};
 	
-	self.deleteDocItem = function(blobKey) {
-		fs.deleteFile(blobKey, function() {
-			var bucket = fs.currentBucket();
-			var bucketFS = fs.currentBucketFS();
-			fs.deleteFileFromBucketFS(blobKey, bucketFS, bucket, function() {
-				$('[href="' + blobKey + '"]').remove();
-			});
+	self.deleteDocItem = function(file) {
+		fs.deleteFile(file, function() {
+			$('[href="' + file.blobKey + '"]').remove();
 		});
 	};
 

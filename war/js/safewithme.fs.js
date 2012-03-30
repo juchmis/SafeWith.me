@@ -24,7 +24,7 @@
  * This class implements all logic required for filesystem and
  * I/O between the browser's HTML5 File Apis and the application.
  */
-var FS = (function (crypto, server, util) {
+var FS = (function (crypto, server, util, cache) {
 	var self = {};	
 	
 	var bucketCache = [];	// a cache for bucket pointer and their respectable fs
@@ -45,7 +45,7 @@ var FS = (function (crypto, server, util) {
 		this.children = [];
 	};
 	
-	self.File = function(name, size, mimeType, blobKey, cryptoKey) {
+	self.File = function(name, size, mimeType, blobKey, cryptoKey, md5) {
 		this.type = "file";
 		this.name = name;
 		this.size = size;			// note: this is the unencrypted file size!
@@ -53,6 +53,7 @@ var FS = (function (crypto, server, util) {
 		this.mimeType = mimeType;
 		this.blobKey = blobKey;		// pointer to the encrypted blob
 		this.cryptoKey = cryptoKey;	// secret key required to decrypt the file
+		this.md5 = md5;
 	};
 
 	self.cacheBucket = function(bucket, bucketFS) {
@@ -78,7 +79,7 @@ var FS = (function (crypto, server, util) {
 	 * using the HTML5 FileReader Api, encrypts the file locally
 	 * and upload encrypted blob to server
 	 */
-	self.readFile = function(file, callback) {
+	self.storeFile = function(file, cachedCallback, callback) {
 		// convert file/blob to binary string
 		util.blob2BinStr(file, function(binStr) {
 			
@@ -88,12 +89,26 @@ var FS = (function (crypto, server, util) {
 			var ctAB = util.binStr2ArrBuf(ct.ct);
 			// create blob for uploading
 			var blob = util.arrBuf2Blob(ctAB, 'application/octet-stream');
-			
 			var ctMd5 = md5(ct.ct);
-			// upload the encrypted blob to the server
-			server.uploadBlob(blob, ctMd5, function(blobKey) {
-				// add link to the file list
-				callback(blobKey, ct.key);
+			
+			// cache the blob locally
+			cache.storeBlob(ctMd5, blob, function(success) {
+				// stop displaying message
+				cachedCallback();
+				// upload the encrypted blob to the server
+				server.uploadBlob(blob, ctMd5, function(blobKey) {
+					
+					// add file to bucket fs
+					var fsFile = new self.File(file.name, file.size, file.type, blobKey, ct.key, ctMd5);
+					var bucket = self.currentBucket();
+					var bucketFS = self.currentBucketFS();
+
+					self.addFileToBucketFS(fsFile, bucketFS, bucket, function(updatedBucket) {
+						// add link to the file list
+						callback(fsFile, updatedBucket);
+					});
+					
+				});
 			});
 		});
 	};
@@ -102,30 +117,47 @@ var FS = (function (crypto, server, util) {
 	 * Downloads the encrypted document and decrypt it
 	 */
 	self.getFile = function(file, callback) {
-		// get encrypted ArrayBuffer from server
-		server.downloadBlob(file.blobKey, function(blob) {
+		// try to fetch blob from the local cache
+		cache.readBlob(file.md5, function(blob) {
+			if (blob) {
+				handleBlob(blob);
+			} else {
+				// get encrypted ArrayBuffer from server
+				server.downloadBlob(file.blobKey, function(blob) {
+					handleBlob(blob);
+				});
+			}
+		});
+
+		function handleBlob(blob) {
 			// read blob as binary string
 			util.blob2BinStr(blob, function(encrStr) {
-				
 				// symmetrically decrypt the string
 				var pt = crypto.symmetricDecrypt(file.cryptoKey, encrStr);
 				var ptAB = util.binStr2ArrBuf(pt);
 				var blob2 = util.arrBuf2Blob(ptAB, file.mimeType);
-
 				// return either data url or filesystem url
 				util.createUrl(file.name, blob2, function(url) {
 					callback(url);
 				});	
 			});
-		});
+		}
 	};
 	
 	/**
 	 * Deletes an encrypted file blob and removes it from the bucket FS
 	 */
-	self.deleteFile = function(blobKey, callback) {
-		server.deleteBlob(blobKey, function(resp) {
-			callback();
+	self.deleteFile = function(file, callback) {
+		// delete from chache
+		cache.removeBlob(file.md5, function(success) {
+			// delete from server
+			server.deleteBlob(file.blobKey, function(resp) {
+				var bucket = self.currentBucket();
+				var bucketFS = self.currentBucketFS();
+				self.deleteFileFromBucketFS(file.blobKey, bucketFS, bucket, function() {
+					callback();
+				});
+			});
 		});
 	};
 	
@@ -263,4 +295,4 @@ var FS = (function (crypto, server, util) {
 	};
 	
 	return self;
-}(CRYPTO, SERVER, UTIL));
+}(CRYPTO, SERVER, UTIL, CACHE));

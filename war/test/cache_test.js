@@ -6,7 +6,7 @@ asyncTest("Create, Get, Delete Blob", 5, function() {
 		blob = UTIL.arrBuf2Blob(buf, 'application/octet-stream'),
 		fileName = 'test.txt';
 	
-	CACHE.saveBlob(fileName, blob, function() {
+	CACHE.storeBlob(fileName, blob, function() {
 		
 		CACHE.readBlob(fileName, function(file) {
 			ok(file);

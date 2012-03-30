@@ -27,7 +27,7 @@ var CACHE = (function (window) {
 	// Blob cache using FileSystem Apis
 	//
 	
-	self.saveBlob = function(fileName, blob, callback) {
+	self.storeBlob = function(fileName, blob, callback) {
 		initFS(fileName, {create: true}, function(fileEntry) {
 			// Create a FileWriter object for our FileEntry
 			fileEntry.createWriter(function(fileWriter) {
