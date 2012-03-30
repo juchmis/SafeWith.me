@@ -207,6 +207,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 * Get the current user's private key
 	 */
 	self.getPrivateKey = function() {
+		if (!privateKey) { return undefined; }
 		return privateKey.armored;
 	};
 
@@ -214,6 +215,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 * Get the current user's public key
 	 */
 	self.getPublicKey = function() {
+		if (!publicKey) { return undefined; }
 		return publicKey.armored;
 	};
 

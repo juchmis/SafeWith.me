@@ -31,16 +31,12 @@
 $(function (window, navigator, menuView, cryptoView, fsView) {
 	
 	// check if browser is supported
-	if (!checkBrowser()) {
-		return;
-	}
+	if (!checkBrowser()) { return; }
 
 	// init views
 	menuView.init('http://safewith.me', function(loginInfo) {
 		// check if user is logged in
-		if (!loginInfo.loggedIn || !loginInfo.email) {
-			return;
-		}
+		if (!loginInfo.loggedIn || !loginInfo.email) { return; }
 		// init crypto and fs
 		cryptoView.init(loginInfo, function() {
 			fsView.init();
@@ -49,10 +45,8 @@ $(function (window, navigator, menuView, cryptoView, fsView) {
 
 	function checkBrowser() {
 		function check(browser) {
-			// does the user agent contain the name of the browser
 			return navigator.userAgent.indexOf(browser) !== -1;
 		}
-
 		if (!check('Chrome') && !check('Android')) {
 			window.alert('Sorry, SafeWith.me is currently supported only on Chrome and Android.');
 			return false;

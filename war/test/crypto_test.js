@@ -3,7 +3,7 @@ module("Asymmetric Crypto");
 CRYPTO.setPassphrase('asdfasdf');
 var email = 'test@asdf.com';
 
-test("Generate keys", 4, function() {
+test("Generate keys", 7, function() {
 	var start = (new Date).getTime();
 	var keySize = 2048;
 	var keys = CRYPTO.generateKeys(keySize, email);
@@ -17,21 +17,33 @@ test("Generate keys", 4, function() {
 	ok(CRYPTO.getPrivateKey().indexOf('-----BEGIN PGP PRIVATE KEY BLOCK-----') === 0);
 	ok(CRYPTO.getPublicKey());
 	ok(CRYPTO.getPublicKey().indexOf('-----BEGIN PGP PUBLIC KEY BLOCK-----') === 0);
+	
+	helperEncrDecr("Hello, World!");
 });
 
 function helperEncrDecr(plaintext) {
-	var cipher = CRYPTO.asymmetricEncrypt(plaintext);
-	ok(cipher, "cipher");
-
-	var decrypted =  CRYPTO.asymmetricDecrypt(cipher);
-	ok(decrypted, "decrypted");
-
-	equal(decrypted, plaintext, "Decrypted should be the same as the plaintext");
+	if (!CRYPTO.getPublicKey()) {
+		CRYPTO.readKeys(email);
+	}
+	
+	console.log('plaintext size [bytes]: ' + plaintext.length);
+	
+	var start = (new Date).getTime();
+	var ct = CRYPTO.asymmetricEncrypt(plaintext);
+	var diff = (new Date).getTime() - start;
+	
+	console.log('Time taken for encryption [ms]: ' + diff);
+	ok(ct, "ciphertext: see console output for benchmark");
+	console.log('ciphertext size [bytes]: ' + ct.length);
+	
+	var decrStart = (new Date).getTime();
+	var pt =  CRYPTO.asymmetricDecrypt(ct);
+	var decrDiff = (new Date).getTime() - decrStart;
+	
+	console.log('Time taken for decryption [ms]: ' + decrDiff);
+	ok(pt, "decrypted: see console output for benchmark");
+	equal(pt, plaintext, "Decrypted should be the same as the plaintext");
 }
-
-test("Encrypt/Decrypt Text", 3, function() {
-	helperEncrDecr("Hello, World!");
-});
 
 test("Encrypt/Decrypt 7KB Image", 3, function() {
 	helperEncrDecr(testImg1Base64);
@@ -44,25 +56,7 @@ test("Encrypt/Decrypt large Blob", 3, function() {
 		bigBlob += testImg1Base64;
 	}
 	
-	console.log('blob size [bytes]: ' + bigBlob.length);
-	
-	var start = (new Date).getTime();
-	var bigBlobCipher = CRYPTO.asymmetricEncrypt(bigBlob);
-	var diff = (new Date).getTime() - start;
-	
-	console.log('Time taken for encryption [ms]: ' + diff);
-	ok(bigBlobCipher, "cipher: see console output for benchmark");
-	console.log('blob cipher size [bytes]: ' + bigBlobCipher.length);
-	
-	var decrStart = (new Date).getTime();
-	var bigBlobDecrypted =  CRYPTO.asymmetricDecrypt(bigBlobCipher);
-	var decrDiff = (new Date).getTime() - decrStart;
-	
-	console.log('Time taken for decryption [ms]: ' + decrDiff);
-	ok(bigBlobDecrypted, "decrypted: see console output for benchmark");
-	equal(bigBlobDecrypted, bigBlob, "Decrypted should be the same as the plaintext");
-	
-	console.log('decrypted blob size [bytes]: ' + bigBlobDecrypted.length);
+	helperEncrDecr(bigBlob);
 });
 
 asyncTest("Export keys", 3, function() {
