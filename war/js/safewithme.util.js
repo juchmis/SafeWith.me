@@ -23,6 +23,12 @@
 var UTIL = (function (window) {
 	var self = {};
 	
+	// set browser prefixes for HTML5 Apis in UTIL since it is initialized first
+	window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
+	window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+	window.storageInfo = window.storageInfo || window.webkitStorageInfo;
+	window.URL = window.URL || window.webkitURL || window.mozURL;
+	
 	/**
 	 * Converts a binary String (e.g. from the FileReader Api) to an ArrayBuffer
 	 * @param str [String] a binary string with integer values (0..255) per character
@@ -45,12 +51,6 @@ var UTIL = (function (window) {
 	 * @return [ArrayBuffer] either a data url or a filesystem url
 	 */
 	self.arrBuf2Blob = function(buf, mimeType) {
-		// check for BlobBuilder support
-		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
-		if (!window.BlobBuilder) {
-			throw 'BlobBuilder Api not supported!';
-		}
-		
 		var bb = new BlobBuilder();
 		bb.append(buf);
 		var blob = bb.getBlob(mimeType);
@@ -80,10 +80,6 @@ var UTIL = (function (window) {
 	 * @return [String] either a data url or a filesystem url
 	 */
 	self.createUrl = function(fileName, blob, callback) {
-		// check browser support
-		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-		window.URL = window.URL || window.webkitURL || window.mozURL;
-		
 		// open file with filesystem apis
 		function onInitFs(fs) {
 			fs.root.getFile(fileName, {create: true}, function(fileEntry) {

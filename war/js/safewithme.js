@@ -35,7 +35,7 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 	 * Single point of entry for the application
 	 */
 	self.init = function() {
-		// check if browser is supported
+		// check if the browser supports all necessary HTML5 Apis
 		if (!checkBrowser()) { return; }
 
 		// init views
@@ -50,23 +50,22 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 	};
 	
 	/**
-	 * Checks if the current browser is supported
+	 * Check browser support
 	 */
 	function checkBrowser() {
-		function check(browser) {
-			return navigator.userAgent.indexOf(browser) !== -1;
-		}
-		if (!check('Chrome') && !check('Android')) {
-			window.alert('Sorry, SafeWith.me is currently supported only on Chrome and Android.');
+		if (!window.BlobBuilder || !window.requestFileSystem || !window.storageInfo) {
+			window.alert('Your browser does not yet support all necessary HTML5 Apis!');
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	}
 	
 	return self;
 }(window, navigator, MENUVIEW, CRYPTOVIEW, FSVIEW));
 
+/**
+ * Start the app on document ready
+ */
 $(function() {
 	SAFEWITHME.init();
 });

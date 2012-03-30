@@ -127,15 +127,10 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 * Export the keys by using the HTML5 FileWriter
 	 */
 	self.exportKeys = function(callback) {
-		// Create a new Blob and write it to log.txt.
-		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
-		var bb = new BlobBuilder();
-
-		// append public and private keys
-		bb.append(publicKey.armored);
-		bb.append(privateKey.armored);
-
-		util.createUrl('safewithme.keys.txt', bb.getBlob('text/plain'), callback);
+		// build blob
+		var blob = util.arrBuf2Blob(publicKey.armored + privateKey.armored, 'text/plain');
+		// create url
+		util.createUrl('safewithme.keys.txt', blob, callback);
 	};
 	
 	/**

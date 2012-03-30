@@ -65,9 +65,6 @@ var CACHE = (function (window) {
 	};
 	
 	function initFS(fileName, options, callback, errCallback) {
-		// check browser support
-		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-		window.storageInfo = window.storageInfo || window.webkitStorageInfo;
 		// fs handler
 		function onInitFs(fs) {
 			fs.root.getFile(fileName, options, function(fileEntry) {
