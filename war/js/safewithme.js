@@ -35,6 +35,9 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 	 * Single point of entry for the application
 	 */
 	self.init = function() {
+		// check for a new version of the application
+		checkAppCache();
+		
 		// check if the browser supports all necessary HTML5 Apis
 		if (!checkBrowser()) { return; }
 
@@ -58,6 +61,30 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Check if a new version of the application cache is available
+	 */
+	function checkAppCache() {
+		// Check if a new cache is available on page load.
+		window.addEventListener('load', function(e) {
+			
+			window.applicationCache.addEventListener('updateready', function(e) {
+				if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+					// Browser downloaded a new app cache.
+					// Swap it in and reload the page to get the new hotness.
+					window.applicationCache.swapCache();
+					// TODO: display SHA1 of the new manifest file, so user can validate it
+					if (confirm('A new version of the App is available. Load it?')) {
+						window.location.reload();
+					}
+				} else {
+					// Manifest didn't changed. Nothing new to server.
+				}
+			}, false);
+
+		}, false);
 	}
 	
 	return self;
