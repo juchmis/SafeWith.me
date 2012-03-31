@@ -1,6 +1,6 @@
 module("Asymmetric Crypto");
 
-CRYPTO.setPassphrase('');
+CRYPTO.setPassphrase('asdfasdf');
 var email = 'test@asdf.com';
 
 test("Generate keys", 7, function() {
