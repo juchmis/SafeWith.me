@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="safewithme.appcache">
   <!--
    - SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
    -
@@ -31,52 +31,45 @@
     <link href="css/bootstrap-2.0.1.min.css" rel="stylesheet">
     <link href="css/safewithme.css" rel="stylesheet">
     <style type="text/css">
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+      
+      #holder h1 {
+        padding-bottom: 20px;
+        text-shadow: 1px 2px 5px rgba(64, 64, 64, 0.5);
+        text-align: center;
+      }
+      
       #logo {
-        background-image:url('img/safe-icon.png');
-        width: 256px;
-        height: 265px;
+        width: 128px;
+        height: 128px;
         margin-left: auto;
         margin-right: auto;
+        background-image: url('img/safe-icon-small.png');
         background-repeat: no-repeat;
-        padding-top: 10px;
+        padding-top: 20px;
       }
       
-      header h1 {
-        font-size: 1.75em;
-        padding-top: 10px;
-        padding-bottom: 20px;
-        line-height: 1.2em;
-        text-align: center;
-        text-shadow: 1px 2px 5px rgba(64, 64, 64, 0.5);
-      }
-
-      article p {
-        font: italic 14px/19px Georgia,Times New Roman,serif;
-        font-family: Georgia, 'Times New Roman', serif;
-        color: #777;
-        text-align: center;
-        padding-bottom: 30px;
-      }
-
-      #html5badge {
-        padding-left: 15px;
+      .fileinput-button {
+        position: relative;
+        overflow: hidden;
+        float: left;
+        margin-right: 4px;
       }
       
-      .openpgpjs {
-        font-size: 19px;
-        font-family: Georgia, serif;
-        font-weight: bold;
-        font-style: italic;
-        color:#F8F8F8;
-        text-shadow: 1px 1px 1px #808080, -1px -1px 0px #fff;
-        float: right;
-        padding-top: 25px;
-        padding-right: 15px;
-      }
-
-      a.openpgpjs:hover {
-      	text-decoration: none;
-        color:#F8F8F8;
+      .fileinput-button input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        border: solid transparent;
+        border-width: 0 0 100px 200px;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        -moz-transform: translate(-300px, 0) scale(4);
+        direction: ltr;
+        cursor: pointer;
       }
     </style>
     <link href="css/bootstrap-responsive-2.0.1.min.css" rel="stylesheet">
@@ -103,14 +96,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="safewithmebrand" href="index.html">SafeWith.me</a>
+          <a class="safewithmebrand" href="http://safewith.me">SafeWith.me</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li><a href="about.html">About</a></li>
+              <li><a href="http://safewith.me/about.html">About</a></li>
               <li><a href="https://github.com/tanx/SafeWith.me/wiki/FAQ">FAQ</a></li>
               <li><a href="https://github.com/tanx/SafeWith.me">Code</a></li>
             </ul>
-            <p id="login" class="navbar-text pull-right">Login and <a href="https://safewith-me.appspot.com/app/">try the alpha</a></p>
+            <p id="login" class="navbar-text pull-right"></p>
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -118,29 +111,105 @@
 
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="well">
-
-          <section id="wrapper">
-            <header>
-              <h1>Would you post a scan of<br/>your credit card on the internet?<br/><br/>You could be doing that right now,<br/>without even knowing it.</h1>
-            </header>
-            <div id="logo"></div>
-            <article>
-              <p><b>Our mission:</b> provide you secure access to all of your private documents<br/> anywhere, anytime and on all of your devices. <a href="about.html">How?</a></p>
-            </article>
-            <div class="row-fluid">
-              <div class="span6">
-                <a href="http://www.w3.org/html/logo/">
-                  <img id="html5badge" src="img/html5-badge-h-css3-performance-storage.png" width="197" height="64" alt="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage" title="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, and Offline &amp; Storage">
-                </a>
-              </div>
-              <div class="span6">
-                <a class="openpgpjs" href="http://openpgpjs.org">powered by OpenPGP.js</a>     
-              </div>
-            </div>       
-          </section><!--/wrapper-->
+        <div class="span4">
+          <div class="well sidebar-nav">
+            <ul id="buckets" class="nav nav-list">
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span8">
           
-        </div><!--/well-->
+          <div id="holder" class="hero-unit">
+            <h1>Drag to safe!</h1>
+            <div id="logo"></div>
+            <p>You can drag and drop files onto the safe or use the upload button. Uploaded files are listed on the left</p>
+            <p>
+              <span class="btn btn-success fileinput-button">
+                <span><i class="icon-plus icon-white"></i> Upload... </span>
+                <input type="file" id="files" name="files[]" multiple />
+              </span>
+            </p>
+          </div><!--/hero-unit-->
+          
+          <!-- Modal dialogs -->
+          <div class="modal hide fade" id="encryptModal">
+            <div class="modal-header">
+              <h3>Please wait, our trained bunnies are encrypting your file...</h3>
+            </div>
+            <div class="modal-body">
+              <div class="progress progress-danger progress-striped active">
+                <div class="bar" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div><!--/modal-->
+
+          <div class="modal hide fade" id="decryptModal">
+            <div class="modal-header">
+              <h3>Please wait, our trained bunnies are decrypting your file...</h3>
+            </div>
+            <div class="modal-body">
+              <div class="progress progress-danger progress-striped active">
+                <div class="bar" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div><!--/modal-->
+
+          <div class="modal hide fade" id="shareModal">
+            <div class="modal-header">
+              <h3>Encrypted sharing...</h3>
+            </div>
+            <div class="modal-body">
+              <form id="shareForm" class="form-inline">
+          		  <input id="shareEmail" type="text" class="input-medium" placeholder="recipient's email"/>
+          		  <button type="submit" class="btn btn-success">share</button>
+          		</form>
+            </div>
+            <div class="modal-footer">
+              <p>Files are shared using the recipient's personal key, so only he will be able to read the shared document.</p>
+            </div>
+          </div><!--/modal-->
+
+          <div class="modal hide fade" id="disclaimerModal">
+            <div class="modal-header">
+              <a class="close" data-dismiss="modal">×</a>
+              <h3>Generate your personal keypair...</h3>
+            </div>
+            <div class="modal-body">
+              <div id="keygenStatus">
+                <form id="genKeysForm" class="form-inline">
+                  <label>Passphrase:</label>
+            		  <input id="passphrase" type="password" class="input-medium"/>
+            		  <button type="submit" class="btn btn-success">Generate Keypair</button>
+            		</form>
+              </div>
+              <div class="alert alert-block">
+                <h4 class="alert-heading">Important!</h4>
+                <p>A pair of passphrase protected keys will be generated on your computer. That way only you will have access to your files. Please export a copy of these keys for safekeeping.</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <p>Thanks for taking the time to check out SafeWith.me. This is a prerelease alpha version, created so that feedback can be acquired before release. Please do not use this version for production purposes.</p>
+              <p>SafeWith.me comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; for details see the <a href="https://github.com/tanx/SafeWith.me/blob/master/LICENSE.txt">license terms</a>.</p>
+            </div>
+          </div><!--/modal-->
+
+          <div class="modal hide fade" id="importKeysModal">
+            <div class="modal-header">
+              <h3>Key import</h3>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-info">
+                <h4 class="alert-heading">Please enter your passphrase</h4>
+              </div>
+              <form>
+                <label>Passphrase:</label>
+                <input id="passphraseImport" type="password"/>
+                <div><a id="importBtn" class="btn btn-primary btn-large">Import</a></div>
+              </form>
+            </div>
+          </div><!--/modal-->
+          
+        </div><!--/span-->
       </div><!--/row-->
 
       <hr>
@@ -156,6 +225,20 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery-1.7.1.min.js"></script>
     <script src="js/bootstrap-2.0.1.min.js"></script>
+    <script src="js/openpgp.min.js"></script>
+    
+    <!--     <script src="js/safewithme.min.js"></script> -->
+    
+    <script src="js/safewithme.util.js"></script>
+    <script src="js/safewithme.menu.js"></script>
+    <script src="js/safewithme.menu.view.js"></script>
+    <script src="js/safewithme.server.js"></script>
+    <script src="js/safewithme.crypto.js"></script>
+    <script src="js/safewithme.crypto.view.js"></script>
+    <script src="js/safewithme.cache.js"></script>
+    <script src="js/safewithme.fs.js"></script>
+    <script src="js/safewithme.fs.view.js"></script>
+    <script src="js/safewithme.js"></script>
 
   </body>
 </html>
