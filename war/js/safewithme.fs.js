@@ -110,12 +110,10 @@ var FS = (function (crypto, server, util, cache) {
 					var fsFile = new self.File(file.name, file.size, file.type, blobKey, ct.key, ctMd5);
 					var bucket = self.currentBucket();
 					var bucketFS = self.currentBucketFS();
-
 					self.addFileToBucketFS(fsFile, bucketFS, bucket, function(updatedBucket) {
 						// add link to the file list
 						callback(fsFile, updatedBucket);
 					});
-					
 				});
 			});
 		});

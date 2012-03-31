@@ -97,7 +97,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 */
 	self.generateKeys = function(numBits, email) {
 		// check passphrase
-		if (!passphrase) { throw 'No passphrase set!'; }
+		if (!passphrase && passphrase !== '') { throw 'No passphrase set!'; }
 		
 		var userId = 'SafeWith.me User <' + email + '>';
 		var keys = openpgp.generate_key_pair(1, numBits, userId, passphrase); // keytype 1=RSA
@@ -112,7 +112,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 */
 	self.importKeys = function(publicKeyArmored, privateKeyArmored, email) {
 		// check passphrase
-		if (!passphrase) { throw 'No passphrase set!'; }
+		if (!passphrase && passphrase !== '') { throw 'No passphrase set!'; }
 		
 		// store keys in html5 local storage
 		openpgp.keyring.importPrivateKey(privateKeyArmored, passphrase);
@@ -128,7 +128,8 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 */
 	self.exportKeys = function(callback) {
 		// build blob
-		var blob = util.arrBuf2Blob(publicKey.armored + privateKey.armored, 'text/plain');
+		var buf = util.binStr2ArrBuf(publicKey.armored + privateKey.armored);
+		var blob = util.arrBuf2Blob(buf, 'text/plain');
 		// create url
 		util.createUrl('safewithme.keys.txt', blob, callback);
 	};
@@ -172,7 +173,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 
 		// read passphrase from local storage
 		passphrase = window.localStorage.getItem(email + 'Passphrase');
-		if (!passphrase) {
+		if (!passphrase && passphrase !== '') {
 			throw 'No passphrase for that user in localstorage!';
 		}
 		

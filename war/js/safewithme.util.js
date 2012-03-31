@@ -80,29 +80,30 @@ var UTIL = (function (window) {
 	 * @return [String] either a data url or a filesystem url
 	 */
 	self.createUrl = function(fileName, blob, callback) {
-		// open file with filesystem apis
-		function onInitFs(fs) {
-			fs.root.getFile(fileName, {create: true}, function(fileEntry) {
-
-				// Create a FileWriter object for our FileEntry
-				fileEntry.createWriter(function(fileWriter) {
-					fileWriter.onwriteend = function(e) {
-						var url = fileEntry.toURL();
-						callback(url);
-					};
-					fileWriter.onerror = function(e) {
-					  console.log('Write failed: ' + e.toString());
-					};
-					fileWriter.write(blob);
-				});
-			});
-		}
-		
-		if (window.requestFileSystem) {
-			// try using HTML5 filesystem api
-			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
-			
-		} else if (window.URL) {
+		// // open file with filesystem apis
+		// 		function onInitFs(fs) {
+		// 			fs.root.getFile(fileName, {create: true}, function(fileEntry) {
+		// 
+		// 				// Create a FileWriter object for our FileEntry
+		// 				fileEntry.createWriter(function(fileWriter) {
+		// 					fileWriter.onwriteend = function(e) {
+		// 						var url = fileEntry.toURL();
+		// 						callback(url);
+		// 					};
+		// 					fileWriter.onerror = function(e) {
+		// 					  console.log('Write failed: ' + e.toString());
+		// 					};
+		// 					fileWriter.write(blob);
+		// 				});
+		// 			});
+		// 		}
+		// 		
+		// 		if (window.requestFileSystem) {
+		// 			// try using HTML5 filesystem api
+		// 			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
+		// 			
+		// 		} else
+		if (window.URL) {
 			// use blob URL api
 			var url = window.URL.createObjectURL(blob);
 			callback(url);

@@ -24,6 +24,33 @@ var CACHE = (function (window) {
 	var self = {};
 	
 	//
+	// Object cache using LocalStorage Apis
+	//
+	
+	/**
+	 * Stringifies an object literal to JSON and perists it (create and update)
+	 */
+	self.storeObject = function(key, object) {
+		var json = JSON.stringify(object);
+		window.localStorage.setItem(key, json);
+	};
+	
+	/**
+	 * Fetches a json string from local storage by its key and parses it to an object literal (get)
+	 */
+	self.readObject = function(key) {
+		var json = window.localStorage.getItem(key);
+		return JSON.parse(json);
+	};
+	
+	/**
+	 * Removes an object liter from local storage by its key (delete)
+	 */
+	self.removeObject = function(key) {
+		window.localStorage.removeItem(key);
+	};
+	
+	//
 	// Blob cache using FileSystem Apis
 	//
 	
