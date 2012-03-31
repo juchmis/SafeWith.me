@@ -165,7 +165,10 @@ var FS = (function (crypto, server, util, cache) {
 	self.getBuckets = function(callback) {
 		// try fetching buckets from server
 		server.call('GET', '/app/buckets', function(buckets) {
-			// TODO: sync bucket cache to server, if required
+			// sync bucket cache with servers data
+			for(var i = 0; i < buckets.length; i++) {
+				putCachedBucket(buckets[i]);
+			}
 			callback(buckets);
 			
 		}, function(jqXHR, textStatus, errorThrown) {
