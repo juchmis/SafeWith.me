@@ -27,6 +27,8 @@
 var FS = (function (crypto, server, util, cache) {
 	var self = {};
 	
+	self.email = undefined;
+	
 	//
 	// BucketFS json model
 	//
@@ -83,6 +85,61 @@ var FS = (function (crypto, server, util, cache) {
 	};
 	
 	//
+	// Bucket (containing encrypted BucketFS) caching in LocalStorage
+	//
+	
+	function putCachedBucket(bucket) {
+		// cache bucket in local storage
+		cache.storeObject(bucket.id, bucket);
+		// update cached bucket ids
+		var bucketIds = cache.readObject(self.email + 'BucketIds');
+		if (bucketIds) {
+			// check if bucket id is already in the array
+			var contained = false;
+			for (var i = 0; i < bucketIds.length; i++) {
+				if (bucketIds[i] === bucket.id) {
+					contained = true;
+					break;
+				}
+			}
+			if (!contained) {
+				bucketIds.push(bucket.id);
+			}
+		} else {
+			// create new array
+			bucketIds = [];
+			bucketIds.push(bucket.id);
+		}
+		cache.storeObject(self.email + 'BucketIds', bucketIds);
+	}
+	
+	function findCachedBuckets() {
+		// get cached bucket ids
+		var bucketIds = cache.readObject(self.email + 'BucketIds');
+		var cachedBuckets = [];
+		for (var i = 0; i < bucketIds.length; i++) {
+			// read bucket from local storage
+			var bucket = cache.readObject(bucketIds[i]);
+			cachedBuckets.push(bucket);
+		}
+		return cachedBuckets;
+	}
+	
+	function removeCachedBucket(bucket) {
+		// remove bucket from local storage
+		cache.removeObject(bucket.id);
+		// update cached bucket ids
+		var bucketIds = cache.readObject(self.email + 'BucketIds');
+		for (var i = 0; i < bucketIds.length; i++) {
+			if (bucketIds[i] === bucket.id) {
+				bucketIds.splice(i, 1);
+				break;
+			}
+		}
+		cache.storeObject(self.email + 'BucketIds', bucketIds);
+	}
+	
+	//
 	// Bucket handling
 	//
 	
@@ -106,9 +163,15 @@ var FS = (function (crypto, server, util, cache) {
 	 * Get bucket pointers from server
 	 */
 	self.getBuckets = function(callback) {
-		// TODO: read buckets from local storage
+		// try fetching buckets from server
 		server.call('GET', '/app/buckets', function(buckets) {
+			// TODO: sync bucket cache to server, if required
 			callback(buckets);
+			
+		}, function(jqXHR, textStatus, errorThrown) {
+			// read buckets from local storage, if server unreachable
+			var cachedBuckets = findCachedBuckets();
+			callback(cachedBuckets);
 		});
 	};
 	
@@ -119,7 +182,7 @@ var FS = (function (crypto, server, util, cache) {
 		// TODO: delete any containing file blobs
 		
 		// remove from local storage cache
-		cache.removeObject(bucket.id);
+		removeCachedBucket(bucket);
 		// delete bucket DTO in datastore
 		server.call('DELETE', '/app/buckets?bucketId=' + bucket.id, function(resp) {
 			callback(resp);
@@ -147,7 +210,7 @@ var FS = (function (crypto, server, util, cache) {
 		bucket.encryptedFS = encryptedFS;
 		bucket.publicKeyId = crypto.getPublicKeyIdBase64();
 		// cache bucket in local storage
-		cache.storeObject(bucket.id);
+		putCachedBucket(bucket);
 		// upload to server
 		var updatedBucketJson = JSON.stringify(bucket);
 		server.upload('PUT', '/app/buckets', 'application/json', updatedBucketJson, function(updatedBucket) {

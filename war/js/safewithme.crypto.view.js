@@ -41,8 +41,11 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 			
 		}, function(genKeysCallback) {
 			
+			// no keys found on server -> generate new keypair fot the user
 			$('#genKeysForm').submit(function(e) {
 				e.preventDefault();
+				// clear localstorage (keypairs, passphrases, cached buckets)
+				window.localStorage.clear();
 				// read passphrase
 				var passphrase = $('#passphrase').val();
 				crypto.setPassphrase(passphrase);

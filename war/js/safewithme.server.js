@@ -33,7 +33,7 @@ var SERVER = (function ($, util) {
 	/**
 	 * Make a REST service call
 	 */
-	self.call = function(httpMethod, uri, callback) {
+	self.call = function(httpMethod, uri, callback, errCallback) {
 		$.ajax({
 			type: httpMethod,
 			url: uri,
@@ -41,7 +41,11 @@ var SERVER = (function ($, util) {
 				callback(resp);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
-				alert('Error calling ' + httpMethod + ' on ' + uri + ': ' + errorThrown);
+				if (errCallback) {
+					errCallback(jqXHR, textStatus, errorThrown);
+				} else {
+					alert('Error calling ' + httpMethod + ' on ' + uri + ': ' + errorThrown);
+				}
 			}
 		});
 	};
@@ -49,7 +53,7 @@ var SERVER = (function ($, util) {
 	/**
 	 * Make a REST service call defining the contents of the HTTP body
 	 */
-	self.upload = function(httpMethod, uri, contentType, body, callback) {
+	self.upload = function(httpMethod, uri, contentType, body, callback, errCallback) {
 		$.ajax({
 			type: httpMethod,
 			url: uri,
@@ -59,7 +63,11 @@ var SERVER = (function ($, util) {
 				callback(resp);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
-				alert('Error calling ' + httpMethod + ' on ' + uri + ': ' + errorThrown);
+				if (errCallback) {
+					errCallback(jqXHR, textStatus, errorThrown);
+				} else {
+					alert('Error calling ' + httpMethod + ' on ' + uri + ': ' + errorThrown);
+				}
 			}
 		});
 	};
@@ -83,7 +91,7 @@ var SERVER = (function ($, util) {
 			var xhr = new XMLHttpRequest();
 			xhr.open('POST', postUrl, true);
 			xhr.onload = function(e) {
-				if (this.status == 201) {
+				if (this.status === 201) {
 					// parse blob-key
 					var blobKey = JSON.parse(this.response).blobKey;
 					callback(blobKey);
@@ -116,7 +124,7 @@ var SERVER = (function ($, util) {
 		xhr.responseType = 'arraybuffer';
 
 		xhr.onload = function(e) {
-			if (this.status == 200) {
+			if (this.status === 200) {
 				var blob = util.arrBuf2Blob(this.response, 'application/octet-stream');
 				callback(blob);
 			} else {

@@ -20,7 +20,7 @@
 
 'use strict';
 
-var MENU = (function () {
+var MENU = (function (server, cache) {
 	var self = {};
 	
 	/**
@@ -29,10 +29,18 @@ var MENU = (function () {
 	self.getLoginInfo = function(goal, callback) {
 		// init Login anchor
 		var uri = '/login?requestUri=' + goal;
-		$.get(uri, function(loginInfo) {
+		server.call('GET', uri, function(loginInfo) {
+			// remember last user in local storage
+			cache.storeObject('lastLoginInfo', loginInfo);
+			// got loginInfo from server
+			callback(loginInfo);
+			
+		}, function(jqXHR, textStatus, errorThrown) {
+			// get last user if server unreachable
+			var loginInfo = cache.readObject('lastLoginInfo');
 			callback(loginInfo);
 		});
 	};
 	
 	return self;
-}());
+}(SERVER, CACHE));

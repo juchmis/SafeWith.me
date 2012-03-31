@@ -29,7 +29,10 @@ var FSVIEW = (function (window, document, $, fs) {
 	/**
 	 * init UI
 	 */
-	self.init = function() {
+	self.init = function(loginInfo) {
+		// set current user's email
+		fs.email = loginInfo.email;
+		
 		// drag and drop area
 		var holder = document.getElementById('holder');
 		// holder.ondragover = function () { this.className = 'hover'; return false; };
