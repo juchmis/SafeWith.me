@@ -59,7 +59,7 @@ var FS = (function (crypto, server, util, cache) {
 	};
 	
 	//
-	// FS presenter logic
+	// Decrypted BucketFS caching in memory
 	//
 	
 	var bucketCache = [];	// a cache for bucket pointer and their respectable fs
@@ -81,6 +81,123 @@ var FS = (function (crypto, server, util, cache) {
 		// at the moment each user only has one
 		return bucketCache[0].bucketFS;
 	};
+	
+	//
+	// Bucket handling
+	//
+	
+	/**
+	 * Create a new bucket by first making a new bucket pointer on the
+	 * server and then creating a bucket FS with the pointer's id.
+	 * The bucket FS is then ecrypted and persited on the server in order to
+	 * get a new blob-key, which is then updated on the bucket pointer.
+	 */
+	self.createBucket = function(name, callback) {
+		server.call('POST', '/app/buckets', function(bucket) {
+			// initialize bucket file system
+			var bucketFS = new self.BucketFS(bucket.id, name, bucket.ownerEmail);
+			persistBucketFS(bucketFS, bucket, function(updatedBucket) {
+				callback(updatedBucket);
+			});
+		});
+	};
+	
+	/**
+	 * Get bucket pointers from server
+	 */
+	self.getBuckets = function(callback) {
+		// TODO: read buckets from local storage
+		server.call('GET', '/app/buckets', function(buckets) {
+			callback(buckets);
+		});
+	};
+	
+	/**
+	 * Delete a bucket from the server.
+	 */
+	self.removeBucket = function(bucket, callback) {
+		// TODO: delete any containing file blobs
+		
+		// remove from local storage cache
+		cache.removeObject(bucket.id);
+		// delete bucket DTO in datastore
+		server.call('DELETE', '/app/buckets?bucketId=' + bucket.id, function(resp) {
+			callback(resp);
+		});
+	};
+	
+	//
+	// BucketFS handling
+	//
+
+	/**
+	 * Convert BucketFS to a JSON string, encrypt and then upload
+	 */
+	function persistBucketFS(bucketFS, bucket, callback, publicKey) {
+		var jsonFS = JSON.stringify(bucketFS);
+		
+		var encryptedFS = null;
+		if (publicKey) {
+			encryptedFS = crypto.asymmetricEncrypt(jsonFS, publicKey);
+		} else {
+			encryptedFS = crypto.asymmetricEncrypt(jsonFS);
+		}
+		
+		// update bucket
+		bucket.encryptedFS = encryptedFS;
+		bucket.publicKeyId = crypto.getPublicKeyIdBase64();
+		// cache bucket in local storage
+		cache.storeObject(bucket.id);
+		// upload to server
+		var updatedBucketJson = JSON.stringify(bucket);
+		server.upload('PUT', '/app/buckets', 'application/json', updatedBucketJson, function(updatedBucket) {
+			callback(updatedBucket);
+		});
+	};
+
+	/**
+	 * Get bucket FS from bucket and decrypt it
+	 */
+	self.getBucketFS = function(encryptedFS) {
+		var jsonFS =  crypto.asymmetricDecrypt(encryptedFS);
+		var bucketFS = JSON.parse(jsonFS);
+		
+		return bucketFS;
+	};
+
+	/**
+	 * Add a file to the currentyl selected bucket fs
+	 */
+	self.addFileToBucketFS = function(file, bucketFS, bucket, callback) {
+		// at the moment directories are not yet implemented
+		bucketFS.root.push(file);
+		
+		persistBucketFS(bucketFS, bucket, function(updatedBucket) {
+			callback(updatedBucket);
+		});
+	};
+	
+	/**
+	 * Delete a file from the currentyl selected bucket fs
+	 */
+	self.deleteFileFromBucketFS = function(fileBlobKey, bucketFS, bucket, callback) {
+		// rm file from root
+		for (var i = 0; i < bucketFS.root.length; i++) {
+			var current = bucketFS.root[i];
+			if (current.type === 'file' && current.blobKey === fileBlobKey) {
+				bucketFS.root.splice(i, 1);
+				break;
+			}
+		}
+		
+		persistBucketFS(bucketFS, bucket, function(updatedBucket) {
+			callback(updatedBucket);
+		});
+	};
+	
+	//
+	// File/Blob handling
+	//
 	
 	/**
 	 * Reads the files that have been dragged onto the page
@@ -170,105 +287,9 @@ var FS = (function (crypto, server, util, cache) {
 		});
 	};
 	
-	/**
-	 * Get bucket pointers from server
-	 */
-	self.getBuckets = function(callback) {
-		server.call('GET', '/app/buckets', function(buckets) {
-			callback(buckets);
-		});
-	};
-
-	/**
-	 * Get bucket FS from bucket and decrypt it
-	 */
-	self.getBucketFS = function(encryptedFS) {
-		var jsonFS =  crypto.asymmetricDecrypt(encryptedFS);
-		var bucketFS = JSON.parse(jsonFS);
-		
-		return bucketFS;
-	};
-
-	/**
-	 * Add a file to the currentyl selected bucket fs
-	 */
-	self.addFileToBucketFS = function(file, bucketFS, bucket, callback) {
-		// at the moment directories are not yet implemented
-		bucketFS.root.push(file);
-		
-		self.persistBucketFS(bucketFS, bucket, function(updatedBucket) {
-			callback(updatedBucket);
-		});
-	};
-	
-	/**
-	 * Delete a file from the currentyl selected bucket fs
-	 */
-	self.deleteFileFromBucketFS = function(fileBlobKey, bucketFS, bucket, callback) {
-		// rm file from root
-		for (var i = 0; i < bucketFS.root.length; i++) {
-			var current = bucketFS.root[i];
-			if (current.type === 'file' && current.blobKey === fileBlobKey) {
-				bucketFS.root.splice(i, 1);
-				break;
-			}
-		}
-		
-		self.persistBucketFS(bucketFS, bucket, function(updatedBucket) {
-			callback(updatedBucket);
-		});
-	};
-
-	/**
-	 * Convert BucketFS to a JSON string, encrypt and then upload
-	 */
-	self.persistBucketFS = function(bucketFS, bucket, callback, publicKey) {
-		var jsonFS = JSON.stringify(bucketFS);
-		
-		var encryptedFS = null;
-		if (publicKey) {
-			encryptedFS = crypto.asymmetricEncrypt(jsonFS, publicKey);
-		} else {
-			encryptedFS = crypto.asymmetricEncrypt(jsonFS);
-		}
-		
-		// update bucket
-		bucket.encryptedFS = encryptedFS;
-		bucket.publicKeyId = crypto.getPublicKeyIdBase64();
-		
-		var updatedBucketJson = JSON.stringify(bucket);
-		server.upload('PUT', '/app/buckets', 'application/json', updatedBucketJson, function(updatedBucket) {
-			callback(updatedBucket);
-		});
-	};
-	
-	/**
-	 * Create a new bucket by first making a new bucket pointer on the
-	 * server and then creating a bucket FS with the pointer's id.
-	 * The bucket FS is then ecrypted and persited on the server in order to
-	 * get a new blob-key, which is then updated on the bucket pointer.
-	 */
-	self.createBucket = function(name, callback) {
-		server.call('POST', '/app/buckets', function(bucket) {
-			// initialize bucket file system
-			var bucketFS = new self.BucketFS(bucket.id, name, bucket.ownerEmail);
-			self.persistBucketFS(bucketFS, bucket, function(updatedBucket) {
-				callback(updatedBucket);
-			});
-		});
-	};
-	
-	/**
-	 * Delete a bucket from the server.
-	 */
-	self.removeBucket = function(bucket, callback) {
-		// TODO: delete any containing file blobs
-		
-		// delete bucket DTO in datastore
-		server.call('DELETE', '/app/buckets?bucketId=' + bucket.id, function(resp) {
-			callback(resp);
-		});
-	};
+	//
+	// Filesharing
+	//
 	
 	/**
 	 * Share a file with another user
@@ -291,8 +312,9 @@ var FS = (function (crypto, server, util, cache) {
 				shareFS.root.push(file);
 				// hand bucket ownership over to the recipient
 				shareBucket.ownerEmail = shareEmail;
+				// TODO: set recipient public key id on bucket
 				
-				self.persistBucketFS(shareFS, shareBucket, function(updatedShareBucket) {
+				persistBucketFS(shareFS, shareBucket, function(updatedShareBucket) {
 					callback(updatedShareBucket);
 				}, recipientKey.asciiArmored);
 			});

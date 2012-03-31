@@ -36,7 +36,7 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 	 */
 	self.init = function() {
 		// check for a new version of the application
-		checkAppCache();
+		// checkAppCache();
 		
 		// check if the browser supports all necessary HTML5 Apis
 		if (!checkBrowser()) { return; }

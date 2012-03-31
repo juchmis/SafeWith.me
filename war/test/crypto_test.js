@@ -77,6 +77,7 @@ asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 	var loginInfo = {
 		email : email
 	};
+	CRYPTO.setPassphrase('');
 	
 	CRYPTO.initKeyPair(loginInfo, function(keyId) {
 		ok(keyId);
