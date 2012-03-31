@@ -25,9 +25,11 @@
  * I/O between the browser's HTML5 File Apis and the application.
  */
 var FS = (function (crypto, server, util, cache) {
-	var self = {};	
+	var self = {};
 	
-	var bucketCache = [];	// a cache for bucket pointer and their respectable fs
+	//
+	// BucketFS json model
+	//
 
 	self.BucketFS = function(id, name, ownerEmail) {
 		this.version = "1.0";
@@ -53,8 +55,14 @@ var FS = (function (crypto, server, util, cache) {
 		this.mimeType = mimeType;
 		this.blobKey = blobKey;		// pointer to the encrypted blob
 		this.cryptoKey = cryptoKey;	// secret key required to decrypt the file
-		this.md5 = md5;
+		this.md5 = md5;				// md5 hash of the encrypted file blob
 	};
+	
+	//
+	// FS presenter logic
+	//
+	
+	var bucketCache = [];	// a cache for bucket pointer and their respectable fs
 
 	self.cacheBucket = function(bucket, bucketFS) {
 		var pair = {
@@ -124,7 +132,10 @@ var FS = (function (crypto, server, util, cache) {
 			} else {
 				// get encrypted ArrayBuffer from server
 				server.downloadBlob(file.blobKey, function(blob) {
-					handleBlob(blob);
+					// cache the downloaded blob
+					cache.storeBlob(file.md5, blob, function(success) {
+						handleBlob(blob);
+					});
 				});
 			}
 		});
@@ -192,7 +203,6 @@ var FS = (function (crypto, server, util, cache) {
 		});
 	};
 	
-
 	/**
 	 * Delete a file from the currentyl selected bucket fs
 	 */
@@ -242,7 +252,6 @@ var FS = (function (crypto, server, util, cache) {
 	 */
 	self.createBucket = function(name, callback) {
 		server.call('POST', '/app/buckets', function(bucket) {
-			
 			// initialize bucket file system
 			var bucketFS = new self.BucketFS(bucket.id, name, bucket.ownerEmail);
 			self.persistBucketFS(bucketFS, bucket, function(updatedBucket) {
@@ -280,10 +289,8 @@ var FS = (function (crypto, server, util, cache) {
 
 				// add all the encrypted files to fs
 				var shareFS = new self.BucketFS(shareBucket.id, shareBucketName, shareEmail);
-						
 				// add file to share FS
 				shareFS.root.push(file);
-				
 				// hand bucket ownership over to the recipient
 				shareBucket.ownerEmail = shareEmail;
 				
