@@ -32,6 +32,10 @@ var CRYPTO = (function (window, openpgp, util, server) {
 
 	openpgp.init();		// initialize OpenPGP.js
 	
+	//
+	// Key management
+	//
+	
 	/**
 	 * Check if user already has a public key on the server and if not,
 	 * generate a new keypait for the user
@@ -229,6 +233,10 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		passphrase = pass;
 	};
 	
+	//
+	// Asymmetric crypto
+	//
+	
 	/**
 	 * Encrypt a string
 	 */
@@ -284,6 +292,10 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	    	throw "No private key found!";
 	    }  
 	};
+	
+	//
+	// Symmetric/Convergent crypto
+	//
 	
 	/**
 	 * Deterministic convergent enctryption using SHA-1, SHA-256, and 256 bit AES CFB mode
