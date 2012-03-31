@@ -54,8 +54,14 @@ var CACHE = (function (window) {
 	// Blob cache using FileSystem Apis
 	//
 	
-	self.storeBlob = function(fileName, blob, callback) {
-		initFS(fileName, {create: true}, function(fileEntry) {
+	/**
+	 * Persist a blob locally using the FileSystem Apis (create and update)
+	 * @param key [String] a unique name for the local blob (e.g. the md5 hash)
+	 * @param blob [Blob] a file blob built with the BlobBuilder Api
+	 * @return [boolean] if persisting was successful
+	 */
+	self.storeBlob = function(key, blob, callback) {
+		initFS(key, {create: true}, function(fileEntry) {
 			// Create a FileWriter object for our FileEntry
 			fileEntry.createWriter(function(fileWriter) {
 				fileWriter.onwriteend = function(e) {
@@ -67,8 +73,13 @@ var CACHE = (function (window) {
 		}, errorHandler);
 	};
 	
-	self.readBlob = function(fileName, callback) {
-		initFS(fileName, {}, function(fileEntry) {
+	/**
+	 * Fetches a local blob from the FileSystem Api (get)
+	 * @param key [String] a unique name for the local blob (e.g. the md5 hash)
+	 * @return [Blob] the read blob
+	 */
+	self.readBlob = function(key, callback) {
+		initFS(key, {}, function(fileEntry) {
 			fileEntry.file(function(file) {
 				// read file successful
 				callback(file);
@@ -79,8 +90,13 @@ var CACHE = (function (window) {
 		});
 	};
 	
-	self.removeBlob = function(fileName, callback) {
-		initFS(fileName, {create: false}, function(fileEntry) {
+	/**
+	 * Removes a blob the FileSystem Apis (delete)
+	 * @param key [String] a unique name for the local blob (e.g. the md5 hash)
+	 * @return [boolean] if removal was successful
+	 */
+	self.removeBlob = function(key, callback) {
+		initFS(key, {create: false}, function(fileEntry) {
 			fileEntry.remove(function() {
 				// deleting successful
 				callback(true);
@@ -91,10 +107,10 @@ var CACHE = (function (window) {
 		});
 	};
 	
-	function initFS(fileName, options, callback, errCallback) {
+	function initFS(key, options, callback, errCallback) {
 		// fs handler
 		function onInitFs(fs) {
-			fs.root.getFile(fileName, options, function(fileEntry) {
+			fs.root.getFile(key, options, function(fileEntry) {
 				callback(fileEntry);
 			}, errCallback);
 		}
