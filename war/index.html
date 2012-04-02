@@ -132,9 +132,31 @@
             </p>
           </div><!--/hero-unit-->
           
-          <div id="pdfjs-canvas">
-            <canvas id="the-canvas" style="border:1px solid black;"/>
-          </div>
+          
+          
+          <!-- Modal pdf.js Carousel -->
+          <div class="modal hide fade" id="pdfjsModal">
+            <div id="pdfCarousel" class="carousel">
+              <!-- Carousel items -->
+              <div class="carousel-inner">
+                <div class="active item">
+                  <canvas id="pdf-canvas-1" style="border:1px solid black;"/>
+                </div>
+                <div class="item">
+                  <canvas id="pdf-canvas-2" style="border:1px solid black;"/>
+                </div>
+              </div>
+              <!-- Carousel nav -->
+              <a class="carousel-control left" href="#pdfCarousel" data-slide="prev">&lsaquo;</a>
+              <a class="carousel-control right" href="#pdfCarousel" data-slide="next">&rsaquo;</a>
+            </div>
+          </div><!--/modal-->
+          
+          <!-- <div id="pdfjs-canvas" class="thumbnails">
+             <a href"#" class="thumbnail">
+               <canvas id="the-canvas" style="border:1px solid black;"/>
+             </a>
+           </div> -->
           
           <!-- Modal dialogs -->
           <div class="modal hide fade" id="encryptModal">
