@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" manifest="safewithme.appcache">
+<html lang="en">
+<!-- <html lang="en" manifest="safewithme.appcache"> -->
   <!--
    - SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
    -
@@ -223,22 +224,28 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery-1.7.1.min.js"></script>
-    <script src="js/bootstrap-2.0.1.min.js"></script>
-    <script src="js/openpgp.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap-2.0.1.min.js"></script>
+    <script type="text/javascript" src="js/openpgp.min.js"></script>
     
-    <!--     <script src="js/safewithme.min.js"></script> -->
+    <script type="text/javascript" src="js/pdf.min.js"></script>
+    <script type="text/javascript">
+      // Specify the main script used to create a new PDF.JS web worker.
+      PDFJS.workerSrc = 'js/pdf.min.js';
+    </script>
     
-    <script src="js/safewithme.util.js"></script>
-    <script src="js/safewithme.server.js"></script>
-    <script src="js/safewithme.crypto.js"></script>
-    <script src="js/safewithme.crypto.view.js"></script>
-    <script src="js/safewithme.cache.js"></script>
-    <script src="js/safewithme.menu.js"></script>
-    <script src="js/safewithme.menu.view.js"></script>
-    <script src="js/safewithme.fs.js"></script>
-    <script src="js/safewithme.fs.view.js"></script>
-    <script src="js/safewithme.js"></script>
+    <!--     <script type="text/javascript" src="js/safewithme.min.js"></script> -->
+    
+    <script type="text/javascript" src="js/safewithme.util.js"></script>
+    <script type="text/javascript" src="js/safewithme.server.js"></script>
+    <script type="text/javascript" src="js/safewithme.crypto.js"></script>
+    <script type="text/javascript" src="js/safewithme.crypto.view.js"></script>
+    <script type="text/javascript" src="js/safewithme.cache.js"></script>
+    <script type="text/javascript" src="js/safewithme.menu.js"></script>
+    <script type="text/javascript" src="js/safewithme.menu.view.js"></script>
+    <script type="text/javascript" src="js/safewithme.fs.js"></script>
+    <script type="text/javascript" src="js/safewithme.fs.view.js"></script>
+    <script type="text/javascript" src="js/safewithme.js"></script>
 
   </body>
 </html>

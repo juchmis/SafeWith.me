@@ -135,7 +135,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		var buf = util.binStr2ArrBuf(publicKey.armored + privateKey.armored);
 		var blob = util.arrBuf2Blob(buf, 'text/plain');
 		// create url
-		util.createUrl('safewithme.keys.txt', blob, callback);
+		util.createUrl(undefined, blob, callback);
 	};
 	
 	/**
