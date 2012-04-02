@@ -42,7 +42,7 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 		if (!checkBrowser()) { return; }
 
 		// init views
-		menuView.init('http://safewith.me', function(loginInfo) {
+		menuView.init('/', function(loginInfo) {
 			// check if user is logged in
 			if (!loginInfo.loggedIn || !loginInfo.email) { return; }
 			// init crypto and fs
