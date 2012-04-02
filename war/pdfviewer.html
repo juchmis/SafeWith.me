@@ -1,8 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<!-- saved from url=(0050)http://www.romancortes.com/ficheros/page-flip.html -->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	
+<!DOCTYPE html>
+<!-- A PDF viewer using pdf.js and CSS3 transistions -->
+<!-- inspired by http://www.romancortes.com/ficheros/page-flip.html -->
+<html>
+  <head>
+  <meta content="charset=UTF-8">
 	<title>Pure CSS3 Page Flip Effect</title>
+	
 	<style type="text/css">
 		body
 		{
@@ -18,7 +21,7 @@
 		}
 		#page-flip
 		{
-			background-image: url(pagebg.jpg);
+			background-image: url(img/pagebg.jpg);
 			position: absolute;
 			padding: 40px 40px 40px 340px;
 			width: 300px;
@@ -49,7 +52,7 @@
 			-webkit-transition-duration: 1s;
 			width: 285px;
 			height: 388px;
-			background-image: url(page1.jpg);
+			background-image: url(img/empty-page.png);
 		}
 		#p1 > div > div
 		{
@@ -65,7 +68,7 @@
 			-webkit-box-shadow: 0 0 11px rgba(0, 0, 0, .5);
 			position: absolute;
 			z-index: 1;
-			background-image: url(page2.jpg);
+			background-image: url(img/empty-page.png);
 		}
 		#r3
 		{
@@ -156,7 +159,7 @@
 			-webkit-box-shadow: 0 0 11px rgba(0, 0, 0, .5);
 			width: 285px;
 			height: 388px;
-			background-image: url(page3.jpg);
+			background-image: url(img/empty-page.png);
 			overflow: hidden;
 		}
 		#p3 > div > div
@@ -227,14 +230,74 @@
 <body>
 	<div id="all">
 		<div id="page-flip">
-			<div id="r1"><div id="p1"><div><div></div></div></div></div>
-			<div id="p2"><div></div></div>
-			<div id="r3"><div id="p3"><div><div></div></div></div></div>
+			<div id="r1"><div id="p1">
+			  <div>
+  			  <canvas id="p1-canvas"/>
+			    <div></div>
+		    </div>
+		  </div>
+		</div>
+		<div id="p2">
+			<div>
+			  <canvas id="p2-canvas"/>
+			</div>
+		</div>
+		<div id="r3">
+		  <div id="p3">
+		    <div>
+		      <canvas id="p3-canvas"/>
+		      <div></div>
+		    </div>
+		  </div>
+		</div>
 			<div class="s"><div id="s3"><div id="sp3"></div></div></div>
 			<div class="s" id="s4"><div id="s2"><div id="sp2"></div></div></div>
-			<a id="coke" href="http://www.romancortes.com/blog/pure-css-coke-can/" title="Pure CSS Coke Can"></a>
-			<a id="meninas" href="http://www.romancortes.com/blog/css-3d-meninas/" title="CSS 3D Meninas"></a>
 		</div>
 	</div>
+
+  <script type="text/javascript" src="js/pdf.min.js"></script>
+  <script type="text/javascript">
+    // Specify the main script used to create a new PDF.JS web worker.
+    PDFJS.workerSrc = 'js/pdf.min.js';
+  </script>
+	
+	<script>
+    PDFJS.getPdf('test/MIT-LCS-TM-632.pdf', function getPdfHelloWorld(data) {
+      //
+      // Instantiate PDFDoc with PDF data
+      //
+      var pdf = new PDFJS.PDFDoc(data);
+      var page1 = pdf.getPage(1);
+      var page2 = pdf.getPage(2);
+      var page3 = pdf.getPage(3);
+      
+      //
+      // Prepare canvas using PDF page dimensions
+      //
+      var canvas1 = document.getElementById('p1-canvas');
+      var canvas2 = document.getElementById('p2-canvas');
+      var canvas3 = document.getElementById('p3-canvas');
+      
+      var context1 = canvas1.getContext('2d');
+      var context2 = canvas2.getContext('2d');
+      var context3 = canvas3.getContext('2d');
+      
+      canvas1.height = canvas1.parentElement.clientHeight;
+      canvas1.width = canvas1.parentElement.clientWidth;
+      
+      canvas2.height = canvas2.parentElement.clientHeight;
+      canvas2.width = canvas2.parentElement.clientWidth;
+      
+      canvas3.height = canvas3.parentElement.clientHeight;
+      canvas3.width = canvas3.parentElement.clientWidth;
+
+      //
+      // Render PDF page into canvas context
+      //
+      page1.startRendering(context1);
+      page2.startRendering(context2);
+      page3.startRendering(context3);
+    });
+	</script>
 
 </body></html>
