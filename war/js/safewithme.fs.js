@@ -327,11 +327,14 @@ var FS = (function (crypto, server, util, cache) {
 				// symmetrically decrypt the string
 				var pt = crypto.symmetricDecrypt(file.cryptoKey, encrStr);
 				var ptAB = util.binStr2ArrBuf(pt);
-				var blob2 = util.arrBuf2Blob(ptAB, file.mimeType);
-				// return either data url or filesystem url
-				util.createUrl(file.name, blob2, function(url) {
-					callback(url);
-				});	
+				
+				// var blob2 = util.arrBuf2Blob(ptAB, file.mimeType);
+				// // return either data url or filesystem url
+				// util.createUrl(file.name, blob2, function(url) {
+				// 	callback(url);
+				// });
+				
+				callback(ptAB);
 			});
 		}
 	};

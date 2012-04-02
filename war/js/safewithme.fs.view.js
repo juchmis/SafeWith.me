@@ -178,7 +178,29 @@ var FSVIEW = (function (window, document, $, fs) {
 			fs.getFile(file, function(decrypted) {
 				// hide progress bar
 				$('#decryptModal').modal('hide');
-				self.displayDoc(decrypted);
+				// self.displayDoc(decrypted);
+				
+				// render PDF with pdf.js
+				
+				//
+				// Instantiate PDFDoc with PDF data
+				//
+				var pdf = new PDFJS.PDFDoc(decrypted);
+				var page = pdf.getPage(1);
+				var scale = 1.0;
+
+				//
+				// Prepare canvas using PDF page dimensions
+				//
+				var canvas = document.getElementById('the-canvas');
+				var context = canvas.getContext('2d');
+				canvas.height = page.height * scale;
+				canvas.width = page.width * scale;
+
+				//
+				// Render PDF page into canvas context
+				//
+				page.startRendering(context);
 			});
 		});
 		
