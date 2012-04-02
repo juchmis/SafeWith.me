@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <!-- A PDF viewer using pdf.js and CSS3 transistions -->
-<!-- inspired by http://www.romancortes.com/ficheros/page-flip.html -->
+<!-- JavaScript by Tankred Hase -->
+<!-- pdf.js by Andreas Gal: https://github.com/mozilla/pdf.js -->
+<!-- CSS by http://www.romancortes.com/blog/pure-css3-page-flip-effect/ -->
 <html>
   <head>
-  <meta content="charset=UTF-8">
-	<title>Pure CSS3 Page Flip Effect</title>
+  <meta charset="utf-8">
+	<title>pdf.js + Pure CSS3 Page Flip Effect</title>
 	
 	<style type="text/css">
 		body
@@ -225,35 +227,46 @@
 			-webkit-transition-delay: .8s;
 			margin: 203px 0 0 14px;
 		}
+		
+		h1, h3 {
+		  text-align: center;
+		}
+		
+		canvas {
+		  float: right;
+		}
 	</style>
 <link type="text/css" rel="stylesheet" href="data:text/css,"></head>
 <body>
+  <h1>drop PDF on desk!</h1>
+  <h3>(works in Chrome)</h3>
 	<div id="all">
 		<div id="page-flip">
 			<div id="r1"><div id="p1">
 			  <div>
-  			  <canvas id="p1-canvas"/>
-			    <div></div>
+			    <canvas id="p1-canvas"></canvas>
+          <div></div>
 		    </div>
 		  </div>
 		</div>
 		<div id="p2">
 			<div>
-			  <canvas id="p2-canvas"/>
+        <canvas id="p2-canvas"></canvas>
+        <div></div>
 			</div>
 		</div>
 		<div id="r3">
 		  <div id="p3">
 		    <div>
-		      <canvas id="p3-canvas"/>
-		      <div></div>
+		      <canvas id="p3-canvas"></canvas>
+	        <div></div>
 		    </div>
 		  </div>
 		</div>
 			<div class="s"><div id="s3"><div id="sp3"></div></div></div>
 			<div class="s" id="s4"><div id="s2"><div id="sp2"></div></div></div>
 		</div>
-	</div>
+	</div>	
 
   <script type="text/javascript" src="js/pdf.min.js"></script>
   <script type="text/javascript">
@@ -261,43 +274,69 @@
     PDFJS.workerSrc = 'js/pdf.min.js';
   </script>
 	
-	<script>
-    PDFJS.getPdf('test/MIT-LCS-TM-632.pdf', function getPdfHelloWorld(data) {
-      //
-      // Instantiate PDFDoc with PDF data
-      //
-      var pdf = new PDFJS.PDFDoc(data);
-      var page1 = pdf.getPage(1);
-      var page2 = pdf.getPage(2);
-      var page3 = pdf.getPage(3);
-      
-      //
-      // Prepare canvas using PDF page dimensions
-      //
-      var canvas1 = document.getElementById('p1-canvas');
-      var canvas2 = document.getElementById('p2-canvas');
-      var canvas3 = document.getElementById('p3-canvas');
-      
-      var context1 = canvas1.getContext('2d');
-      var context2 = canvas2.getContext('2d');
-      var context3 = canvas3.getContext('2d');
-      
-      canvas1.height = canvas1.parentElement.clientHeight;
-      canvas1.width = canvas1.parentElement.clientWidth;
-      
-      canvas2.height = canvas2.parentElement.clientHeight;
-      canvas2.width = canvas2.parentElement.clientWidth;
-      
-      canvas3.height = canvas3.parentElement.clientHeight;
-      canvas3.width = canvas3.parentElement.clientWidth;
+	<script>      
+		var holder = document.getElementById('all');
+		holder.ondragover = function () { return false; };
+		holder.ondragend = function () { return false; };
+	  
+    //
+    // Use HTML5 FileReader to read file as ArrayBuffer on drop
+    //
 
-      //
+		holder.ondrop = function(e) {
+			// this.className = '';			
+			e.preventDefault();
+			var file = e.dataTransfer.files[0];
+			
+			// test for FileReader support
+			if(!window.FileReader) {
+			  alert('Sorry, your browser has no FileReader support!');
+			  return false;
+			}
+			
+  		var reader = new window.FileReader();
+
+  		reader.onload = function(event) {
+  		  var data = event.target.result;
+  		  
+        // Instantiate PDFDoc with PDF data
+        var pdf = new PDFJS.PDFDoc(data);
+        var numPages = pdf.numPages;
+        
+        // render page 1
+        if (numPages >= 1) {
+          var page1 = pdf.getPage(1);
+          var canvas1 = document.getElementById('p1-canvas');
+          renderPage(page1, canvas1);
+        }
+
+        // render page 2
+        if (numPages >= 2) {
+          var page2 = pdf.getPage(2);
+          var canvas2 = document.getElementById('p2-canvas');
+          renderPage(page2, canvas2);
+        }
+        
+        // render page 3
+        if (numPages >= 3) {
+          var page3 = pdf.getPage(3);
+          var canvas3 = document.getElementById('p3-canvas');
+          renderPage(page3, canvas3);
+        }
+        
+      }
+
+  		reader.readAsArrayBuffer(file);
+		};
+		
+		function renderPage(page, canvas) {
+      // Prepare canvas using PDF page dimensions
+      var context = canvas.getContext('2d');
+      canvas.height = canvas.parentElement.clientHeight;
+      canvas.width = canvas.parentElement.clientWidth;
       // Render PDF page into canvas context
-      //
-      page1.startRendering(context1);
-      page2.startRendering(context2);
-      page3.startRendering(context3);
-    });
+      page.startRendering(context);
+		}
 	</script>
 
 </body></html>
