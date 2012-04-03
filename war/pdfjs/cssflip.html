@@ -274,78 +274,7 @@
 	</div>	
 
   <script type="text/javascript" src="../js/pdf.min.js"></script>
-  <script type="text/javascript">
-    // Specify the main script used to create a new PDF.JS web worker.
-    PDFJS.workerSrc = '../js/pdf.min.js';
-  </script>
-	
-	<script type="text/javascript">      
-		var holder = document.getElementById('all');
-		holder.ondragover = function () { return false; };
-		holder.ondragend = function () { return false; };
-	  
-    //
-    // Use HTML5 FileReader to read file as ArrayBuffer on drop
-    //
-
-		holder.ondrop = function(e) {
-			// this.className = '';			
-			e.preventDefault();
-			var file = e.dataTransfer.files[0];
-			
-			// test for FileReader support
-			if(!window.FileReader) {
-			  alert('Sorry, your browser has no FileReader support!');
-			  return false;
-			}
-			
-  		var reader = new window.FileReader();
-
-  		reader.onload = function(event) {
-  		  var data = event.target.result;
-  		  
-        // Instantiate PDFDoc with PDF data
-        var pdf = new PDFJS.PDFDoc(data);
-        var numPages = pdf.numPages;
-        
-        // render page 1
-        if (numPages >= 1) {
-          var page1 = pdf.getPage(1);
-          var canvas1 = document.getElementById('p1-canvas');
-          renderPage(page1, canvas1);
-        }
-
-        // render page 2
-        if (numPages >= 2) {
-          var page2 = pdf.getPage(2);
-          var canvas2 = document.getElementById('p2-canvas');
-          renderPage(page2, canvas2);
-        }
-        
-        // render page 3
-        if (numPages >= 3) {
-          var page3 = pdf.getPage(3);
-          var canvas3 = document.getElementById('p3-canvas');
-          renderPage(page3, canvas3);
-        }
-      };
-
-  		reader.readAsArrayBuffer(file);
-      
-      return false;
-		};
-		
-		function renderPage(page, canvas) {
-      // Prepare canvas using PDF page dimensions
-      var context = canvas.getContext('2d');
-      canvas.height = canvas.parentElement.clientHeight;
-      canvas.width = canvas.parentElement.clientWidth;
-      // Render PDF page into canvas context
-      page.startRendering(context);
-      
-      return false;
-		}
-	</script>
+  <script type="text/javascript" src="cssflip.js"></script>
 
 </body>
 </html>
