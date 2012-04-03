@@ -4,7 +4,7 @@
 <!-- CSS3 Page Flip by http://www.romancortes.com/blog/pure-css3-page-flip-effect/ -->
 <!-- pdf.js by https://github.com/mozilla/pdf.js -->
 <html>
-  <head>
+<head>
   <meta charset="utf-8">
 	<title>pdf.js + CSS3 Page Flip</title>
 	
@@ -238,10 +238,13 @@
 		  float: right;
 		}
 	</style>
-<link type="text/css" rel="stylesheet" href="data:text/css,"></head>
+	
+</head>
 <body>
+  
   <h1>drop PDF on desk!</h1>
   <h3>(works in Chrome)</h3>
+  
 	<div id="all">
 		<div id="page-flip">
 			<div id="r1"><div id="p1">
@@ -276,7 +279,7 @@
     PDFJS.workerSrc = '../js/pdf.min.js';
   </script>
 	
-	<script>      
+	<script type="text/javascript">      
 		var holder = document.getElementById('all');
 		holder.ondragover = function () { return false; };
 		holder.ondragend = function () { return false; };
@@ -325,10 +328,11 @@
           var canvas3 = document.getElementById('p3-canvas');
           renderPage(page3, canvas3);
         }
-        
-      }
+      };
 
   		reader.readAsArrayBuffer(file);
+      
+      return false;
 		};
 		
 		function renderPage(page, canvas) {
@@ -338,7 +342,10 @@
       canvas.width = canvas.parentElement.clientWidth;
       // Render PDF page into canvas context
       page.startRendering(context);
+      
+      return false;
 		}
 	</script>
 
-</body></html>
+</body>
+</html>
