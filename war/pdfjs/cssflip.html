@@ -13,6 +13,9 @@
 		{
 			padding: 0;
 			margin: 0;
+ 			background-image: url(../img/wood.jpg);
+			background-repeat-x: repeat;
+      background-repeat-y: repeat;
 		}
 		#all
 		{
@@ -23,7 +26,6 @@
 		}
 		#page-flip
 		{
-			background-image: url(img/pagebg.jpg);
 			position: absolute;
 			padding: 40px 40px 40px 340px;
 			width: 300px;
@@ -54,7 +56,7 @@
 			-webkit-transition-duration: 1s;
 			width: 285px;
 			height: 388px;
-			background-image: url(img/empty-page.png);
+			background-image: url(../img/empty-page.png);
 		}
 		#p1 > div > div
 		{
@@ -70,7 +72,7 @@
 			-webkit-box-shadow: 0 0 11px rgba(0, 0, 0, .5);
 			position: absolute;
 			z-index: 1;
-			background-image: url(img/empty-page.png);
+			background-image: url(../img/empty-page.png);
 		}
 		#r3
 		{
@@ -161,7 +163,7 @@
 			-webkit-box-shadow: 0 0 11px rgba(0, 0, 0, .5);
 			width: 285px;
 			height: 388px;
-			background-image: url(img/empty-page.png);
+			background-image: url(../img/empty-page.png);
 			overflow: hidden;
 		}
 		#p3 > div > div
@@ -268,10 +270,10 @@
 		</div>
 	</div>	
 
-  <script type="text/javascript" src="js/pdf.min.js"></script>
+  <script type="text/javascript" src="../js/pdf.min.js"></script>
   <script type="text/javascript">
     // Specify the main script used to create a new PDF.JS web worker.
-    PDFJS.workerSrc = 'js/pdf.min.js';
+    PDFJS.workerSrc = '../js/pdf.min.js';
   </script>
 	
 	<script>      
