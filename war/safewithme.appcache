@@ -12,6 +12,7 @@ css/bootstrap-responsive-2.0.1.min.css
 js/jquery-1.7.1.min.js
 js/bootstrap-2.0.1.min.js
 js/openpgp.min.js
+js/pdf.min.js
 js/safewithme.util.js
 js/safewithme.menu.js
 js/safewithme.menu.view.js
