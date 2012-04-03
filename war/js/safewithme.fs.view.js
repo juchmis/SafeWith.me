@@ -178,40 +178,14 @@ var FSVIEW = (function (window, document, $, fs) {
 			fs.getFile(file, function(decrypted) {
 				// hide progress bar
 				$('#decryptModal').modal('hide');
-				// self.displayDoc(decrypted);
 				
-				// render PDF with pdf.js
+				// if (file.mimeType === 'application/pdf') {
+				// 	window.location.href = 'pdfjs/viewer.html?file=' + decrypted;
+				// 	return;
+				// }
 				
-				//
-				// Instantiate PDFDoc with PDF data
-				//
-				var pdf = new PDFJS.PDFDoc(decrypted);
-				var page1 = pdf.getPage(1);
-				var page2 = pdf.getPage(2);
-				var scale = 0.5;
-
-				//
-				// Prepare canvas using PDF page dimensions
-				//
-				var canvas1 = document.getElementById('pdf-canvas-1');
-				var canvas2 = document.getElementById('pdf-canvas-2');
-				var context1 = canvas1.getContext('2d');
-				var context2 = canvas2.getContext('2d');
-				canvas1.height = page1.height * scale;
-				canvas1.width = page1.width * scale;
-				canvas2.height = page2.height * scale;
-				canvas2.width = page2.width * scale;
-
-				//
-				// Render PDF page into canvas context
-				//
-				page1.startRendering(context1);
-				page2.startRendering(context2);
-				
-				$('#pdfjsModal').on('shown', function() {
-					$('.carousel').carousel('stop');
-				});
-				$('#pdfjsModal').modal('show');
+				// display the document
+				window.location.href = decrypted;
 			});
 		});
 		
@@ -225,13 +199,6 @@ var FSVIEW = (function (window, document, $, fs) {
 		fs.deleteFile(file, function() {
 			$('[href="' + file.blobKey + '"]').remove();
 		});
-	};
-
-	/**
-	 * Displays the document in the main view
-	 */
-	self.displayDoc = function(url) {
-		window.location.href = url;
 	};
 	
 	return self;

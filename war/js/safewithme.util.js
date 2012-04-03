@@ -102,7 +102,7 @@ var UTIL = (function (window) {
 			// try using HTML5 filesystem api
 			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
 			
-		} else if (window.URL && fileName) {
+		} else if (window.URL) {
 			// use blob URL api
 			var url = window.URL.createObjectURL(blob);
 			callback(url);
