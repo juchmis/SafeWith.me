@@ -1,4 +1,4 @@
-(function(window, document) {
+$(function() {
 	
     // Specify the main script used to create a new PDF.JS web worker.
     PDFJS.workerSrc = '../js/pdf.min.js';
@@ -46,4 +46,4 @@
 		page.startRendering(context);
 	}
 	
-}(window, document));
+});
