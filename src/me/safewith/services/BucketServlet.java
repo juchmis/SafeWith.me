@@ -93,6 +93,7 @@ public class BucketServlet extends HttpServlet {
 				BucketMsg msg = BucketDAO.dto2msg(bucket);
 				
 				String json = new GsonBuilder().create().toJson(msg);
+				resp.setStatus(201);
 				resp.setContentType("application/json");
 				resp.getWriter().print(json);
 				resp.getWriter().close();

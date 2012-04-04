@@ -92,15 +92,30 @@ asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 			
 			var base64Key = btoa(keyId);
 			var encodedKeyId = encodeURIComponent(base64Key);
-			SERVER.call('DELETE', '/app/publicKeys?keyId=' + encodedKeyId, function(resp) {
-				equal(resp, "");
-				
-				SERVER.call('DELETE', '/app/privateKeys?keyId=' + encodedKeyId, function(resp) {
+			
+			SERVER.xhr({
+				type: 'DELETE',
+				uri: '/app/publicKeys?keyId=' + encodedKeyId,
+				expected: 200,
+				success: function(resp) {
 					equal(resp, "");
-
-					start();
-				});
+					
+					deletePrivateKey();
+				}
 			});
+			
+			function deletePrivateKey() {
+				SERVER.xhr({
+					type: 'DELETE',
+					uri: '/app/privateKeys?keyId=' + encodedKeyId,
+					expected: 200,
+					success: function(resp) {
+						equal(resp, "");
+
+						start();
+					}
+				});
+			}
 		});
 		
 	}, function(modalShown) {

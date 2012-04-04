@@ -65,10 +65,16 @@ var CACHE = (function (window) {
 				fileWriter.onwriteend = function(e) {
 					callback(true);
 				};
-				fileWriter.onerror = function(e) { errorHandler(e); };
+				fileWriter.onerror = function(e) {
+					errorHandler(e);
+					callback(false);
+				};
 				fileWriter.write(blob);
 			});
-		}, errorHandler);
+		}, function(e) {
+			errorHandler(e);
+			callback(false);
+		});
 	};
 	
 	/**

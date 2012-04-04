@@ -127,6 +127,7 @@ public class PublicKeyServlet extends HttpServlet {
 				}
 				
 				new GenericDAO().persist(pk);
+				resp.setStatus(201);
 				resp.getWriter().close();
 			}
 		});

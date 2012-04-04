@@ -83,12 +83,32 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		var jsonPublicKey = JSON.stringify(publicKey);
 		var jsonPrivateKey = JSON.stringify(privateKey);
 		
-		server.upload('POST', '/app/publicKeys', 'application/json', jsonPublicKey, function(resp) {
-			server.upload('POST', '/app/privateKeys', 'application/json', jsonPrivateKey, function(resp) {
-				// read the user's keys from local storage
-				callback(keyId);
-			});
+		// first upload public key
+		server.xhr({
+			type: 'POST',
+			uri: '/app/publicKeys',
+			contentType: 'application/json',
+			expected: 201,
+			body: jsonPublicKey,
+			success: function(resp) {
+				uploadPrivateKeys();
+			}
 		});
+		
+		// then upload private key
+		function uploadPrivateKeys() {
+			server.xhr({
+				type: 'POST',
+				uri: '/app/privateKeys',
+				contentType: 'application/json',
+				expected: 201,
+				body: jsonPrivateKey,
+				success: function(resp) {
+					// read the user's keys from local storage
+					callback(keyId);
+				}
+			});
+		}
 	};
 
 	/**
@@ -189,16 +209,30 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	self.fetchKeys = function(email, keyId, callback) {
 		var base64Key = window.btoa(keyId);
 		var encodedKeyId = encodeURIComponent(base64Key);
-		// GET public key
-		server.call('GET', '/app/publicKeys?keyId=' + encodedKeyId, function(publicKey) {
-			// GET private key
-			server.call('GET', '/app/privateKeys?keyId=' + encodedKeyId, function(privateKey) {
-				// import keys
-				self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, email);
-				
-				callback({ privateKey:privateKey, publicKey:publicKey });
-			});
+		
+		// get public key
+		server.xhr({
+			type: 'GET',
+			uri: '/app/publicKeys?keyId=' + encodedKeyId,
+			expected: 200,
+			success: function(publicKey) {
+				getPrivateKey(publicKey);
+			}
 		});
+		
+		// get private key
+		function getPrivateKey(publicKey) {
+			server.xhr({
+				type: 'GET',
+				uri: '/app/privateKeys?keyId=' + encodedKeyId,
+				expected: 200,
+				success: function(privateKey) {
+					// import keys
+					self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, email);
+					callback({ privateKey:privateKey, publicKey:publicKey });
+				}
+			});
+		}
 	};
 	
 	/**

@@ -27,16 +27,21 @@ var MENU = (function (server, cache) {
 	self.getLoginInfo = function(goal, callback) {
 		// init Login anchor
 		var uri = '/login?requestUri=' + goal;
-		server.call('GET', uri, function(loginInfo) {
-			// remember last user in local storage
-			cache.storeObject('lastLoginInfo', loginInfo);
-			// got loginInfo from server
-			callback(loginInfo);
-			
-		}, function(jqXHR, textStatus, errorThrown) {
-			// get last user if server unreachable
-			var loginInfo = cache.readObject('lastLoginInfo');
-			callback(loginInfo);
+		server.xhr({
+			type: 'GET',
+			uri: '/login?requestUri=' + goal,
+			expected: 200,
+			success: function(loginInfo) {
+				// remember last user in local storage
+				cache.storeObject('lastLoginInfo', loginInfo);
+				// got loginInfo from server
+				callback(loginInfo);
+			},
+			error: function(e) {
+				// get last user if server unreachable
+				var loginInfo = cache.readObject('lastLoginInfo');
+				callback(loginInfo);
+			}
 		});
 	};
 	

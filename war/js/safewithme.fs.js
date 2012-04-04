@@ -148,12 +148,17 @@ var FS = (function (crypto, server, util, cache) {
 	 * get a new blob-key, which is then updated on the bucket pointer.
 	 */
 	self.createBucket = function(name, callback) {
-		server.call('POST', '/app/buckets', function(bucket) {
-			// initialize bucket file system
-			var bucketFS = new self.BucketFS(bucket.id, name, bucket.ownerEmail);
-			persistBucketFS(bucketFS, bucket, function(updatedBucket) {
-				callback(updatedBucket);
-			});
+		server.xhr({
+			type: 'POST',
+			uri: '/app/buckets',
+			expected: 201,
+			success: function(bucket) {
+				// initialize bucket file system
+				var bucketFS = new self.BucketFS(bucket.id, name, bucket.ownerEmail);
+				persistBucketFS(bucketFS, bucket, function(updatedBucket) {
+					callback(updatedBucket);
+				});
+			}
 		});
 	};
 	
@@ -162,17 +167,22 @@ var FS = (function (crypto, server, util, cache) {
 	 */
 	self.getBuckets = function(callback) {
 		// try fetching buckets from server
-		server.call('GET', '/app/buckets', function(buckets) {
-			// sync bucket cache with servers data
-			for(var i = 0; i < buckets.length; i++) {
-				putCachedBucket(buckets[i]);
+		server.xhr({
+			type: 'GET',
+			uri: '/app/buckets',
+			expected: 200,
+			success: function(buckets) {
+				// sync bucket cache with servers data
+				for(var i = 0; i < buckets.length; i++) {
+					putCachedBucket(buckets[i]);
+				}
+				callback(buckets);
+			},
+			error: function(e) {
+				// read buckets from local storage, if server unreachable
+				var cachedBuckets = findCachedBuckets();
+				callback(cachedBuckets);
 			}
-			callback(buckets);
-			
-		}, function(jqXHR, textStatus, errorThrown) {
-			// read buckets from local storage, if server unreachable
-			var cachedBuckets = findCachedBuckets();
-			callback(cachedBuckets);
 		});
 	};
 	
@@ -185,8 +195,13 @@ var FS = (function (crypto, server, util, cache) {
 		// remove from local storage cache
 		removeCachedBucket(bucket);
 		// delete bucket DTO in datastore
-		server.call('DELETE', '/app/buckets?bucketId=' + bucket.id, function(resp) {
-			callback(resp);
+		server.xhr({
+			type: 'DELETE',
+			uri: '/app/buckets?bucketId=' + bucket.id,
+			expected: 200,
+			success: function(resp) {
+				callback(resp);
+			}
 		});
 	};
 	
@@ -214,8 +229,15 @@ var FS = (function (crypto, server, util, cache) {
 		putCachedBucket(bucket);
 		// upload to server
 		var updatedBucketJson = JSON.stringify(bucket);
-		server.upload('PUT', '/app/buckets', 'application/json', updatedBucketJson, function(updatedBucket) {
-			callback(updatedBucket);
+		server.xhr({
+			type: 'PUT',
+			uri: '/app/buckets',
+			contentType: 'application/json',
+			body: updatedBucketJson,
+			expected: 200,
+			success: function(updatedBucket) {
+				callback(updatedBucket);
+			}
 		});
 	};
 
@@ -282,6 +304,15 @@ var FS = (function (crypto, server, util, cache) {
 			
 			// cache the blob locally
 			cache.storeBlob(ctMd5, blob, function(success) {
+				if (success) {
+					// blob was cached locally
+					handleBlob();
+				} else {
+					
+				}
+			});
+			
+			function handleBlob() {
 				// stop displaying message
 				cachedCallback();
 				// upload the encrypted blob to the server
@@ -296,7 +327,7 @@ var FS = (function (crypto, server, util, cache) {
 						callback(fsFile, updatedBucket);
 					});
 				});
-			});
+			}
 		});
 	};
 	
