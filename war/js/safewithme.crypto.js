@@ -284,7 +284,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			pub_key = openpgp.read_publicKey(publicKey.armored);
 		}
 		
-		var ciphertext = openpgp.write_encrypted_message(pub_key, plaintext);
+		var ciphertext = openpgp.write_encrypted_message(pub_key, window.btoa(plaintext));
 		return ciphertext;
 	};
 	
@@ -319,7 +319,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	    	}
 	    	
 	    	var decrypted = msg[0].decrypt(keymat, sesskey);
-			return decrypted;
+			return window.atob(decrypted);
 	    	
 	    } else {
 	    	throw "No private key found!";
