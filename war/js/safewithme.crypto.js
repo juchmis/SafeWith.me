@@ -189,18 +189,19 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		
 		// check keys
 		if (!publicKey || !privateKey || (publicKey.keyId !== privateKey.keyId)) {
-			errorCallback();
-			return;
+			// no amtching keys found in the key store
+			return false;
 		}
 
-		// read passphrase from local storage
-		passphrase = window.localStorage.getItem(email + 'Passphrase');
+		// read passphrase from local storage if no passphrase is specified
+		if(!passphrase && passphrase !== '') {
+			passphrase = window.localStorage.getItem(email + 'Passphrase');
+		}
 		if (!passphrase && passphrase !== '') {
 			throw 'No passphrase for that user in localstorage!';
 		}
 		
-		// keys found
-		if (callback) { callback(); }
+		return true;
 	};
 	
 	/**
@@ -215,21 +216,21 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			type: 'GET',
 			uri: '/app/publicKeys?keyId=' + encodedKeyId,
 			expected: 200,
-			success: function(publicKey) {
-				getPrivateKey(publicKey);
+			success: function(pubKey) {
+				getPrivateKey(pubKey);
 			}
 		});
 		
 		// get private key
-		function getPrivateKey(publicKey) {
+		function getPrivateKey(pubKey) {
 			server.xhr({
 				type: 'GET',
 				uri: '/app/privateKeys?keyId=' + encodedKeyId,
 				expected: 200,
-				success: function(privateKey) {
+				success: function(privKey) {
 					// import keys
-					self.importKeys(publicKey.asciiArmored, privateKey.asciiArmored, email);
-					callback({ privateKey:privateKey, publicKey:publicKey });
+					self.importKeys(pubKey.asciiArmored, privKey.asciiArmored, email);
+					callback({ privateKey:privKey, publicKey:pubKey });
 				}
 			});
 		}
@@ -271,6 +272,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	
 	/**
 	 * Encrypt a string
+	 * @param customPubKey [PublicKey] (optional) another user's public key for sharing
 	 */
 	self.asymmetricEncrypt = function(plaintext, customPubKey) {
 		var pub_key = null;
@@ -282,18 +284,17 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			pub_key = openpgp.read_publicKey(publicKey.armored);
 		}
 		
-		var cipher = openpgp.write_encrypted_message(pub_key, plaintext);
-
-		return cipher;
+		var ciphertext = openpgp.write_encrypted_message(pub_key, plaintext);
+		return ciphertext;
 	};
 	
 	/**
 	 * Decrypt a string
 	 */
-	self.asymmetricDecrypt = function(cipher) {
+	self.asymmetricDecrypt = function(ciphertext) {
 		var priv_key = openpgp.read_privateKey(privateKey.armored);
 	
-	    var msg = openpgp.read_message(cipher);
+	    var msg = openpgp.read_message(ciphertext);
 	    var keymat = null;
 	    var sesskey = null;
 	    

@@ -1,7 +1,12 @@
 module("FS");
 
-asyncTest("Create, Get, Delete Bucket", 11, function() {
-	CRYPTO.readKeys("test@asdf.com");
+asyncTest("Create, Get, Delete Bucket", 13, function() {
+	var email = "test@example.com";
+	if(!CRYPTO.readKeys(email)) {
+		return;
+	}
+	
+	FS.email = email;
 
 	var name = 'Test Bucket';
 	// create
@@ -29,27 +34,33 @@ asyncTest("Create, Get, Delete Bucket", 11, function() {
 		// store file
 		FS.storeFile(blob, function() {}, function(file, updatedBucket) {
 			
-			// read file
-			FS.getFile(file, function(url) {
-				ok(url);
+			FS.getBuckets(function(buckets) {
+				ok(buckets.length === 1);
 				
-				var gottenBucketFS = FS.getBucketFS(updatedBucket.encryptedFS);
-				equal(gottenBucketFS.root[0].name, bucketFS.root[0].name);
+				var updatedBucketFS = FS.getBucketFS(updatedBucket.encryptedFS);
+				equal(JSON.stringify(updatedBucketFS), JSON.stringify(bucketFS));
+				var gottenBucketFS = FS.getBucketFS(buckets[0].encryptedFS);
+				equal(JSON.stringify(gottenBucketFS), JSON.stringify(bucketFS));
 
-				// delete file from bucket fs
-				FS.deleteFile(file, function() {
-					equal(bucketFS.root.length, 0);
+				// read file
+				FS.getFile(file, function(url) {
+					ok(url);
 
-					// test getAllBuckets
-					FS.getBuckets(function(bucketPointers) {
-						ok(bucketPointers);
-						ok(bucketPointers.length >= 1);
+					// delete file from bucket fs
+					FS.deleteFile(file, function() {
+						equal(bucketFS.root.length, 0);
 
-						// remove the created bucket
-						FS.removeBucket(bucket, function(resp) {
-							equal(resp, "");
+						// test getAllBuckets
+						FS.getBuckets(function(bucketPointers) {
+							ok(bucketPointers);
+							ok(bucketPointers.length >= 1);
 
-							start();
+							// remove the created bucket
+							FS.removeBucket(bucket, function(resp) {
+								equal(resp, "");
+
+								start();
+							});
 						});
 					});
 				});

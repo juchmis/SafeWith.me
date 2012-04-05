@@ -32,12 +32,14 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 		// check server for user's public key ID
 		crypto.initKeyPair(loginInfo, function(keyId) {
 			// read corresponding keys from localstorage
-			crypto.readKeys(loginInfo.email, keyId, callback, function() {
+			if (crypto.readKeys(loginInfo.email, keyId)) {
+				callback();
+			} else {
 				// import keys from server if no matching keys are found in local storage
 				self.showImportKeys(loginInfo, keyId, callback);
-			});
+			}
 			
-		}, function(genKeysCallback) {
+		}, function(genKeysCallback) /* displayCallback */ {
 			
 			// no keys found on server -> generate new keypair fot the user
 			$('#genKeysForm').submit(function(e) {
@@ -57,7 +59,8 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 			// show disclaimer during key generation
 			$('#disclaimerModal').modal('show');
 
-		}, function() {
+		}, function() /* finishCallback */ {
+			
 			// create export keys link
 			crypto.exportKeys(function(url) {
 				// show completion message

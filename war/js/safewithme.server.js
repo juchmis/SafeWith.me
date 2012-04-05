@@ -29,7 +29,10 @@ var SERVER = (function (util) {
 	//
 	
 	/**
-	 * Helper methods for REST service requests
+	 * Helper methods for REST service requests. All requests to the server
+	 * in the application use only this function, providing centralized response
+	 * parsing and error handling. This makes it easier to defend against XSS and 
+	 * code injection attacks.
 	 * @param args [Object] e.g.:
 	 * {
 	 *   type: 'GET',
@@ -47,7 +50,7 @@ var SERVER = (function (util) {
 		xhr.open(args.type, args.uri, true);
 		
 		if (args.contentType) {
-			xhr.overrideMimeType(args.contentType);
+			xhr.setRequestHeader('Content-Type', args.contentType);
 		}
 		if (args.responseType) {
 			xhr.responseType = args.responseType;
@@ -58,7 +61,7 @@ var SERVER = (function (util) {
 				// http status is ok
 				var respMimeType = xhr.getResponseHeader("Content-Type");
 				if (respMimeType && respMimeType.indexOf('application/json') !== -1) {
-					// do centralized json parsing
+					// do centralized parsing of data
 					args.success(JSON.parse(this.response));
 				} else {
 					args.success(this.response);

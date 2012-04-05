@@ -1,6 +1,6 @@
 module("Asymmetric Crypto");
 
-CRYPTO.setPassphrase('asdfasdf');
+CRYPTO.setPassphrase('');
 var email = 'test@asdf.com';
 
 test("Generate keys", 7, function() {
@@ -72,7 +72,7 @@ asyncTest("Export keys", 3, function() {
 	});
 });
 
-asyncTest("CRUD PGP KeyPair to Server", 7, function() {
+asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 	var email = "test@example.com";
 	var loginInfo = {
 		email : email
@@ -83,7 +83,7 @@ asyncTest("CRUD PGP KeyPair to Server", 7, function() {
 		ok(keyId);
 		
 		CRYPTO.fetchKeys(email, keyId, function(keys) {
-			CRYPTO.readKeys(loginInfo.email, keyId);
+			ok(CRYPTO.readKeys(loginInfo.email, keyId));
 
 			equal(keys.publicKey.asciiArmored, CRYPTO.getPublicKey());
 			equal(keys.publicKey.keyId, CRYPTO.getPublicKeyIdBase64());
