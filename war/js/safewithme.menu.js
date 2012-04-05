@@ -26,7 +26,6 @@ var MENU = (function (server, cache) {
 	 */
 	self.getLoginInfo = function(goal, callback) {
 		// init Login anchor
-		var uri = '/login?requestUri=' + goal;
 		server.xhr({
 			type: 'GET',
 			uri: '/login?requestUri=' + goal,

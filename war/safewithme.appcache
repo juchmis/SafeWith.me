@@ -1,11 +1,11 @@
 CACHE MANIFEST
-# SafeWith.me v0.7.10 - 2012-04-05 12:20
+# SafeWith.me v0.7.13 - 2012-04-05 17:00
 # Git commit SHA1: 434f1ea0efac3e1d295ffb72c9b1d2008a8fcdcf (just an example)
 # (TODO: generate values in script)
 
 CACHE:
 favicon.ico
-index.html
+app/index.html
 css/bootstrap-2.0.1.min.css
 css/safewithme.css
 css/bootstrap-responsive-2.0.1.min.css
