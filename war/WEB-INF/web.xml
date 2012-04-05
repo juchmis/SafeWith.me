@@ -4,10 +4,21 @@ xmlns="http://java.sun.com/xml/ns/javaee"
 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
   <welcome-file-list>
 	<welcome-file>index.html</welcome-file>
   </welcome-file-list>
-  
+
+  <!-- Mime-Type mapping since app engine e.g. uses text/plain for .js files -->
+  <mime-mapping>
+    <extension>appcache</extension>
+    <mime-type>text/cache-manifest</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>js</extension>
+    <mime-type>text/javascript</mime-type>
+  </mime-mapping>
+
   <!-- Http Servlet for login --> 
   <servlet>
 	<servlet-name>Login</servlet-name>
@@ -17,7 +28,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-name>Login</servlet-name>
 	<url-pattern>/login</url-pattern>
   </servlet-mapping>
-    
+
   <!-- Http Servlet for serving public keys -->  
   <servlet>
     <servlet-name>PublicKeyServlet</servlet-name>
@@ -27,7 +38,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-name>PublicKeyServlet</servlet-name>
     <url-pattern>/app/publicKeys</url-pattern>
   </servlet-mapping>
-    
+
   <!-- Http Servlet for serving private keys -->  
   <servlet>
     <servlet-name>PrivateKeyServlet</servlet-name>
@@ -37,7 +48,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-name>PrivateKeyServlet</servlet-name>
     <url-pattern>/app/privateKeys</url-pattern>
   </servlet-mapping>
-    
+
   <!-- Http Servlet for serving buckets -->  
   <servlet>
     <servlet-name>BucketServlet</servlet-name>
@@ -47,7 +58,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-name>BucketServlet</servlet-name>
     <url-pattern>/app/buckets</url-pattern>
   </servlet-mapping>
-  
+
   <!-- Http Servlet for uploading blobs -->  
   <servlet>
     <servlet-name>UploadBlobServlet</servlet-name>
@@ -57,7 +68,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-name>UploadBlobServlet</servlet-name>
     <url-pattern>/app/uploadBlob</url-pattern>
   </servlet-mapping>
-    
+
   <!-- Http Servlet for serving blobs -->  
   <servlet>
     <servlet-name>ServeBlobServlet</servlet-name>
@@ -67,7 +78,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-name>ServeBlobServlet</servlet-name>
     <url-pattern>/app/blobs</url-pattern>
   </servlet-mapping>
-  
+
   <!-- Make HTTPS mandatory -->
   <security-constraint>
     <web-resource-collection>
@@ -77,7 +88,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
-  
+
   <!-- Users must be logged in for the following url pattern -->
   <security-constraint>
     <web-resource-collection>

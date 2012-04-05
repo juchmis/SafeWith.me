@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <application>safewith-me</application>
-  <version>0-7-11</version>
+  <version>0-7-12</version>
 
   <!--
     By default, App Engine sends requests serially to a given web server.
@@ -11,11 +11,10 @@
   -->
 
   <!-- Configure java.util.logging -->
-  <sessions-enabled>true</sessions-enabled>
-<system-properties>
-  <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
-  <property name="com.google.gdata.DisableCookieHandler" value="true"/>
-</system-properties>
+  <system-properties>
+    <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+    <property name="com.google.gdata.DisableCookieHandler" value="true"/>
+  </system-properties>
 
   <!--
     HTTP Sessions are disabled by default. To enable HTTP sessions specify:
