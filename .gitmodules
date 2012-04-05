@@ -7,3 +7,6 @@
 [submodule "lib/pdfjs"]
 	path = lib/pdfjs
 	url = https://github.com/mozilla/pdf.js.git
+[submodule "lib/sjcl"]
+	path = lib/sjcl
+	url = https://github.com/bitwiseshiftleft/sjcl.git
