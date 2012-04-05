@@ -1,6 +1,6 @@
 module("FS");
 
-asyncTest("Create, Get, Delete Bucket", 13, function() {
+asyncTest("Create, Get, Delete Bucket", 14, function() {
 	var email = "test@example.com";
 	if(!CRYPTO.readKeys(email)) {
 		return;
@@ -27,7 +27,7 @@ asyncTest("Create, Get, Delete Bucket", 13, function() {
 		// create blob for uploading
 		var ct = "Hello, World!";
 		var ctAB = UTIL.binStr2ArrBuf(ct);
-		var blob = UTIL.arrBuf2Blob(ctAB, 'application/octet-stream');
+		var blob = UTIL.arrBuf2Blob(ctAB, 'text/plain');
 		blob.name = 'test.txt';
 		var ctMd5 = md5(ct);
 		
@@ -39,6 +39,7 @@ asyncTest("Create, Get, Delete Bucket", 13, function() {
 				
 				var updatedBucketFS = FS.getBucketFS(updatedBucket.encryptedFS);
 				equal(JSON.stringify(updatedBucketFS), JSON.stringify(bucketFS));
+				equal(bucket.encryptedFS, buckets[0].encryptedFS);
 				var gottenBucketFS = FS.getBucketFS(buckets[0].encryptedFS);
 				equal(JSON.stringify(gottenBucketFS), JSON.stringify(bucketFS));
 
