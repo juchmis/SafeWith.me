@@ -156,6 +156,36 @@ test("Large blob", 4, function() {
 	equal(pt, message);
 });
 
+test("SJCL large blob", 1, function() {
+	var message = '';
+	for (var i=0; i < 147; i++) {
+		message += testImg1Base64;
+	}
+	
+	console.log('blob size [bytes]: ' + message.length);
+	
+	var start = (new Date).getTime();
+	
+	var p = {
+		mode: 'ocb2'
+	};
+	var rp = {};
+	var ct = sjcl.encrypt('asdf', message);
+	var diff = (new Date).getTime() - start;
+
+	console.log('Time taken for encryption [ms]: ' + diff);
+	
+	console.log('ct lenght [bytes]: ' + ct.length);
+	
+	var decrStart = (new Date).getTime();
+	var pt = sjcl.decrypt('asdf', ct);
+	var decrDiff = (new Date).getTime() - decrStart;
+
+	console.log('Time taken for decryption [ms]: ' + decrDiff);
+	
+	equal(pt, message);
+});
+
 asyncTest("Upload blob", 4, function() {
 	// build test message
 	var message = '';
