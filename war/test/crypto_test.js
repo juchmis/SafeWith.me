@@ -125,33 +125,51 @@ asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 
 module("Convergent/Symmetric Crypto");
 
-test("Large blob", 4, function() {
+asyncTest("WebWorker", 2, function() {
+	
 	var message = '';
 	for (var i=0; i < 147; i++) {
 		message += testImg1Base64;
 	}
 	
-	console.log('blob size [bytes]: ' + message.length);
-	
-	var start = (new Date).getTime();
-	var ct = CRYPTO.symmetricEncrypt(message);
-	var diff = (new Date).getTime() - start;
+	CRYPTO.symmetricEncrypt(message, function(ct) {
+		ok(ct.ct && ct.key);
 
-	console.log('Time taken for encryption [ms]: ' + diff);
-	// console.log('Ciphertext: ' + ct);
+		var decrStart = (new Date).getTime();
+		
+		CRYPTO.symmetricDecrypt(ct.key, ct.ct, function(pt) {
+			equal(pt, message);
+			
+			start();
+		});
+	});
+});
+
+test("Without WebWorker", 3, function() {
+	var message = '';
+	for (var i=0; i < 147; i++) {
+		message += testImg1Base64;
+	}
+
+	console.log('blob size [bytes]: ' + message.length);
+	var start = (new Date).getTime();
 	
-	var ct2 = CRYPTO.symmetricEncrypt(message);
-	equal(ct.ct, ct2.ct);
-	equal(ct.locator, ct2.locator);
-	equal(ct.key, ct2.key);
+	var ct = CRYPTOWORKER.symmetricEncrypt(message);
 	
+	var diff = (new Date).getTime() - start;
+	console.log('OpenPGP.js: Time taken for encryption [ms]: ' + diff);
 	console.log('key: "' + ct.key + '", key length: ' + ct.key.length + ', ct lenght [bytes]: ' + ct.ct.length);
 	
+	var ct2 = CRYPTOWORKER.symmetricEncrypt(message);
+	equal(ct.ct, ct2.ct);
+	equal(ct.key, ct2.key);
+	
 	var decrStart = (new Date).getTime();
-	var pt = CRYPTO.symmetricDecrypt(ct.key, ct.ct);
+	
+	var pt = CRYPTOWORKER.symmetricDecrypt(ct.key, ct.ct);
+	
 	var decrDiff = (new Date).getTime() - decrStart;
-
-	console.log('Time taken for decryption [ms]: ' + decrDiff);
+	console.log('OpenPGP.js: Time taken for decryption [ms]: ' + decrDiff);
 	
 	equal(pt, message);
 });
@@ -173,7 +191,7 @@ test("SJCL large blob", 1, function() {
 	var ct = sjcl.encrypt('asdf', message);
 	var diff = (new Date).getTime() - start;
 
-	console.log('Time taken for encryption [ms]: ' + diff);
+	console.log('SJCL: Time taken for encryption [ms]: ' + diff);
 	
 	console.log('ct lenght [bytes]: ' + ct.length);
 	
@@ -181,20 +199,17 @@ test("SJCL large blob", 1, function() {
 	var pt = sjcl.decrypt('asdf', ct);
 	var decrDiff = (new Date).getTime() - decrStart;
 
-	console.log('Time taken for decryption [ms]: ' + decrDiff);
+	console.log('SJCL Time taken for decryption [ms]: ' + decrDiff);
 	
 	equal(pt, message);
 });
 
 asyncTest("Upload blob", 4, function() {
 	// build test message
-	var message = '';
-	for (var i=0; i < 147; i++) {
-		message += testImg1Base64;
-	}
+	var message = 'Hello, World!';
 	
 	// symmetrically encrypt the string
-	var ct = CRYPTO.symmetricEncrypt(message);
+	var ct = CRYPTOWORKER.symmetricEncrypt(message);
 	// convert binary string to ArrayBuffer
 	var ctAB = UTIL.binStr2ArrBuf(ct.ct);
 	// create blob for uploading
@@ -213,7 +228,7 @@ asyncTest("Upload blob", 4, function() {
 			UTIL.blob2BinStr(blob, function(encrStr) {
 				
 				// symmetrically decrypt the string
-				var pt = CRYPTO.symmetricDecrypt(ct.key, encrStr);
+				var pt = CRYPTOWORKER.symmetricDecrypt(ct.key, encrStr);
 				equal(pt, message);
 				
 				// delete blob again

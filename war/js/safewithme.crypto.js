@@ -331,28 +331,33 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	//
 	
 	/**
-	 * Deterministic convergent enctryption using SHA-1, SHA-256, and 256 bit AES CFB mode
+	 * Deterministic convergent encryption in a web worker thread
 	 */
-	self.symmetricEncrypt = function(data) {
-		// get sha1 of data
-		var sha1 = str_sha1(data);
-		// generate 256 bit encryption key
-		var key = str_sha256(sha1);
-		// get "random" 16 octet prefix
-		var prefixrandom = str_sha1(sha1).substr(0, 16);
-		// encrypt using 256 bit AES (9)
-		var ct = openpgp_crypto_symmetricEncrypt(prefixrandom, 9, key, data, 0);
+	self.symmetricEncrypt = function(plaintext, callback) {
+		// init webworker thread
+		var worker = new Worker('../js/safewithme.crypto.worker.js');
 
-		return { key: window.btoa(key), ct: ct };
+		worker.addEventListener('message', function(e) {
+			callback(e.data);
+		}, false);
+
+		// Send plaintext data to the worker
+		worker.postMessage({type: 'encrypt', plaintext: plaintext});
 	};
 
 	/**
-	 * Decrypt using symmetric 256 bit AES CFB mode
+	 * Symmetric decryption in a web worker thread
 	 */
-	self.symmetricDecrypt = function(key, ciphertext) {
-		// decrypt using 256 bit AES (9)
-		var pt = openpgp_crypto_symmetricDecrypt(9, window.atob(key), ciphertext, 0);
-		return pt;
+	self.symmetricDecrypt = function(key, ciphertext, callback) {
+		// init webworker thread
+		var worker = new Worker('../js/safewithme.crypto.worker.js');
+
+		worker.addEventListener('message', function(e) {
+			callback(e.data);
+		}, false);
+
+		// Send plaintext data to the worker
+		worker.postMessage({type: 'decrypt', key: key, ciphertext: ciphertext});
 	};
 	
 	return self;
