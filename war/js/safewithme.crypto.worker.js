@@ -45,6 +45,9 @@ var CRYPTOWORKER = (function (symEncrypt, symDecrypt, sha1, sha256) {
 		} else if (args.type === 'decrypt' && args.key && args.ciphertext) {
 			// start decryption
 			output = self.symmetricDecrypt(args.key, args.ciphertext);
+			
+		} else {
+			throw 'Not all arguments for web worker crypto are defined!';
 		}
 		
 		// pass output back to main thread
