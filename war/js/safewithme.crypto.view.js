@@ -81,14 +81,14 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 			
 			crypto.fetchKeys(loginInfo.email, keyId, function(keys) {
 				// try to read keys from local storage again
-				crypto.readKeys(loginInfo.email, keyId, function() {
+				if (crypto.readKeys(loginInfo.email, keyId)) {
 					window.alert('Key import from server successful!');
 					$('#importKeysModal').modal('hide');
 					callback();
-				}, function() {
+				} else {
 					window.alert('Key import failed... please check your passphrase!');
 					return;
-				});
+				}
 			});
 		});
 	};
