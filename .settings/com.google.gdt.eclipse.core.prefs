@@ -1,5 +1,5 @@
-#Sun Mar 04 15:20:01 EST 2012
+#Fri Apr 06 12:05:14 WST 2012
 eclipse.preferences.version=1
-jarsExcludedFromWebInfLib=/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.6.1.v201201120043r37/appengine-java-sdk-1.6.1/lib/impl/appengine-api-stubs.jar|/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.6.1.v201201120043r37/appengine-java-sdk-1.6.1/lib/testing/appengine-testing.jar
+jarsExcludedFromWebInfLib=/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.6.4.v201203300216r37/appengine-java-sdk-1.6.4/lib/impl/appengine-api-stubs.jar|/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.6.4.v201203300216r37/appengine-java-sdk-1.6.4/lib/testing/appengine-testing.jar
 warSrcDir=war
 warSrcDirIsOutput=true
