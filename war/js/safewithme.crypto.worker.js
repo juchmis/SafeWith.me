@@ -17,7 +17,6 @@
  */
 
 var CRYPTOWORKER = (function () {
-	var self = this;
 	
 	//
 	// Web Worker logic
