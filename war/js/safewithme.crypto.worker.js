@@ -16,17 +16,24 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-var CRYPTOWORKER = (function () {
+'use strict';
+
+// import web worker dependencies
+importScripts('openpgp.worker.min.js');
+
+var CRYPTOWORKER = (function (symEncrypt, symDecrypt, sha1, sha256) {
 	
 	//
 	// Web Worker logic
 	//
 	
+	/**
+	 * In the web worker thread context, 'this' and 'self' can be used as a global
+	 * variable namespace similar to the 'window' object in the main thread
+	 */
 	self.addEventListener('message', function(e) {
-		// define openpgp.config for util debug
+		// define openpgp.config locally for openpgp.util.debug in the worker thread context
 		self.openpgp = { config : {} };
-		// import dependencies
-		importScripts('openpgp.worker.min.js');
 		
 		var args = e.data,
 			output = null;
@@ -53,13 +60,13 @@ var CRYPTOWORKER = (function () {
 	 */
 	self.symmetricEncrypt = function(data) {
 		// get sha1 of data
-		var sha1 = str_sha1(data);
+		var h = sha1(data);
 		// generate 256 bit encryption key
-		var key = str_sha256(sha1);
+		var key = sha256(h);
 		// get "random" 16 octet prefix
-		var prefixrandom = str_sha1(sha1).substr(0, 16);
+		var prefixrandom = sha1(h).substr(0, 16);
 		// encrypt using 256 bit AES (9)
-		var ct = openpgp_crypto_symmetricEncrypt(prefixrandom, 9, key, data, 0);
+		var ct = symEncrypt(prefixrandom, 9, key, data, 0);
 
 		return { key: key, ct: ct };
 	};
@@ -69,9 +76,8 @@ var CRYPTOWORKER = (function () {
 	 */
 	self.symmetricDecrypt = function(key, ciphertext) {
 		// decrypt using 256 bit AES (9)
-		var pt = openpgp_crypto_symmetricDecrypt(9, key, ciphertext, 0);
+		var pt = symDecrypt(9, key, ciphertext, 0);
 		return pt;
 	};
 	
-	return self;
-}());
+}(openpgp_crypto_symmetricEncrypt, openpgp_crypto_symmetricDecrypt, str_sha1, str_sha256));

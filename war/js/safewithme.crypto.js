@@ -356,7 +356,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			callback(e.data);
 		}, false);
 
-		// Send plaintext data to the worker
+		// Send ciphertext and symmetric key data to the worker
 		worker.postMessage({type: 'decrypt', key: key, ciphertext: ciphertext});
 	};
 	
