@@ -338,10 +338,11 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		var worker = new Worker('../js/safewithme.crypto.worker.js');
 
 		worker.addEventListener('message', function(e) {
+			// return ciphertext from the worker
 			callback(e.data);
 		}, false);
 
-		// Send plaintext data to the worker
+		// send plaintext data to the worker
 		worker.postMessage({type: 'encrypt', plaintext: plaintext});
 	};
 
@@ -353,10 +354,11 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		var worker = new Worker('../js/safewithme.crypto.worker.js');
 
 		worker.addEventListener('message', function(e) {
+			// return plaintext from the worker
 			callback(e.data);
 		}, false);
 
-		// Send ciphertext and symmetric key data to the worker
+		// send ciphertext and symmetric key data to the worker
 		worker.postMessage({type: 'decrypt', key: key, ciphertext: ciphertext});
 	};
 	
