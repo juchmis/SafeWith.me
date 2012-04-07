@@ -51,8 +51,11 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 	 * Check browser support
 	 */
 	function checkBrowser() {
-		if (!window.BlobBuilder || !window.requestFileSystem || !window.storageInfo) {
-			window.alert('Sorry, your browser does not yet support all the necessary HTML5 Apis. Try using Chrome.');
+		if (!window.Worker ||
+			!window.BlobBuilder ||
+			!window.requestFileSystem ||
+			!window.storageInfo) {
+			window.alert('Sorry, your browser doesn\'t support all the necessary HTML5 features yet. Try using Chrome.');
 			return false;
 		}
 		return true;
