@@ -13,13 +13,19 @@ test("JQuery and basic requirements", 10, function() {
 	ok( window.URL || window.webkitURL || window.mozURL, "ObjectURL Api" );
 });
 
-asyncTest("String -> ArrayBuffer -> String", 3, function() {
+asyncTest("String -> ArrayBuffer -> String", 5, function() {
 	var util = UTIL;
 	
 	var input = "asdf";
 	var buf = util.binStr2ArrBuf(input);
 	ok(buf);
 	
+	// test slow conversion in js
+	var binStr = util.arrBuf2BinStr(buf);
+	ok(binStr);
+	equal(binStr, input);
+	
+	// test native conversion with BlobBuilder Api
 	var blob = util.arrBuf2Blob(buf, 'application/octet-stream');
 	ok(blob);
 	

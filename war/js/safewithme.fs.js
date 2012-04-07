@@ -295,31 +295,31 @@ var FS = (function (crypto, server, util, cache) {
 		util.blob2BinStr(file, function(binStr) {
 			
 			// symmetrically encrypt the string
-			var ct = crypto.symmetricEncrypt(binStr);
-			// convert binary string to ArrayBuffer
-			var ctAB = util.binStr2ArrBuf(ct.ct);
-			// create blob for uploading
-			var blob = util.arrBuf2Blob(ctAB, 'application/octet-stream');
-			var ctMd5 = md5(ct.ct);
-			
-			// cache the blob locally
-			cache.storeBlob(ctMd5, blob, function(success) {
-				if (success) {
-					// blob was cached locally
-					handleBlob();
-				} else {
-					
-				}
+			crypto.symmetricEncrypt(binStr, function(ct) {
+				
+				// create blob for uploading
+				var blob = util.arrBuf2Blob(util.binStr2ArrBuf(ct.ct), 'application/octet-stream');
+				var ctMd5 = md5(ct.ct);
+
+				// cache the blob locally
+				cache.storeBlob(ctMd5, blob, function(success) {
+					if (success) {
+						// blob was cached locally
+						handleBlob(blob, ctMd5, ct.key);
+					} else {
+						throw 'Caching encrypted file blob before uploading failed!';
+					}
+				});
 			});
 			
-			function handleBlob() {
+			function handleBlob(blob, ctMd5, key) {
 				// stop displaying message
 				cachedCallback();
 				// upload the encrypted blob to the server
 				server.uploadBlob(blob, ctMd5, function(blobKey) {
 					
 					// add file to bucket fs
-					var fsFile = new self.File(file.name, file.size, file.type, blobKey, ct.key, ctMd5);
+					var fsFile = new self.File(file.name, file.size, file.type, blobKey, key, ctMd5);
 					var bucket = self.currentBucket();
 					var bucketFS = self.currentBucketFS();
 					self.addFileToBucketFS(fsFile, bucketFS, bucket, function(updatedBucket) {
@@ -342,9 +342,14 @@ var FS = (function (crypto, server, util, cache) {
 			} else {
 				// get encrypted ArrayBuffer from server
 				server.downloadBlob(file.blobKey, function(blob) {
+					
 					// cache the downloaded blob
 					cache.storeBlob(file.md5, blob, function(success) {
-						handleBlob(blob);
+						if (success) {
+							handleBlob(blob);
+						} else {
+							throw 'Caching encrypted file blob locally after download failed!';
+						}
 					});
 				});
 			}
@@ -353,14 +358,16 @@ var FS = (function (crypto, server, util, cache) {
 		function handleBlob(blob) {
 			// read blob as binary string
 			util.blob2BinStr(blob, function(encrStr) {
-				// symmetrically decrypt the string
-				var pt = crypto.symmetricDecrypt(file.cryptoKey, encrStr);
-				var ptAB = util.binStr2ArrBuf(pt);
 				
-				var blob2 = util.arrBuf2Blob(ptAB, file.mimeType);
-				// return either data url or filesystem url
-				util.createUrl(file.name, blob2, function(url) {
-					callback(url);
+				// symmetrically decrypt the string
+				crypto.symmetricDecrypt(file.cryptoKey, encrStr, function(pt) {
+					
+					// build plaintext blob
+					var blob2 = util.arrBuf2Blob(util.binStr2ArrBuf(pt), file.mimeType);
+					// return either data url or filesystem url
+					util.createUrl(file.name, blob2, function(url) {
+						callback(url);
+					});
 				});
 			});
 		}

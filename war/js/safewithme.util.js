@@ -30,7 +30,7 @@ var UTIL = (function (window) {
 	/**
 	 * Converts a binary String (e.g. from the FileReader Api) to an ArrayBuffer
 	 * @param str [String] a binary string with integer values (0..255) per character
-	 * @return [ArrayBuffer] either a data url or a filesystem url
+	 * @return [ArrayBuffer]
 	 */
 	self.binStr2ArrBuf = function(str) {
 		var b = new ArrayBuffer(str.length);
@@ -69,6 +69,24 @@ var UTIL = (function (window) {
 		};
 
 		reader.readAsBinaryString(blob);
+	};
+	
+	/**
+	 * Converts an ArrayBuffer to a binary String. This is a slower alternative to
+	 * conversion with arrBuf2Blob -> blob2BinStr, since these use native apis,
+	 * but it can be used on browsers without the BlodBuilder Api
+	 * @param buf [ArrayBuffer]
+	 * @return [String] a binary string with integer values (0..255) per character
+	 */
+	self.arrBuf2BinStr = function(buf) {
+		var b = new Uint8Array(buf);
+		var str = '';
+		
+		for(var i = 0; i < b.byteLength; i++){
+			str += String.fromCharCode(b[i]);
+		}
+		
+		return str;
 	};
 	
 	/**
