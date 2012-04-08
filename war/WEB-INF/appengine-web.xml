@@ -3,6 +3,17 @@
   <application>safewith-me</application>
   <version>0-7-16</version>
 
+  <static-files>
+    <include path="/**.gif" expiration="1d" />
+    <include path="/**.jpg" expiration="1d" />
+    <include path="/**.png" expiration="1d" />
+    <include path="/**.ico" expiration="1d" />
+    <include path="/**.js" />
+    <include path="/**.css"/>
+    <include path="**.html"/>
+    <include path="/**.manifest"/>
+  </static-files>
+
   <!--
     By default, App Engine sends requests serially to a given web server.
     To allow App Engine to send multiple requests in parallel specify:

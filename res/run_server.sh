@@ -9,6 +9,7 @@ GAE_SDK=/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.6
 
 # Start with '--wipe' to delete datastore and blobstore to start with a fresh server
 if [ "$1" = "--wipe" ]; then
+	#rm -rf ~/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/Cache/*
 	rm -rf war/WEB-INF/appengine-generated/
 fi
 
