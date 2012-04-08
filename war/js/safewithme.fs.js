@@ -176,7 +176,7 @@ var FS = (function (crypto, server, util, cache) {
 				
 				
 				// !!!!!!!!!!!!!!
-				// TODO: sync: local bucket cache -> server
+				// TODO: sync: local bucket cache and not yet uploaded blob -> server
 				// !!!!!!!!!!!!!!
 				
 				
@@ -330,12 +330,14 @@ var FS = (function (crypto, server, util, cache) {
 		});
 		
 		function persistOnServer(blob, file, ctMd5, encryptionkey) {
+			// send encrypted file blob to server
 			server.uploadBlob(blob, ctMd5, function(blobKey) {
+				// store file and file-metadata in BucketFS with blob-key
 				console.log(file.name + ' encrypted blob uploaded successful!');
 				createFSFile(file, ctMd5, encryptionkey, blobKey);
 			}, function(err) {
-				// TODO: error uploading to server
-				console.log('No connection to server... ' + file.name + ' (encrypted) was not uploaded!');
+				// store file and file-metadata in BucketFS without blob-key
+				console.log('No connection to server... ' + file.name + ' (encrypted) was not uploaded!');	
 				createFSFile(file, ctMd5, encryptionkey);
 			});
 		}
