@@ -33,22 +33,23 @@ var SERVER = (function (util) {
 	 * in the application use only this function, providing centralized response
 	 * parsing and error handling. This makes it easier to defend against XSS and 
 	 * code injection attacks.
-	 * @param args [Object] e.g.:
+	 * @param args [Object] with the the following parameters:
 	 * {
 	 *   type: 'GET',
 	 *   uri: '/server/foo',
 	 *   expected: 200,
-	 *   contentType: 'application/json',
-	 *   responseType: 'arraybuffer',
-	 *   body: '{"foo":"bar"}',
+	 *   contentType: 'application/json',	(optional)
+	 *   responseType: 'arraybuffer',		(optional)
+	 *   body: '{"foo":"bar"}',				(optional)
 	 *   success: function(resp) {...},
 	 *   error: function(e) {...}
 	 * }
 	 */
 	self.xhr = function(args) {
 		var xhr = new XMLHttpRequest();
-		xhr.open(args.type, args.uri, true);
 		
+		// set request headers
+		xhr.open(args.type, args.uri, true);
 		if (args.contentType) {
 			xhr.setRequestHeader('Content-Type', args.contentType);
 		}
@@ -56,6 +57,7 @@ var SERVER = (function (util) {
 			xhr.responseType = args.responseType;
 		}
 		
+		// response handler
 		xhr.onload = function(e) {
 			if (this.status === args.expected) {
 				// http status is ok
@@ -74,15 +76,12 @@ var SERVER = (function (util) {
 			}
 		};
 		
+		// error handler + send request
 		xhr.onerror = function(e) {
 			args.error(e);
 		};
 		
-		if (args.body) {
-			xhr.send(args.body);
-		} else {
-			xhr.send();
-		}
+		xhr.send(args.body);
 	};
 
 	//
