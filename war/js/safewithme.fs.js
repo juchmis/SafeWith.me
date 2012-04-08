@@ -22,7 +22,7 @@
  * This class implements all logic required for filesystem and
  * I/O between the browser's HTML5 File Apis and the application.
  */
-var FS = (function (crypto, server, util, cache) {
+var FS = (function (crypto, server, util, cache,  bucketCache) {
 	var self = {};
 	
 	self.email = undefined;
@@ -59,85 +59,6 @@ var FS = (function (crypto, server, util, cache) {
 	};
 	
 	//
-	// Decrypted BucketFS caching in memory
-	//
-	
-	var bucketCache = [];	// a cache for bucket pointer and their respectable fs
-
-	self.cacheBucket = function(bucket, bucketFS) {
-		var pair = {
-			bucket : bucket,
-			bucketFS : bucketFS
-		};
-		bucketCache.push(pair);
-	};
-
-	self.currentBucket = function() {
-		// at the moment each user only has one
-		return bucketCache[0].bucket;
-	};
-
-	self.currentBucketFS = function() {
-		// at the moment each user only has one
-		return bucketCache[0].bucketFS;
-	};
-	
-	//
-	// Bucket (containing encrypted BucketFS) caching in LocalStorage
-	//
-	
-	function putCachedBucket(bucket) {
-		// cache bucket in local storage
-		cache.storeObject(bucket.id, bucket);
-		// update cached bucket ids
-		var bucketIds = cache.readObject(self.email + 'BucketIds');
-		if (bucketIds) {
-			// check if bucket id is already in the array
-			var contained = false;
-			for (var i = 0; i < bucketIds.length; i++) {
-				if (bucketIds[i] === bucket.id) {
-					contained = true;
-					break;
-				}
-			}
-			if (!contained) {
-				bucketIds.push(bucket.id);
-			}
-		} else {
-			// create new array
-			bucketIds = [];
-			bucketIds.push(bucket.id);
-		}
-		cache.storeObject(self.email + 'BucketIds', bucketIds);
-	}
-	
-	function findCachedBuckets() {
-		// get cached bucket ids
-		var bucketIds = cache.readObject(self.email + 'BucketIds');
-		var cachedBuckets = [];
-		for (var i = 0; i < bucketIds.length; i++) {
-			// read bucket from local storage
-			var bucket = cache.readObject(bucketIds[i]);
-			cachedBuckets.push(bucket);
-		}
-		return cachedBuckets;
-	}
-	
-	function removeCachedBucket(bucket) {
-		// remove bucket from local storage
-		cache.removeObject(bucket.id);
-		// update cached bucket ids
-		var bucketIds = cache.readObject(self.email + 'BucketIds');
-		for (var i = 0; i < bucketIds.length; i++) {
-			if (bucketIds[i] === bucket.id) {
-				bucketIds.splice(i, 1);
-				break;
-			}
-		}
-		cache.storeObject(self.email + 'BucketIds', bucketIds);
-	}
-	
-	//
 	// Bucket handling
 	//
 	
@@ -166,30 +87,23 @@ var FS = (function (crypto, server, util, cache) {
 	 * Get bucket pointers from server
 	 */
 	self.getBuckets = function(callback) {
+		// read buckets from local storage, if server unreachable
+		var cachedBuckets = bucketCache.getAllBuckets();
+		
 		// try fetching buckets from server
 		server.xhr({
 			type: 'GET',
 			uri: '/app/buckets',
 			expected: 200,
-			success: function(buckets) {
-				
-				
-				
-				// !!!!!!!!!!!!!!
-				// TODO: sync: local bucket cache and not yet uploaded blob -> server
-				// !!!!!!!!!!!!!!
-				
-				
-				
-				// sync: local bucket cache <- servers 
-				for(var i = 0; i < buckets.length; i++) {
-					putCachedBucket(buckets[i]);
-				}
-				callback(buckets);
+			success: function(serverBuckets) {
+				// synchronize the server's with local buckets
+				bucketCache.syncBuckets(cachedBuckets, serverBuckets, function(syncedBuckets) {
+					// cache <-> server buckets are in sync
+					callback(syncedBuckets);
+				});
 			},
 			error: function(e) {
-				// read buckets from local storage, if server unreachable
-				var cachedBuckets = findCachedBuckets();
+				// no buckets from server... use cache
 				callback(cachedBuckets);
 			}
 		});
@@ -202,7 +116,7 @@ var FS = (function (crypto, server, util, cache) {
 		// TODO: delete any containing file blobs
 		
 		// remove from local storage cache
-		removeCachedBucket(bucket);
+		bucketCache.removeBucket(bucket);
 		// delete bucket DTO in datastore
 		server.xhr({
 			type: 'DELETE',
@@ -235,7 +149,7 @@ var FS = (function (crypto, server, util, cache) {
 		bucket.encryptedFS = encryptedFS;
 		bucket.publicKeyId = crypto.getPublicKeyIdBase64();
 		// cache bucket in local storage
-		putCachedBucket(bucket);
+		bucketCache.putBucket(bucket);
 		console.log('Bucket cached locally.');
 		// upload to server
 		var updatedBucketJson = JSON.stringify(bucket);
@@ -257,11 +171,14 @@ var FS = (function (crypto, server, util, cache) {
 	};
 
 	/**
-	 * Get bucket FS from bucket and decrypt it
+	 * Get bucket FS from bucket decrypt it
 	 */
-	self.getBucketFS = function(encryptedFS) {
-		var jsonFS =  crypto.asymmetricDecrypt(encryptedFS);
+	self.getBucketFS = function(bucket) {
+		var jsonFS =  crypto.asymmetricDecrypt(bucket.encryptedFS);
 		var bucketFS = JSON.parse(jsonFS);
+		
+		// cache local user buckets and fs in memory
+		bucketCache.putFS(bucket, bucketFS);
 		
 		return bucketFS;
 	};
@@ -345,9 +262,8 @@ var FS = (function (crypto, server, util, cache) {
 		function createFSFile(file, ctMd5, encryptionkey, blobKey) {
 			// add file to bucket fs
 			var fsFile = new self.File(file.name, file.size, file.type, blobKey, encryptionkey, ctMd5);
-			var bucket = self.currentBucket();
-			var bucketFS = self.currentBucketFS();
-			self.addFileToBucketFS(fsFile, bucketFS, bucket, function(updatedBucket) {
+			var current = bucketCache.current();
+			self.addFileToBucketFS(fsFile, current.bucketFS, current.bucket, function(updatedBucket) {
 				// add link to the file list
 				callback(fsFile, updatedBucket);					
 				// stop displaying message
@@ -407,9 +323,8 @@ var FS = (function (crypto, server, util, cache) {
 		cache.removeBlob(file.md5, function(success) {
 			// delete from server
 			server.deleteBlob(file.blobKey, function(resp) {
-				var bucket = self.currentBucket();
-				var bucketFS = self.currentBucketFS();
-				self.deleteFileFromBucketFS(file.blobKey, bucketFS, bucket, function() {
+				var current = bucketCache.current();
+				self.deleteFileFromBucketFS(file.blobKey, current.bucketFS, current.bucket, function() {
 					callback();
 				});
 			});
@@ -451,4 +366,4 @@ var FS = (function (crypto, server, util, cache) {
 	};
 	
 	return self;
-}(CRYPTO, SERVER, UTIL, CACHE));
+}(CRYPTO, SERVER, UTIL, CACHE, BUCKETCACHE));

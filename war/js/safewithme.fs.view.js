@@ -89,10 +89,7 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.displayBucket = function(bucket, index, numBuckets) {
 		// get bucket FS
-		var bucketFS = fs.getBucketFS(bucket.encryptedFS);
-			
-		// cache local user buckets and fs
-		fs.cacheBucket(bucket, bucketFS);
+		var bucketFS = fs.getBucketFS(bucket);
 		
 		// add bucket to accordion
 		var html = '<li class="nav-header">' + bucketFS.name + '</li>';

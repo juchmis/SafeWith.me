@@ -18,6 +18,10 @@
 
 'use strict';
 
+/**
+ * This module handles generic caching of both JSON oobjects in LocalStorage
+ * as well as Blobs in the local FileSystem
+ */
 var CACHE = (function (window) {
 	var self = {};
 	

@@ -15,14 +15,11 @@ asyncTest("Create, Get, Delete Bucket", 12, function() {
 		ok(bucket.encryptedFS);
 		
 		// get created fs
-		var bucketFS = FS.getBucketFS(bucket.encryptedFS);
+		var bucketFS = FS.getBucketFS(bucket);
 		
 		ok(bucketFS);
 		equal(bucketFS.name, name);
 		equal(bucketFS.id, bucket.id);
-			
-		// cache local user buckets and fs
-		FS.cacheBucket(bucket, bucketFS);
 		
 		// create blob for uploading
 		var ct = "Hello, World!";
@@ -34,7 +31,7 @@ asyncTest("Create, Get, Delete Bucket", 12, function() {
 		// store file
 		FS.storeFile(blob, function() {}, function(file, updatedBucket) {
 				
-			var updatedBucketFS = FS.getBucketFS(updatedBucket.encryptedFS);
+			var updatedBucketFS = FS.getBucketFS(updatedBucket);
 			equal(JSON.stringify(updatedBucketFS), JSON.stringify(bucketFS));
 			equal(bucket.encryptedFS, updatedBucket.encryptedFS);
 
