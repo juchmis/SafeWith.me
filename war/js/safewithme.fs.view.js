@@ -29,7 +29,7 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.init = function(loginInfo) {
 		// set current user's email
-		fs.email = loginInfo.email;
+		fs.setEmail(loginInfo.email);
 		
 		// drag and drop area
 		var holder = document.getElementById('holder');

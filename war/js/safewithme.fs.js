@@ -25,8 +25,6 @@
 var FS = (function (crypto, server, util, cache,  bucketCache) {
 	var self = {};
 	
-	self.email = undefined;
-	
 	//
 	// BucketFS json model
 	//
@@ -61,6 +59,13 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	//
 	// Bucket handling
 	//
+	
+	/**
+	 * Remember current user's email for bucket caching
+	 */
+	self.setEmail = function(email) {
+		bucketCache.setEmail(email);
+	};
 	
 	/**
 	 * Create a new bucket by first making a new bucket pointer on the

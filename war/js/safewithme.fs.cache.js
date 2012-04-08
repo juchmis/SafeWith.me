@@ -40,6 +40,9 @@ var BUCKETCACHE = (function (cache) {
 	};
 	
 	self.current = function() {
+		if (bucketFSCache.length === 0) {
+			return null;
+		}
 		// at the moment each user only has one
 		return {
 			bucket : bucketFSCache[0].bucket,
@@ -50,6 +53,13 @@ var BUCKETCACHE = (function (cache) {
 	//
 	// Bucket (containing encrypted BucketFS) caching in LocalStorage
 	//
+	
+	/**
+	 * Remember email for keys in local storage
+	 */
+	self.setEmail = function(email) {
+		self.email = email;
+	};
 
 	/**
 	 * Creates/Updates a bucket in the cache with its ID as a key
