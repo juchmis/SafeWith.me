@@ -19,7 +19,7 @@
 'use strict';
 
 // import web worker dependencies
-importScripts('openpgp.worker.min.js');
+importScripts('lib/openpgp.worker.min.js');
 
 var CRYPTOWORKER = (function (symEncrypt, symDecrypt, sha1, sha256) {
 	

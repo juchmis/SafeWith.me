@@ -9,10 +9,10 @@ app/index.html
 css/bootstrap-2.0.1.min.css
 css/safewithme.css
 css/bootstrap-responsive-2.0.1.min.css
-js/jquery-1.7.1.min.js
-js/bootstrap-2.0.1.min.js
-js/openpgp.worker.min.js
-js/openpgp.min.js
+js/lib/jquery-1.7.1.min.js
+js/lib/bootstrap-2.0.1.min.js
+js/lib/openpgp.worker.min.js
+js/lib/openpgp.min.js
 js/safewithme.util.js
 js/safewithme.menu.js
 js/safewithme.menu.view.js

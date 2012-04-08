@@ -8,6 +8,8 @@
     <include path="/**.jpg" expiration="1d" />
     <include path="/**.png" expiration="1d" />
     <include path="/**.ico" expiration="1d" />
+    <include path="/**.svg" expiration="1d" />
+    <include path="/**.pdf" expiration="1d" />
     <include path="/**.js" />
     <include path="/**.css"/>
     <include path="**.html"/>
