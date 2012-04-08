@@ -70,23 +70,18 @@ var FSVIEW = (function (window, document, $, fs) {
 	/**
 	 * Process a file after it has been droped on the droparea
 	 */
-	self.handleFileDrop = function(file) {
-		// wait for modal to appear, then start decryption
-		$('#encryptModal').on('shown', function() {
-			
-			// read, encrypt and upload encrypted file to server
-			fs.storeFile(file, function() {
-				// hide progress bar
-				$('#encryptModal').modal('hide');
-			}, function(fsFile) {
-				// display link to the file
-				self.addLinkToList(fsFile);
-			});
-			
-		});
-		
+	self.handleFileDrop = function(file) {		
 		// show progress bar
 		$('#encryptModal').modal('show');
+			
+		// read, encrypt and upload encrypted file to server
+		fs.storeFile(file, function() {
+			// hide progress bar
+			$('#encryptModal').modal('hide');
+		}, function(fsFile) {
+			// display link to the file
+			self.addLinkToList(fsFile);
+		});
 	};
 	
 	/**
@@ -171,24 +166,22 @@ var FSVIEW = (function (window, document, $, fs) {
 	 * Downloads the encrypted document, decrypt it and display it
 	 */
 	self.showDocItem = function(file) {
-		// wait for modal to appear, then start decryption
-		$('#decryptModal').on('shown', function() {
-			fs.getFile(file, function(decrypted) {
-				// hide progress bar
-				$('#decryptModal').modal('hide');
-				
-				// if (file.mimeType === 'application/pdf') {
-				// 	window.location.href = 'pdfjs/viewer.html?file=' + decrypted;
-				// 	return;
-				// }
-				
-				// display the document
-				window.location.href = decrypted;
-			});
-		});
-		
 		// show progress bar
 		$('#decryptModal').modal('show');
+		
+		// get encrypted fiel and decrypt
+		fs.getFile(file, function(decrypted) {
+			// hide progress bar
+			$('#decryptModal').modal('hide');
+			
+			// if (file.mimeType === 'application/pdf') {
+			// 	window.location.href = 'pdfjs/viewer.html?file=' + decrypted;
+			// 	return;
+			// }
+			
+			// display the document
+			window.location.href = decrypted;
+		});
 		
 		return false;
 	};
