@@ -47,8 +47,10 @@ var FSVIEW = (function (window, document, $, fs) {
 		
 		// upload button
 		function handleFileSelect(e) {
-			var file = e.target.files[0];
-			self.handleFileDrop(file);
+			//var file = e.target.files[0];
+			for (var i = 0; i < e.target.files.length; i++) {
+				self.handleFileDrop(e.target.files[i]);
+			}
 		}
 		document.getElementById('files').addEventListener('change', handleFileSelect, false);
 		
