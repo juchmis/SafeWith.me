@@ -172,7 +172,16 @@ var FS = (function (crypto, server, util, cache) {
 			uri: '/app/buckets',
 			expected: 200,
 			success: function(buckets) {
-				// sync bucket cache with servers data
+				
+				
+				
+				// !!!!!!!!!!!!!!
+				// TODO: sync: local bucket cache -> server
+				// !!!!!!!!!!!!!!
+				
+				
+				
+				// sync: local bucket cache <- servers 
 				for(var i = 0; i < buckets.length; i++) {
 					putCachedBucket(buckets[i]);
 				}
@@ -227,6 +236,7 @@ var FS = (function (crypto, server, util, cache) {
 		bucket.publicKeyId = crypto.getPublicKeyIdBase64();
 		// cache bucket in local storage
 		putCachedBucket(bucket);
+		console.log('Bucket cached locally.');
 		// upload to server
 		var updatedBucketJson = JSON.stringify(bucket);
 		server.xhr({
@@ -236,7 +246,12 @@ var FS = (function (crypto, server, util, cache) {
 			body: updatedBucketJson,
 			expected: 200,
 			success: function(updatedBucket) {
+				console.log('Bucket successfully updated on server.');
 				callback(updatedBucket);
+			},
+			error: function(err) {
+				console.log('No connection to server... bucket not updated on server!');
+				callback();
 			}
 		});
 	};
@@ -293,7 +308,6 @@ var FS = (function (crypto, server, util, cache) {
 	self.storeFile = function(file, cachedCallback, callback) {
 		// convert file/blob to binary string
 		util.blob2BinStr(file, function(binStr) {
-			
 			// symmetrically encrypt the string
 			crypto.symmetricEncrypt(binStr, function(ct) {
 				
@@ -305,30 +319,39 @@ var FS = (function (crypto, server, util, cache) {
 				cache.storeBlob(ctMd5, blob, function(success) {
 					if (success) {
 						// blob was cached locally
-						handleBlob(blob, ctMd5, ct.key);
+						console.log(file.name + ' encrypted blob cached locally.');
+						// upload to the server
+						persistOnServer(blob, file, ctMd5, ct.key);
 					} else {
 						throw 'Caching encrypted file blob before uploading failed!';
 					}
 				});
 			});
-			
-			function handleBlob(blob, ctMd5, key) {
+		});
+		
+		function persistOnServer(blob, file, ctMd5, encryptionkey) {
+			server.uploadBlob(blob, ctMd5, function(blobKey) {
+				console.log(file.name + ' encrypted blob uploaded successful!');
+				createFSFile(file, ctMd5, encryptionkey, blobKey);
+			}, function(err) {
+				// TODO: error uploading to server
+				console.log('No connection to server... ' + file.name + ' (encrypted) was not uploaded!');
+				createFSFile(file, ctMd5, encryptionkey);
+			});
+		}
+		
+		function createFSFile(file, ctMd5, encryptionkey, blobKey) {
+			// add file to bucket fs
+			var fsFile = new self.File(file.name, file.size, file.type, blobKey, encryptionkey, ctMd5);
+			var bucket = self.currentBucket();
+			var bucketFS = self.currentBucketFS();
+			self.addFileToBucketFS(fsFile, bucketFS, bucket, function(updatedBucket) {
+				// add link to the file list
+				callback(fsFile, updatedBucket);					
 				// stop displaying message
 				cachedCallback();
-				// upload the encrypted blob to the server
-				server.uploadBlob(blob, ctMd5, function(blobKey) {
-					
-					// add file to bucket fs
-					var fsFile = new self.File(file.name, file.size, file.type, blobKey, key, ctMd5);
-					var bucket = self.currentBucket();
-					var bucketFS = self.currentBucketFS();
-					self.addFileToBucketFS(fsFile, bucketFS, bucket, function(updatedBucket) {
-						// add link to the file list
-						callback(fsFile, updatedBucket);
-					});
-				});
-			}
-		});
+			});
+		}
 	};
 	
 	/**
@@ -338,6 +361,7 @@ var FS = (function (crypto, server, util, cache) {
 		// try to fetch blob from the local cache
 		cache.readBlob(file.md5, function(blob) {
 			if (blob) {
+				console.log(file.name + ' read from cache.');
 				handleBlob(blob);
 			} else {
 				// get encrypted ArrayBuffer from server
