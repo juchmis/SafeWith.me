@@ -50,6 +50,10 @@ var BUCKETCACHE = (function (cache) {
 		};
 	};
 	
+	self.clearFSCache = function() {
+		bucketFSCache = [];
+	};
+	
 	//
 	// Bucket (containing encrypted BucketFS) caching in LocalStorage
 	//

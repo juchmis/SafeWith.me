@@ -18,4 +18,7 @@ test("Bucket FS Cache", 6, function() {
 	ok(currentBucketFS);
 	equal(currentBucket.encryptedFS, 'asdfasdf');
 	equal(currentBucketFS.name, 'Test BucketFS');
+	
+	// clear cache
+	BUCKETCACHE.clearFSCache();
 });
