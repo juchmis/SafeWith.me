@@ -84,12 +84,26 @@ asyncTest("BucketCache <- Server", 1, function() {
 
 asyncTest("BucketCache -> Server", 1, function() {
 	var email = 'test@example.com';
+
+	var bucket1 = {
+		id: '1',
+		encryptedFS: 'asdfasdf',
+		ownerEmail: email,
+		publicKeyId: 'pubKeyId123'
+	};
+
+	var bucket2 = {
+		id: '2',
+		encryptedFS: 'yxcvycxv',
+		ownerEmail: email,
+		publicKeyId: 'pubKeyId123'
+	};
+	
 	bucketCache.clearBucketCache(email);
 	var server = SERVER;
-
+	
 	bucketCache.putBucket(bucket1);
 	bucketCache.putBucket(bucket2);
-	var serverBuckets = [ bucket1 ];
 	
 	var createdBucket = undefined;
 	
