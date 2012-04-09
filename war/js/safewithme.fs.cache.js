@@ -125,7 +125,13 @@ var BUCKETCACHE = (function (cache) {
 	 * Clears the bucket cache for a ceratin user
 	 */
 	self.clearBucketCache = function(email) {
-		
+		// get cached bucket ids
+		var bucketIds = cache.readObject(email + 'BucketIds');
+		for (var i = 0; i < bucketIds.length; i++) {
+			// read bucket from local storage
+			var bucket = cache.readObject(bucketIds[i]);
+			self.removeBucket(bucket);
+		}
 	};
 
 	/**

@@ -44,7 +44,7 @@ asyncTest("Create, Get, Delete Bucket", 12, function() {
 					equal(bucketFS.root.length, 0);
 
 					// test getAllBuckets
-					FS.getBuckets(function(bucketPointers) {
+					FS.getBuckets(email, function(bucketPointers) {
 						ok(bucketPointers);
 						ok(bucketPointers.length >= 1);
 

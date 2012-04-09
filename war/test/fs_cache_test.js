@@ -25,19 +25,40 @@ test("Bucket FS Cache (in memory)", 6, function() {
 	bucketCache.clearFSCache();
 });
 
-test("Bucket Cache (in local storage)", 2, function() {
+test("Bucket Cache (in local storage)", 6, function() {
 	var email = 'test@qwertz.de';
+	bucketCache.clearBucketCache(email);
 	
-	var bucket = {
+	var bucket1 = {
 		id: '1',
 		encryptedFS: 'asdfasdf',
 		ownerEmail: email,
 		publicKeyId: 'pubKeyId123'
 	};
 	
-	bucketCache.putBucket(bucket);
-	equal(bucketCache.getAllBuckets(email)[0].id, bucket.id);
+	var bucket2 = {
+		id: '2',
+		encryptedFS: 'yxcvycxv',
+		ownerEmail: email,
+		publicKeyId: 'pubKeyId123'
+	};
 	
-	bucketCache.removeBucket(bucket);
+	// get all buckets
+	equal(bucketCache.getAllBuckets(email).length, 0);
+	
+	// put bucket
+	bucketCache.putBucket(bucket1);
+	equal(bucketCache.getAllBuckets(email).length, 1);
+	equal(bucketCache.getAllBuckets(email)[0].id, bucket1.id);
+	
+	// remove bucket
+	bucketCache.removeBucket(bucket1);
+	equal(bucketCache.getAllBuckets(email).length, 0);
+	
+	// clear bucket cache
+	bucketCache.putBucket(bucket1);
+	bucketCache.putBucket(bucket2);
+	equal(bucketCache.getAllBuckets(email).length, 2);
+	bucketCache.clearBucketCache(email);
 	equal(bucketCache.getAllBuckets(email).length, 0);
 });
