@@ -4,6 +4,6 @@
 cd `dirname $0`
 cd ..
 
-rm -r ~/Library/Application\ Support/Google/Chrome/Default/File\ System/*
-rm -r ~/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/Cache/*
-rm -r ~/Library/Application\ Support/Google/Chrome/Default/Local\ Storage/*
+rm -rf ~/Library/Application\ Support/Google/Chrome/Default/File\ System/*
+rm -rf ~/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/Cache/*
+rm -rf ~/Library/Application\ Support/Google/Chrome/Default/Local\ Storage/*
