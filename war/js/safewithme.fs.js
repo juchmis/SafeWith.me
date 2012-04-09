@@ -85,9 +85,6 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	 * Get bucket pointers from server
 	 */
 	self.getBuckets = function(email, callback) {
-		// read buckets from local storage, if server unreachable
-		var cachedBuckets = bucketCache.getAllBuckets(email);
-		
 		// try fetching buckets from server
 		server.xhr({
 			type: 'GET',
@@ -95,12 +92,14 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 			expected: 200,
 			success: function(serverBuckets) {
 				// synchronize the server's with local buckets
-				bucketCache.syncBuckets(cachedBuckets, serverBuckets, function(syncedBuckets) {
+				bucketCache.syncBuckets(serverBuckets, function(syncedBuckets) {
 					// cache <-> server buckets are in sync
 					callback(syncedBuckets);
 				});
 			},
 			error: function(e) {
+				// read buckets from local storage, if server unreachable
+				var cachedBuckets = bucketCache.getAllBuckets(email);
 				// no buckets from server... use cache
 				callback(cachedBuckets);
 			}

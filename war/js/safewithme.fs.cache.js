@@ -136,8 +136,11 @@ var BUCKETCACHE = (function (cache) {
 
 	/**
 	 * Synchronize the local cached buckets with the DTO entries on the server
+	 * and uploads any encrypted file-blobs, that are not yet on the server
+	 * but in the local filesystem (e.g. because the user imported files offline)
+	 * @return [Bucket] the synchronoized buckets that are to be displayed
 	 */
-	self.syncBuckets = function(localBuckets, serverBuckets, callback) {
+	self.syncBuckets = function(serverBuckets, callback) {
 
 		// !!!!!!!!!!!!!!
 		// TODO: sync: local bucket cache and not yet uploaded blob -> server
