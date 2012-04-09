@@ -57,13 +57,6 @@ var BUCKETCACHE = (function (cache) {
 	//
 	// Bucket (containing encrypted BucketFS) caching in LocalStorage
 	//
-	
-	/**
-	 * Remember email for keys in local storage
-	 */
-	self.setEmail = function(email) {
-		self.email = email;
-	};
 
 	/**
 	 * Creates/Updates a bucket in the cache with its ID as a key
@@ -72,7 +65,7 @@ var BUCKETCACHE = (function (cache) {
 		// cache bucket in local storage
 		cache.storeObject(bucket.id, bucket);
 		// update cached bucket ids
-		var bucketIds = cache.readObject(self.email + 'BucketIds');
+		var bucketIds = cache.readObject(bucket.ownerEmail + 'BucketIds');
 		if (bucketIds) {
 			// check if bucket id is already in the array
 			var contained = false;
@@ -90,16 +83,16 @@ var BUCKETCACHE = (function (cache) {
 			bucketIds = [];
 			bucketIds.push(bucket.id);
 		}
-		cache.storeObject(self.email + 'BucketIds', bucketIds);
+		cache.storeObject(bucket.ownerEmail + 'BucketIds', bucketIds);
 	};
 
 	/**
 	 * Returns all the cached buckets
 	 */
-	self.getAllBuckets = function() {
+	self.getAllBuckets = function(email) {
 		var cachedBuckets = [];
 		// get cached bucket ids
-		var bucketIds = cache.readObject(self.email + 'BucketIds');
+		var bucketIds = cache.readObject(email + 'BucketIds');
 		if (!bucketIds) {
 			return cachedBuckets;
 		}
@@ -118,14 +111,21 @@ var BUCKETCACHE = (function (cache) {
 		// remove bucket from local storage
 		cache.removeObject(bucket.id);
 		// update cached bucket ids
-		var bucketIds = cache.readObject(self.email + 'BucketIds');
+		var bucketIds = cache.readObject(bucket.ownerEmail + 'BucketIds');
 		for (var i = 0; i < bucketIds.length; i++) {
 			if (bucketIds[i] === bucket.id) {
 				bucketIds.splice(i, 1);
 				break;
 			}
 		}
-		cache.storeObject(self.email + 'BucketIds', bucketIds);
+		cache.storeObject(bucket.ownerEmail + 'BucketIds', bucketIds);
+	};
+	
+	/**
+	 * Clears the bucket cache for a ceratin user
+	 */
+	self.clearBucketCache = function(email) {
+		
 	};
 
 	/**

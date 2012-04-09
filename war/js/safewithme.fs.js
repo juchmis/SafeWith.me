@@ -61,13 +61,6 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	//
 	
 	/**
-	 * Remember current user's email for bucket caching
-	 */
-	self.setEmail = function(email) {
-		bucketCache.setEmail(email);
-	};
-	
-	/**
 	 * Create a new bucket by first making a new bucket pointer on the
 	 * server and then creating a bucket FS with the pointer's id.
 	 * The bucket FS is then ecrypted and persited on the server in order to
@@ -91,9 +84,9 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	/**
 	 * Get bucket pointers from server
 	 */
-	self.getBuckets = function(callback) {
+	self.getBuckets = function(email, callback) {
 		// read buckets from local storage, if server unreachable
-		var cachedBuckets = bucketCache.getAllBuckets();
+		var cachedBuckets = bucketCache.getAllBuckets(email);
 		
 		// try fetching buckets from server
 		server.xhr({

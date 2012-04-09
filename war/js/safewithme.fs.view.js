@@ -28,9 +28,6 @@ var FSVIEW = (function (window, document, $, fs) {
 	 * init UI
 	 */
 	self.init = function(loginInfo) {
-		// set current user's email
-		fs.setEmail(loginInfo.email);
-		
 		// drag and drop area
 		var holder = document.getElementById('holder');
 		// holder.ondragover = function () { this.className = 'hover'; return false; };
@@ -55,7 +52,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		document.getElementById('files').addEventListener('change', handleFileSelect, false);
 		
 		// get user's bucket if logged in
-		fs.getBuckets(function(buckets) {
+		fs.getBuckets(loginInfo.email, function(buckets) {
 			// if the user does not have any buckets create a default bucket for him
 			if (buckets.length === 0) {
 				fs.createBucket('Personal Documents', function(bucket) {
