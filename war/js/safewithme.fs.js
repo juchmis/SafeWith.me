@@ -145,6 +145,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		// update bucket
 		bucket.encryptedFS = encryptedFS;
 		bucket.publicKeyId = crypto.getPublicKeyIdBase64();
+		bucket.lastUpdate = new Date().toISOString();
 		// cache bucket in local storage
 		bucketCache.putBucket(bucket);
 		console.log('Bucket cached locally.');

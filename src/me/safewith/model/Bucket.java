@@ -45,6 +45,9 @@ public class Bucket implements DTO {
 	private String publicKeyId;
 	
 	@Persistent
+	private String lastUpdate;
+	
+	@Persistent
 	private Text encryptedFS;
 	
 	/*
@@ -77,6 +80,14 @@ public class Bucket implements DTO {
 
 	public void setPublicKeyId(String publicKeyId) {
 		this.publicKeyId = publicKeyId;
+	}
+
+	public String getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(String lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 
 	public String getEncryptedFS() {

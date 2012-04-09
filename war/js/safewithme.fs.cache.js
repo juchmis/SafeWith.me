@@ -127,6 +127,10 @@ var BUCKETCACHE = (function (cache) {
 	self.clearBucketCache = function(email) {
 		// get cached bucket ids
 		var bucketIds = cache.readObject(email + 'BucketIds');
+		if (!bucketIds) {
+			return;
+		}
+		
 		for (var i = 0; i < bucketIds.length; i++) {
 			// read bucket from local storage
 			var bucket = cache.readObject(bucketIds[i]);
@@ -141,15 +145,57 @@ var BUCKETCACHE = (function (cache) {
 	 * @return [Bucket] the synchronoized buckets that are to be displayed
 	 */
 	self.syncBuckets = function(serverBuckets, callback) {
-
-		// !!!!!!!!!!!!!!
-		// TODO: sync: local bucket cache and not yet uploaded blob -> server
-		// !!!!!!!!!!!!!!
-
-		// sync: local bucket cache <- servers 
-		for(var i = 0; i < serverBuckets.length; i++) {
-			self.putBucket(serverBuckets[i]);
+		
+		//
+		// BucketCache (LocalStorage) -> Server
+		//
+		
+		// fetch cached buckets
+		var cachedBuckets = self.getAllBuckets();
+		for (var i = 0; i < cachedBuckets.length; i++) {
+			var cb = cachedBuckets[i];
+			
+			// check if cached bucket is already stored on the server
+			var isOnServer = false;
+			for (var j = 0; j < serverBuckets.length; j++) {
+				var sb = serverBuckets[j];
+				
+				if (cb.id === sb.id) {
+					// check if local buckets are newer
+					var cbTime = new Date(cb.lastUpdate).getTime();
+					var sbTime = new Date(sb.lastUpdate).getTime();
+					if (cbTime > sbTime) {
+						// if newer, send updated buckets to server
+						
+						// upload missing blobs to server
+					
+					} else {
+						// if older, update cached bucket
+						self.putBucket(sb);
+					}
+					
+					isOnServer = true;
+				}
+			}
+			
+			if (!isOnServer) {
+				// send bucket to server
+				// upload missing blobs to server
+			}
+			
 		}
+		
+		//
+		// BucketCache (LocalStorage) <- Server
+		//
+		
+		// get bucket again from the server (should now contain all local changes)
+		
+		// put all buckets in local cache
+		
+		// for(var k = 0; k < serverBuckets.length; k++) {
+		// 	self.putBucket(serverBuckets[k]);
+		// }
 		
 		callback(serverBuckets);
 	};

@@ -86,14 +86,14 @@ asyncTest("BucketCache -> Server", 1, function() {
 	var email = 'test@example.com';
 
 	var bucket1 = {
-		id: '1',
+		id: '3',
 		encryptedFS: 'asdfasdf',
 		ownerEmail: email,
 		publicKeyId: 'pubKeyId123'
 	};
 
 	var bucket2 = {
-		id: '2',
+		id: '4',
 		encryptedFS: 'yxcvycxv',
 		ownerEmail: email,
 		publicKeyId: 'pubKeyId123'
@@ -114,7 +114,11 @@ asyncTest("BucketCache -> Server", 1, function() {
 		expected: 201,
 		success: function(bucket) {
 			
-			createdBucket = bucket;
+			// update bucket on client and cache new version
+			bucket.encryptedFS = 'asdf5467569';
+			bucket.lastUpdate = new Date().toISOString();
+			bucketCache.putBucket(bucket);
+			createdBucketId = bucket.id;
 			
 			// get bucket from the server
 			server.xhr({
@@ -151,13 +155,16 @@ asyncTest("BucketCache -> Server", 1, function() {
 		});
 	}
 	
+	// cleanup
 	function deleteBucket() {
 		// delete bucket DTO in datastore
 		server.xhr({
 			type: 'DELETE',
-			uri: '/app/buckets?bucketId=' + createdBucket.id,
+			uri: '/app/buckets?bucketId=' + createdBucketId,
 			expected: 200,
 			success: function(resp) {
+				// clean cache
+				bucketCache.clearBucketCache(email);
 				start();
 			}
 		});
