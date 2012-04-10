@@ -64,16 +64,28 @@ public class BucketServlet extends HttpServlet {
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
 				
-				// read user buckets and respond in json form
-				List<Bucket> buckets = new BucketDAO().listUserBuckets(user.getEmail());
+				String bucketId = req.getParameter("id");
 				
-				// convert DTO to MSG objects
-				List<BucketMsg> bucketMsgs = new ArrayList<BucketMsg>();
-				for (Bucket b : buckets) {
-					bucketMsgs.add(BucketDAO.dto2msg(b));
+				String json = null;
+				if (bucketId != null) {
+					// read single bucket by ID
+					Bucket bucket = new BucketDAO().readBucket(bucketId, user.getEmail());
+					BucketMsg bucketMsg = BucketDAO.dto2msg(bucket);
+					json = new GsonBuilder().create().toJson(bucketMsg);
+					
+				} else {					
+					// read user buckets and respond in json form
+					List<Bucket> buckets = new BucketDAO().listUserBuckets(user.getEmail());
+					
+					// convert DTO to MSG objects
+					List<BucketMsg> bucketMsgs = new ArrayList<BucketMsg>();
+					for (Bucket b : buckets) {
+						bucketMsgs.add(BucketDAO.dto2msg(b));
+					}
+					
+					json = new GsonBuilder().create().toJson(bucketMsgs);
 				}
 				
-				String json = new GsonBuilder().create().toJson(bucketMsgs);
 				resp.setContentType("application/json");
 				resp.getWriter().print(json);
 				resp.getWriter().close();

@@ -23,6 +23,7 @@ public class BucketMsg {
 	private String id;
 	private String ownerEmail;
 	private String publicKeyId;
+	private String lastUpdate;
 	private String encryptedFS;
 	
 	public String getId() {
@@ -42,6 +43,12 @@ public class BucketMsg {
 	}
 	public void setPublicKeyId(String publicKeyId) {
 		this.publicKeyId = publicKeyId;
+	}
+	public String getLastUpdate() {
+		return lastUpdate;
+	}
+	public void setLastUpdate(String lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 	public String getEncryptedFS() {
 		return encryptedFS;

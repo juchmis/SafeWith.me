@@ -95,6 +95,7 @@ public class BucketDAO {
 		b.setId(msg.getId());
 		b.setOwnerEmail(msg.getOwnerEmail());
 		b.setPublicKeyId(msg.getPublicKeyId());
+		b.setLastUpdate(msg.getLastUpdate());
 		b.setEncryptedFS(msg.getEncryptedFS());
 		
 		return b;
@@ -106,6 +107,7 @@ public class BucketDAO {
 		msg.setId(b.getId());
 		msg.setOwnerEmail(b.getOwnerEmail());
 		msg.setPublicKeyId(b.getPublicKeyId());
+		msg.setLastUpdate(b.getLastUpdate());
 		msg.setEncryptedFS(b.getEncryptedFS());
 		
 		return msg;

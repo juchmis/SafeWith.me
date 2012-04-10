@@ -16,6 +16,8 @@ asyncTest("Create, Get, Delete Bucket", 12, function() {
 		
 		// get created fs
 		var bucketFS = FS.getBucketFS(bucket);
+		// cache decrypted bucketFS in memory
+		FS.cacheBucketFS(bucket, bucketFS);
 		
 		ok(bucketFS);
 		equal(bucketFS.name, name);
@@ -32,6 +34,8 @@ asyncTest("Create, Get, Delete Bucket", 12, function() {
 		FS.storeFile(blob, function() {}, function(file, updatedBucket) {
 				
 			var updatedBucketFS = FS.getBucketFS(updatedBucket);
+			FS.cacheBucketFS(updatedBucket, updatedBucketFS);
+			
 			equal(JSON.stringify(updatedBucketFS), JSON.stringify(bucketFS));
 			equal(bucket.encryptedFS, updatedBucket.encryptedFS);
 

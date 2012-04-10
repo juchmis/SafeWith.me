@@ -77,7 +77,7 @@ public class Bucket implements DTO {
 	public String getPublicKeyId() {
 		return publicKeyId;
 	}
-
+	
 	public void setPublicKeyId(String publicKeyId) {
 		this.publicKeyId = publicKeyId;
 	}

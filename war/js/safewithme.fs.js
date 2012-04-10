@@ -49,7 +49,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		this.type = "file";
 		this.name = name;
 		this.size = size;			// note: this is the unencrypted file size!
-		this.uploaded = new Date().toISOString();
+		this.created = new Date().toISOString();
 		this.mimeType = mimeType;
 		this.blobKey = blobKey;		// pointer to the encrypted blob
 		this.cryptoKey = cryptoKey;	// secret key required to decrypt the file
@@ -92,7 +92,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 			expected: 200,
 			success: function(serverBuckets) {
 				// synchronize the server's with local buckets
-				bucketCache.syncBuckets(serverBuckets, function(syncedBuckets) {
+				bucketCache.syncBuckets(serverBuckets, self, function(syncedBuckets) {
 					// cache <-> server buckets are in sync
 					callback(syncedBuckets);
 				});
@@ -150,6 +150,13 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		bucketCache.putBucket(bucket);
 		console.log('Bucket cached locally.');
 		// upload to server
+		self.updateServerBucket(bucket, callback);
+	};
+	
+	/**
+	 * Updates the bucket DTO on the server
+	 */
+	self.updateServerBucket = function(bucket, callback) {
 		var updatedBucketJson = JSON.stringify(bucket);
 		server.xhr({
 			type: 'PUT',
@@ -175,10 +182,14 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		var jsonFS =  crypto.asymmetricDecrypt(bucket.encryptedFS);
 		var bucketFS = JSON.parse(jsonFS);
 		
-		// cache local user buckets and fs in memory
-		bucketCache.putFS(bucket, bucketFS);
-		
 		return bucketFS;
+	};
+	
+	/**
+	 * cache local user buckets and fs in memory
+	 */
+	self.cacheBucketFS = function(bucket, bucketFS) {
+		bucketCache.putFS(bucket, bucketFS);
 	};
 
 	/**

@@ -22,7 +22,7 @@
  * This module handles caching both Buckets in local storage
  * as well as decrypted BucketFS objects in memory
  */
-var BUCKETCACHE = (function (cache) {
+var BUCKETCACHE = (function (cache, server) {
 	var self = {};
 
 	//
@@ -137,6 +137,52 @@ var BUCKETCACHE = (function (cache) {
 			self.removeBucket(bucket);
 		}
 	};
+	
+	//
+	// Syncronization of BucketCache (LocalStorage) <-> Bucket DTOs (Server)
+	//
+	
+	/**
+	 * Synchronizes a single bucket between the local cache and the server.
+	 * Prerequisite is that the bucket with that ID is already on both the server
+	 * and in the local cache.
+	 */
+	self.syncSingelBucket = function(bucketID, fs, callback) {
+		// read bucket from local cache
+		var cachedBucket = cache.readObject(bucketID);
+		
+		// get bucket with the same ID from server
+		server.xhr({
+			type: 'GET',
+			uri: '/app/buckets?id=' + bucketID,
+			expected: 200,
+			success: function(serverBucket) {
+				compareBuckets(cachedBucket, serverBucket);
+			}
+		});
+		
+		function compareBuckets(cachedBucket, serverBucket) {
+			// check if local bucket is newer
+			var cbTime = new Date(cachedBucket.lastUpdate).getTime();
+			var sbTime = new Date(serverBucket.lastUpdate).getTime();
+			
+			if (cbTime > sbTime) {
+				// if newer, send updated buckets to server
+				console.log('Sync bucket(' + cachedBucket.name + '): cached -> server');
+				fs.updateServerBucket(cachedBucket, function(updatedServerBucket) {
+					// TODO: upload missing blobs to server
+					
+					callback(updatedServerBucket);
+				});
+				
+			} else {
+				// if older, update cached bucket
+				console.log('Sync bucket(' + cachedBucket.name + '): cached <- server');
+				self.putBucket(serverBucket);
+				callback(serverBucket);
+			}
+		}
+	};
 
 	/**
 	 * Synchronize the local cached buckets with the DTO entries on the server
@@ -144,7 +190,7 @@ var BUCKETCACHE = (function (cache) {
 	 * but in the local filesystem (e.g. because the user imported files offline)
 	 * @return [Bucket] the synchronoized buckets that are to be displayed
 	 */
-	self.syncBuckets = function(serverBuckets, callback) {
+	self.syncBuckets = function(serverBuckets, fs, callback) {
 		
 		//
 		// BucketCache (LocalStorage) -> Server
@@ -161,19 +207,9 @@ var BUCKETCACHE = (function (cache) {
 				var sb = serverBuckets[j];
 				
 				if (cb.id === sb.id) {
-					// check if local buckets are newer
-					var cbTime = new Date(cb.lastUpdate).getTime();
-					var sbTime = new Date(sb.lastUpdate).getTime();
-					if (cbTime > sbTime) {
-						// if newer, send updated buckets to server
+					self.syncSingelBucket(cb.id, function(syncedBucket) {
 						
-						// upload missing blobs to server
-					
-					} else {
-						// if older, update cached bucket
-						self.putBucket(sb);
-					}
-					
+					});
 					isOnServer = true;
 				}
 			}
@@ -201,4 +237,4 @@ var BUCKETCACHE = (function (cache) {
 	};
 	
 	return self;
-}(CACHE));
+}(CACHE, SERVER));
