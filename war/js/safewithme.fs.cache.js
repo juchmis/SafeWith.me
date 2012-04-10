@@ -147,18 +147,13 @@ var BUCKETCACHE = (function (cache, server) {
 	 * Prerequisite is that the bucket with that ID is already on both the server
 	 * and in the local cache.
 	 */
-	self.syncSingelBucket = function(bucketID, fs, callback) {
+	self.syncSingleBucket = function(bucketId, fs, callback) {
 		// read bucket from local cache
-		var cachedBucket = cache.readObject(bucketID);
+		var cachedBucket = cache.readObject(bucketId);
 		
 		// get bucket with the same ID from server
-		server.xhr({
-			type: 'GET',
-			uri: '/app/buckets?id=' + bucketID,
-			expected: 200,
-			success: function(serverBucket) {
-				compareBuckets(cachedBucket, serverBucket);
-			}
+		fs.getBucket(bucketId, function(serverBucket) {
+			compareBuckets(cachedBucket, serverBucket);
 		});
 		
 		function compareBuckets(cachedBucket, serverBucket) {
@@ -190,50 +185,75 @@ var BUCKETCACHE = (function (cache, server) {
 	 * but in the local filesystem (e.g. because the user imported files offline)
 	 * @return [Bucket] the synchronoized buckets that are to be displayed
 	 */
-	self.syncBuckets = function(serverBuckets, fs, callback) {
+	self.syncBuckets = function(email, fs, callback) {
 		
 		//
-		// BucketCache (LocalStorage) -> Server
+		// Try fetching data from server
 		//
 		
 		// fetch cached buckets
-		var cachedBuckets = self.getAllBuckets();
-		for (var i = 0; i < cachedBuckets.length; i++) {
-			var cb = cachedBuckets[i];
+		var cachedBuckets = self.getAllBuckets(email);
+		
+		// try fetching buckets from server
+		server.xhr({
+			type: 'GET',
+			uri: '/app/buckets',
+			expected: 200,
+			success: function(serverBuckets) {
+				// start by syncing local changes to server
+				syncToServer(cachedBuckets, serverBuckets);
+			},
+			error: function(e) {
+				// no buckets from server... use cache
+				callback(cachedBuckets);
+			}
+		});
+		
+		//
+		// BucketCache (LocalStorage) <- Server (Buckets cannot be created wihtout server)
+		//
+		
+		function syncToServer(cachedBuckets, serverBuckets) {
 			
-			// check if cached bucket is already stored on the server
-			var isOnServer = false;
 			for (var j = 0; j < serverBuckets.length; j++) {
 				var sb = serverBuckets[j];
 				
-				if (cb.id === sb.id) {
-					self.syncSingelBucket(cb.id, function(syncedBucket) {
-						
-					});
-					isOnServer = true;
+				// check if server bucket is already in local cache
+				var cachedLocally = false;
+				for (var i = 0; i < cachedBuckets.length; i++) {
+					var cb = cachedBuckets[i];
+
+					if (cb.id === sb.id) {
+						cachedLocally = true;
+						// synchronize common bucket
+						self.syncSingleBucket(cb.id, fs, function(syncedBucket) {
+							// check for the end of the loop
+							checkEndOfLoop(i, j);
+						});
+					}	
+					
+					// check for the end of the loop
+					checkEndOfLoop(i, j);
+					
+				} // for: cachedBuckets
+
+				// add uncached buckets from server to cache
+				if (!cachedLocally) {
+					self.putBucket(sb);
+				}
+
+			} // for: serverBuckets
+			
+			function checkEndOfLoop(i, j) {	
+				// check for the end of the loop
+				if (i === cachedBuckets.length - 1 &&
+					j === serverBuckets.length - 1) {
+					var syncedBuckets = self.getAllBuckets(email);
+					callback(syncedBuckets);
+					return;
 				}
 			}
-			
-			if (!isOnServer) {
-				// send bucket to server
-				// upload missing blobs to server
-			}
-			
-		}
-		
-		//
-		// BucketCache (LocalStorage) <- Server
-		//
-		
-		// get bucket again from the server (should now contain all local changes)
-		
-		// put all buckets in local cache
-		
-		// for(var k = 0; k < serverBuckets.length; k++) {
-		// 	self.putBucket(serverBuckets[k]);
-		// }
-		
-		callback(serverBuckets);
+		} 
 	};
 	
 	return self;

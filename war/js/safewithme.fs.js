@@ -82,26 +82,26 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	};
 	
 	/**
-	 * Get bucket pointers from server
+	 * Get all the user's buckets from server
 	 */
 	self.getBuckets = function(email, callback) {
-		// try fetching buckets from server
+		// synchronize the server's with local buckets
+		bucketCache.syncBuckets(email, self, function(syncedBuckets) {
+			// cache <-> server buckets are in sync
+			callback(syncedBuckets);
+		});
+	};
+	
+	/**
+	 * Get a bucket by its ID from the server
+	 */
+	self.getBucket = function(bucketId, callback) {
 		server.xhr({
 			type: 'GET',
-			uri: '/app/buckets',
+			uri: '/app/buckets?id=' + bucketId,
 			expected: 200,
-			success: function(serverBuckets) {
-				// synchronize the server's with local buckets
-				bucketCache.syncBuckets(serverBuckets, self, function(syncedBuckets) {
-					// cache <-> server buckets are in sync
-					callback(syncedBuckets);
-				});
-			},
-			error: function(e) {
-				// read buckets from local storage, if server unreachable
-				var cachedBuckets = bucketCache.getAllBuckets(email);
-				// no buckets from server... use cache
-				callback(cachedBuckets);
+			success: function(bucket) {
+				callback(bucket);
 			}
 		});
 	};

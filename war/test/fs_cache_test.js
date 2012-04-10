@@ -66,7 +66,7 @@ test("Bucket Cache (in local storage)", 6, function() {
 
 module("Sync: FS Cache");
 
-asyncTest("Single bucket: Cache <-> Server", 2, function() {
+asyncTest("Single bucket: Cache <-> Server", 4, function() {
 	var email = "test@example.com";
 	bucketCache.clearBucketCache(email);
 	
@@ -97,33 +97,43 @@ asyncTest("Single bucket: Cache <-> Server", 2, function() {
 		bucketCache.putBucket(bucket);
 		
 		// sync to server
-		doTest1(bucket);
+		doTest1(bucket.id);
 	});
 	
-	function doTest1(bucket) {
+	function doTest1(bucketId) {
 		// DO TEST SYNC: Cache -> Server
-		bucketCache.syncSingelBucket(bucket.id, FS, function(syncedBucket) {
-			deepEqual(syncedBucket, bucket);
-			
-			updateOnlyServerBucket(syncedBucket);
+		bucketCache.syncSingleBucket(bucketId, FS, function(syncedBucket) {
+			// get bucket from server
+			FS.getBucket(bucketId, function(serverBucket) {
+				// check buckets
+				deepEqual(syncedBucket, serverBucket);
+				deepEqual(syncedBucket, CACHE.readObject(bucketId));
+				
+				updateOnlyServerBucket(serverBucket);
+			});		
 		});
 	}
 	
-	function updateOnlyServerBucket(syncedBucket) {
+	function updateOnlyServerBucket(serverBucket) {
 		// update bucket time
-		syncedBucket.lastUpdate = new Date().toISOString();
-		FS.updateServerBucket(syncedBucket, function(updatedServerBucket) {
+		serverBucket.lastUpdate = new Date().toISOString();
+		FS.updateServerBucket(serverBucket, function(updatedServerBucket) {
 			// sync from server
-			doTest2(updatedServerBucket);
+			doTest2(updatedServerBucket.id);
 		});
 	}
 
-	function doTest2(bucket) {
+	function doTest2(bucketId) {
 		// DO TEST SYNC: Cache -> Server
-		bucketCache.syncSingelBucket(bucket.id, FS, function(serverBucket) {
-			deepEqual(serverBucket, bucket);
+		bucketCache.syncSingleBucket(bucketId, FS, function(syncedBucket) {
+			// get bucket from server
+			FS.getBucket(bucketId, function(serverBucket) {
+				// check buckets
+				deepEqual(syncedBucket, serverBucket);
+				deepEqual(syncedBucket, CACHE.readObject(bucketId));
 
-			deleteBucket();
+				deleteBucket();
+			});
 		});
 	}
 
@@ -143,38 +153,38 @@ asyncTest("Single bucket: Cache <-> Server", 2, function() {
 	}
 });
 
-asyncTest("BucketCache <- Server", 1, function() {
-	// test data
-	var email = 'test@qwertz.de';
-	bucketCache.clearBucketCache(email);
+// asyncTest("BucketCache <- Server", 1, function() {
+// 	// test data
+// 	var email = 'test@qwertz.de';
+// 	bucketCache.clearBucketCache(email);
+// 
+// 	var bucket1 = {
+// 		id: '1',
+// 		encryptedFS: 'asdfasdf',
+// 		ownerEmail: email,
+// 		publicKeyId: 'pubKeyId123'
+// 	};
+// 
+// 	var bucket2 = {
+// 		id: '2',
+// 		encryptedFS: 'yxcvycxv',
+// 		ownerEmail: email,
+// 		publicKeyId: 'pubKeyId123'
+// 	};
+// 	
+// 	bucketCache.putBucket(bucket1);
+// 	var serverBuckets = [ bucket1, bucket2 ];
+// 	
+// 	bucketCache.syncBuckets(email, FS, function(syncedBuckets) {
+// 		// only check the buckets in local sotarage
+// 		// file blobs are not downloaded automatically from server
+// 		deepEqual(bucketCache.getAllBuckets(email), serverBuckets);
+// 		
+// 		start();
+// 	});
+// });
 
-	var bucket1 = {
-		id: '1',
-		encryptedFS: 'asdfasdf',
-		ownerEmail: email,
-		publicKeyId: 'pubKeyId123'
-	};
-
-	var bucket2 = {
-		id: '2',
-		encryptedFS: 'yxcvycxv',
-		ownerEmail: email,
-		publicKeyId: 'pubKeyId123'
-	};
-	
-	bucketCache.putBucket(bucket1);
-	var serverBuckets = [ bucket1, bucket2 ];
-	
-	bucketCache.syncBuckets(serverBuckets, FS, function(syncedBuckets) {
-		// only check the buckets in local sotarage
-		// file blobs are not downloaded automatically from server
-		deepEqual(bucketCache.getAllBuckets(email), serverBuckets);
-		
-		start();
-	});
-});
-
-asyncTest("BucketCache -> Server", 1, function() {
+asyncTest("BucketCache <- Server", 2, function() {
 	var email = 'test@example.com';
 	bucketCache.clearBucketCache(email);
 
@@ -192,8 +202,8 @@ asyncTest("BucketCache -> Server", 1, function() {
 		publicKeyId: 'pubKeyId123'
 	};
 	
-	bucketCache.putBucket(bucket1);
-	bucketCache.putBucket(bucket2);
+	// bucketCache.putBucket(bucket1);
+	// bucketCache.putBucket(bucket2);
 	
 	var server = SERVER,
 		createdBucketId = undefined;
@@ -211,22 +221,13 @@ asyncTest("BucketCache -> Server", 1, function() {
 			bucketCache.putBucket(bucket);
 			createdBucketId = bucket.id;
 			
-			// get bucket from the server
-			server.xhr({
-				type: 'GET',
-				uri: '/app/buckets',
-				expected: 200,
-				success: function(serverBuckets) {
-					doTest(serverBuckets);
-				}
-			});
-			
+			doTest();
 		}
 	});
 	
-	function doTest(serverBuckets) {
+	function doTest() {
 		// DO THE ACTUAL TEST AND SYNC
-		bucketCache.syncBuckets(serverBuckets, FS, function(syncedBuckets) {
+		bucketCache.syncBuckets(email, FS, function(syncedBuckets) {
 			// compare buckets on server with the ones in local storage
 			server.xhr({
 				type: 'GET',
@@ -234,8 +235,9 @@ asyncTest("BucketCache -> Server", 1, function() {
 				expected: 200,
 				success: function(updatedServerBuckets) {
 					// check if buckets match
-					deepEqual(bucketCache.getAllBuckets(email), serverBuckets);
-					deepEqual(bucketCache.getAllBuckets(email), updatedServerBuckets);
+					var cachedBuckets = bucketCache.getAllBuckets(email);
+					deepEqual(cachedBuckets, syncedBuckets, 'Compare cached to synced');
+					deepEqual(cachedBuckets, updatedServerBuckets, 'Compare cached to server');
 
 					// check file blobs
 					
