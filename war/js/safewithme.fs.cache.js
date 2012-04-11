@@ -172,7 +172,7 @@ var BUCKETCACHE = (function (cache, server) {
 				});
 				
 			} else {
-				// if older, update cached bucket
+				// if older or equal update cached bucket
 				console.log('Sync bucket(' + bucketId + '): cached <- server');
 				self.putBucket(serverBucket);
 				callback(serverBucket);
@@ -187,11 +187,6 @@ var BUCKETCACHE = (function (cache, server) {
 	 * @return [Bucket] the synchronoized buckets that are to be displayed
 	 */
 	self.syncBuckets = function(email, fs, callback) {
-		
-		//
-		// Try fetching data from server
-		//
-		
 		// fetch cached buckets
 		var cachedBuckets = self.getAllBuckets(email);
 		
@@ -215,34 +210,6 @@ var BUCKETCACHE = (function (cache, server) {
 		//
 		
 		function syncToServer(cachedBuckets, serverBuckets) {
-			
-			// An asynchronous for loop implementation
-			function asyncLoop(iterations, func, callback) {
-			    var index = 0;
-			    var done = false;
-			    var loop = {
-			        next: function() {
-			            if (done) {
-			                return;
-			            }
- 
-			            if (index < iterations) {
-			                index++;
-			                func(loop);
-
-			            } else {
-			                done = true;
-			                callback();
-			            }
-			        },
-
-			        iteration: function() {
-			            return index - 1;
-			        }
-			    };
-			    loop.next();
-			    return loop;
-			}
 			
 			asyncLoop(serverBuckets.length, function(loop1) {
 				// get current iteration os server bucket
@@ -274,14 +241,39 @@ var BUCKETCACHE = (function (cache, server) {
 					loop1.next();
 				});
 				
-				
 			}, function() {
 				// loop1 is finished
 				var syncedBuckets = self.getAllBuckets(email);
 				callback(syncedBuckets);
 			});
+		}
 			
-		} 
+		// An asynchronous for loop implementation
+		function asyncLoop(iterations, func, callback) {
+		    var index = 0;
+		    var done = false;
+		    var loop = {
+		        next: function() {
+		            if (done) {
+		                return;
+		            }
+
+		            if (index < iterations) {
+		                index++;
+		                func(loop);
+
+		            } else {
+		                done = true;
+		                callback();
+		            }
+		        },
+		        iteration: function() {
+		            return index - 1;
+		        }
+		    };
+		    loop.next();
+		    return loop;
+		}
 	};
 	
 	return self;
