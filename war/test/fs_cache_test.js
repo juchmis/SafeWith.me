@@ -89,7 +89,7 @@ asyncTest("Single bucket: Cache <-> Server", 4, function() {
 		var jsonFS = JSON.stringify(bucketFS);
 		var encryptedFS = CRYPTO.asymmetricEncrypt(jsonFS);
 		
-		// update localbucket bucket
+		// update local bucket
 		bucket.encryptedFS = encryptedFS;
 		bucket.publicKeyId = CRYPTO.getPublicKeyIdBase64();
 		bucket.lastUpdate = new Date().toISOString();
@@ -236,8 +236,8 @@ asyncTest("BucketCache <- Server", 2, function() {
 				success: function(updatedServerBuckets) {
 					// check if buckets match
 					var cachedBuckets = bucketCache.getAllBuckets(email);
-					deepEqual(cachedBuckets, syncedBuckets, 'Compare cached to synced');
-					deepEqual(cachedBuckets, updatedServerBuckets, 'Compare cached to server');
+					deepEqual(syncedBuckets, cachedBuckets, 'Compare cached to synced');
+					deepEqual(updatedServerBuckets, cachedBuckets, 'Compare cached to server');
 
 					// check file blobs
 					

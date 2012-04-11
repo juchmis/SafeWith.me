@@ -161,9 +161,10 @@ var BUCKETCACHE = (function (cache, server) {
 			var cbTime = new Date(cachedBucket.lastUpdate).getTime();
 			var sbTime = new Date(serverBucket.lastUpdate).getTime();
 			
-			if (cbTime > sbTime) {
+			// if server bucket lastUpdate is undefined, assume cached is newer
+			if (!sbTime || cbTime > sbTime) {
 				// if newer, send updated buckets to server
-				console.log('Sync bucket(' + cachedBucket.name + '): cached -> server');
+				console.log('Sync bucket(' + bucketId + '): cached -> server');
 				fs.updateServerBucket(cachedBucket, function(updatedServerBucket) {
 					// TODO: upload missing blobs to server
 					
@@ -172,7 +173,7 @@ var BUCKETCACHE = (function (cache, server) {
 				
 			} else {
 				// if older, update cached bucket
-				console.log('Sync bucket(' + cachedBucket.name + '): cached <- server');
+				console.log('Sync bucket(' + bucketId + '): cached <- server');
 				self.putBucket(serverBucket);
 				callback(serverBucket);
 			}
@@ -210,49 +211,76 @@ var BUCKETCACHE = (function (cache, server) {
 		});
 		
 		//
-		// BucketCache (LocalStorage) <- Server (Buckets cannot be created wihtout server)
+		// BucketCache (LocalStorage) <- Server (Buckets cannot be created without server)
 		//
 		
 		function syncToServer(cachedBuckets, serverBuckets) {
 			
-			for (var j = 0; j < serverBuckets.length; j++) {
-				var sb = serverBuckets[j];
-				
+			// An asynchronous for loop implementation
+			function asyncLoop(iterations, func, callback) {
+			    var index = 0;
+			    var done = false;
+			    var loop = {
+			        next: function() {
+			            if (done) {
+			                return;
+			            }
+ 
+			            if (index < iterations) {
+			                index++;
+			                func(loop);
+
+			            } else {
+			                done = true;
+			                callback();
+			            }
+			        },
+
+			        iteration: function() {
+			            return index - 1;
+			        }
+			    };
+			    loop.next();
+			    return loop;
+			}
+			
+			asyncLoop(serverBuckets.length, function(loop1) {
+				// get current iteration os server bucket
+				var sb = serverBuckets[loop1.iteration()];
+
 				// check if server bucket is already in local cache
 				var cachedLocally = false;
-				for (var i = 0; i < cachedBuckets.length; i++) {
-					var cb = cachedBuckets[i];
+				
+				asyncLoop(cachedBuckets.length, function(loop2) {
+					// get current iterations cached bucket
+					var cb = cachedBuckets[loop2.iteration()];
 
 					if (cb.id === sb.id) {
 						cachedLocally = true;
 						// synchronize common bucket
 						self.syncSingleBucket(cb.id, fs, function(syncedBucket) {
-							// check for the end of the loop
-							checkEndOfLoop(i, j);
+					        loop2.next();
 						});
+					} else {
+						loop2.next();
+					}
+
+				}, function(){	
+					// loop2 is finished for that iteration of loop1
+					if (!cachedLocally) {
+						// add uncached buckets from server to cache
+						self.putBucket(sb);
 					}	
-					
-					// check for the end of the loop
-					checkEndOfLoop(i, j);
-					
-				} // for: cachedBuckets
-
-				// add uncached buckets from server to cache
-				if (!cachedLocally) {
-					self.putBucket(sb);
-				}
-
-			} // for: serverBuckets
+					loop1.next();
+				});
+				
+				
+			}, function() {
+				// loop1 is finished
+				var syncedBuckets = self.getAllBuckets(email);
+				callback(syncedBuckets);
+			});
 			
-			function checkEndOfLoop(i, j) {	
-				// check for the end of the loop
-				if (i === cachedBuckets.length - 1 &&
-					j === serverBuckets.length - 1) {
-					var syncedBuckets = self.getAllBuckets(email);
-					callback(syncedBuckets);
-					return;
-				}
-			}
 		} 
 	};
 	
