@@ -178,6 +178,26 @@ var BUCKETCACHE = (function (cache, server) {
 				callback(serverBucket);
 			}
 		}
+		
+		function pushBlobs(bucket, callback) {
+			var bucketFS = fs.getBucketFS(bucket);
+			
+			asyncLoop(bucketFS.root.length, function(loop) {
+				// get current iterations cached bucket
+				var file = bucketFS.root[loop.iteration()];
+				
+				// TODO: get blob from cache via md5 and upload
+				
+				loop.next();
+
+			}, function(){	
+				// loop is finished
+				
+				// TODO: update bucket fs with blobKeys
+				callback();
+			});
+			
+		}
 	};
 
 	/**
@@ -247,34 +267,37 @@ var BUCKETCACHE = (function (cache, server) {
 				callback(syncedBuckets);
 			});
 		}
-			
-		// An asynchronous for loop implementation
-		function asyncLoop(iterations, func, callback) {
-		    var index = 0;
-		    var done = false;
-		    var loop = {
-		        next: function() {
-		            if (done) {
-		                return;
-		            }
-
-		            if (index < iterations) {
-		                index++;
-		                func(loop);
-
-		            } else {
-		                done = true;
-		                callback();
-		            }
-		        },
-		        iteration: function() {
-		            return index - 1;
-		        }
-		    };
-		    loop.next();
-		    return loop;
-		}
 	};
+	
+	
+	/**
+	 * An asynchronous for loop implementation
+	 */
+	function asyncLoop(iterations, func, callback) {
+	    var index = 0;
+	    var done = false;
+	    var loop = {
+	        next: function() {
+	            if (done) {
+	                return;
+	            }
+
+	            if (index < iterations) {
+	                index++;
+	                func(loop);
+
+	            } else {
+	                done = true;
+	                callback();
+	            }
+	        },
+	        iteration: function() {
+	            return index - 1;
+	        }
+	    };
+	    loop.next();
+	    return loop;
+	}
 	
 	return self;
 }(CACHE, SERVER));
