@@ -26,43 +26,65 @@
     <meta name="keywords" content="safe with me, secure online storage, secure cloud storage, secure file sharing, securely share files, open source, privacy, security, client side encryption, pgp, openpgp, html5" />
   	<link rel="stylesheet" href="../css/jquery.mobile-1.1.0-rc.2.min.css" />
     <link rel="stylesheet" href="../jquery.mobile-1.1.0-rc.2/demos/docs/_assets/css/jqm-docs.css" />
+    <link rel="stylesheet" href="../css/app.css" />
   	<script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
   	<script type="text/javascript" src="../js/lib/jquery.mobile-1.1.0-rc.2.min.js"></script>
   </head>
   <body> 
 
-    <div data-role="page">
-
-    	<div data-role="header">
-    		<h1>SafeWith.me</h1>
+    <div data-role="page" data-theme="a" id="main">
+      
+    	<div data-role="header" data-position="fixed" data-theme="a">
+    	  <a href="#" data-role="button" data-icon="plus" class="ui-btn-left">Upload</a>
+        <h1 class="safewithmebrand">SafeWith.me</h1>
+      	<a href="#about" data-role="button" data-icon="info" data-transition="flip" data-rel="dialog" class="ui-btn-right">About</a>
     	</div><!-- /header -->
 
     	<div data-role="content">
-    	  
-        <!-- <div class="content-secondary">
-          <ul data-role="listview">
-            <li><a href="#">Acura</a></li>
-            <li><a href="#">Audi</a></li>
-            <li><a href="#">BMW</a></li>
-            <li><a href="#">Cadillac</a></li>
-            <li><a href="#">Ferrari</a></li>
-          </ul>
-        </div> -->
-    	  
-    	  <div>
-        	<ul data-role="listview" data-inset="true" data-filter="true">
-          	<li><a href="#">Acura</a></li>
-          	<li><a href="#">Audi</a></li>
-          	<li><a href="#">BMW</a></li>
-          	<li><a href="#">Cadillac</a></li>
-          	<li><a href="#">Ferrari</a></li>
-    	  </div>
+      	<ul data-role="listview" data-inset="true" data-filter="true" data-theme="c" data-divider-theme="d">
+      	  <li data-role="list-divider">A</li>
+        	<li><a href="#bar" data-rel="dialog" data-transition="slideup">Acura</a></li>
+        	<li><a href="#">Audi</a></li>
+        	<li><a href="#">Arra</a></li>
+        	
+        	<li data-role="list-divider">B</li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	
+        	<li data-role="list-divider">B</li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">Cadillac</a></li>
+        	<li><a href="#">Ferrari</a></li>
+        	
+        	<li data-role="list-divider">B</li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	
+        	<li data-role="list-divider">B</li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        </ul>
     	</div><!-- /content -->
     	
-    	<div data-role="footer" class="footer-docs ui-footer ui-bar-c" data-theme="c" role="contentinfo">
-  			<h4>© 2012 Tankred Hase</h4>
+    	<div data-role="footer" data-theme="a" role="contentinfo">
+  			<h4 class="safewithmebrand">© 2012 Tankred Hase</h4>
   		</div><!-- /footer -->
-
+  		
+    </div><!-- /page -->
+    <div data-role="page" data-theme="c" id="about">
+      
+    	<div data-role="content">
+    	  <div id="logo"></div>
+    	  <p><a href="http://safewith.me">SafeWith.me</a> - store and share your files with OpenPGP encryption on any device via HTML5</p>
+    	  <p style="text-align:center">© 2012 Tankred Hase</p>
+    	  <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3 of the License.</p>
+    	  <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://github.com/tanx/SafeWith.me/blob/master/LICENSE.txt">GNU Affero General Public License</a> for more details.</p>
+      	<a href="#main" data-role="button" data-transition="flow" data-theme="a">Close</a>
+  	  </div><!-- /content -->
+  	  
     </div><!-- /page -->
 
   </body>
