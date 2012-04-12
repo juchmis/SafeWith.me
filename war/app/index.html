@@ -29,10 +29,22 @@
     <link rel="shortcut icon" href="../favicon.ico">
   	<script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
   	<script type="text/javascript" src="../js/lib/jquery.mobile-1.1.0-rc.2.min.js"></script>
+    <script type="text/javascript" src="../js/lib/openpgp.min.js"></script>
+    <script type="text/javascript" src="../js/safewithme.util.js"></script>
+    <script type="text/javascript" src="../js/safewithme.server.js"></script>
+    <script type="text/javascript" src="../js/safewithme.crypto.js"></script>
+    <script type="text/javascript" src="../js/safewithme.crypto.view.js"></script>
+    <script type="text/javascript" src="../js/safewithme.cache.js"></script>
+    <script type="text/javascript" src="../js/safewithme.menu.js"></script>
+    <script type="text/javascript" src="../js/safewithme.menu.view.js"></script>
+    <script type="text/javascript" src="../js/safewithme.fs.cache.js"></script>
+    <script type="text/javascript" src="../js/safewithme.fs.js"></script>
+    <script type="text/javascript" src="../js/safewithme.fs.view.js"></script>
+    <script type="text/javascript" src="../js/safewithme.js"></script>
   </head>
   <body> 
 
-    <div data-role="page" data-theme="a" id="holder">
+    <div data-role="page" data-theme="a" id="mainPage">
       
     	<div data-role="header" data-position="fixed" data-theme="a">
         <span data-role="button" data-icon="plus" class="ui-btn-left fileinput-button">
@@ -40,30 +52,15 @@
           <input type="file" id="files" name="files[]" multiple />
         </span><!-- /fileinput-button -->
         <h1 class="safewithmebrand">SafeWith.me</h1>
-      	<a href="about.html" data-role="button" data-icon="info" data-transition="flip" data-rel="dialog" class="ui-btn-right">About</a>
+      	<a href="about.html" data-role="button" data-icon="info" data-transition="flip" class="ui-btn-right">About</a>
     	</div><!-- /header -->
 
     	<div data-role="content">
       	<ul data-role="listview" data-inset="true" data-filter="true" data-theme="c" data-divider-theme="d">
       	  <li data-role="list-divider">A</li>
-        	<li><a href="#bar" data-rel="dialog" data-transition="slideup">Acura</a></li>
+        	<li><a href="keygen.html" data-transition="slidedown">Acura</a></li>
         	<li><a href="#">Audi</a></li>
-        	<li><a href="#">Arra</a></li>
-        	
-        	<li data-role="list-divider">B</li>
-        	<li><a href="#">BMW</a></li>
-        	<li><a href="#">BMW</a></li>
-        	<li><a href="#">BMW</a></li>
-        	
-        	<li data-role="list-divider">B</li>
-        	<li><a href="#">BMW</a></li>
-        	<li><a href="#">Cadillac</a></li>
-        	<li><a href="#">Ferrari</a></li>
-        	
-        	<li data-role="list-divider">B</li>
-        	<li><a href="#">BMW</a></li>
-        	<li><a href="#">BMW</a></li>
-        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">Audi</a></li>
         	
         	<li data-role="list-divider">B</li>
         	<li><a href="#">BMW</a></li>
@@ -77,25 +74,6 @@
   		</div><!-- /footer -->
   		
     </div><!-- /page -->
-    
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="../js/lib/openpgp.min.js"></script>
-    
-    <!--     <script type="text/javascript" src="../js/safewithme.min.js"></script> -->
-    
-    <script type="text/javascript" src="../js/safewithme.util.js"></script>
-    <script type="text/javascript" src="../js/safewithme.server.js"></script>
-    <script type="text/javascript" src="../js/safewithme.crypto.js"></script>
-    <script type="text/javascript" src="../js/safewithme.crypto.view.js"></script>
-    <script type="text/javascript" src="../js/safewithme.cache.js"></script>
-    <script type="text/javascript" src="../js/safewithme.menu.js"></script>
-    <script type="text/javascript" src="../js/safewithme.menu.view.js"></script>
-    <script type="text/javascript" src="../js/safewithme.fs.cache.js"></script>
-    <script type="text/javascript" src="../js/safewithme.fs.js"></script>
-    <script type="text/javascript" src="../js/safewithme.fs.view.js"></script>
-    <script type="text/javascript" src="../js/safewithme.js"></script>
 
   </body>
 </html>
