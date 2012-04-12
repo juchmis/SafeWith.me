@@ -1,3 +1,17 @@
+.fileinput-button input {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	border: solid transparent;
+	border-width: 0 0 100px 200px;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	-moz-transform: translate(-300px, 0) scale(4);
+	direction: ltr;
+	cursor: pointer;
+}
+
 .safewithmebrand {
 	display: block;
 	padding: 10px 20px 10px;
@@ -30,6 +44,10 @@ a.safewithmebrand:hover {
 	font: italic 14px/19px Georgia,Times New Roman,serif;
 	font-family: Georgia, 'Times New Roman', serif;
 	color: #777;
+}
+
+.author {
+	text-align: center;
 }
 
 #about a {
