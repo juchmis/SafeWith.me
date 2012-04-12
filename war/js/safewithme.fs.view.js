@@ -80,6 +80,8 @@ var FSVIEW = (function (window, document, $, fs) {
 		}, function(fsFile) {
 			// display link to the file
 			self.addLinkToList(fsFile);
+			// refresh listView
+			$('#itemList').listview("refresh");
 		});
 	};
 	
@@ -104,6 +106,9 @@ var FSVIEW = (function (window, document, $, fs) {
 		for (var i=0; i < bucketFS.root.length; i++) {
 			self.addLinkToList(bucketFS.root[i]);
 		}
+		
+		// refresh listView
+		$('#itemList').listview("refresh");
 	};
 	
 	/**
@@ -118,9 +123,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		// 		   '</div></li>';
 				
 		var item = '<li><a id="showItem" href="' + blobKey + '">' + file.name + '</a></li>';
-		var itemList = $('#itemList');
-		itemList.append(item);
-		itemList.listview("refresh");
+		$('#itemList').append(item);
 		
 		// show document
 		$('#showItem[href="' + blobKey + '"]').click(function(e) {
@@ -172,7 +175,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		$.mobile.showPageLoadingMsg();
 		
 		// get encrypted fiel and decrypt
-		fs.getFile(file, function(decrypted) {
+		fs.getFile(file, function(decryptedUrl) {
 			// hide progress bar
 			$.mobile.hidePageLoadingMsg();
 			
@@ -182,7 +185,7 @@ var FSVIEW = (function (window, document, $, fs) {
 			// }
 			
 			// display the document
-			window.location.href = decrypted;
+			window.location.href = decryptedUrl;
 		});
 	};
 	
