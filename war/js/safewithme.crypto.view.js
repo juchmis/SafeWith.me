@@ -42,7 +42,7 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 		}, function(genKeysCallback) /* displayCallback */ {
 			
 			// no keys found on server -> generate new keypair fot the user
-			$('#genKeysForm').submit(function(e) {
+			$('#genKeys-btn').click(function(e) {
 				e.preventDefault();
 				// clear localstorage (keypairs, passphrases, cached buckets)
 				window.localStorage.clear();
@@ -50,23 +50,21 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 				var passphrase = $('#passphrase').val();
 				crypto.setPassphrase(passphrase);
 				// display progressbar
-				var pogressbar = '<div class="progress progress-danger progress-striped active"><div class="bar" style="width: 100%;"></div></div>';
-				$('#keygenStatus').html(pogressbar);
+				$.mobile.showPageLoadingMsg();
 				// generate keys
 				genKeysCallback();
 			});
 
-			// show disclaimer during key generation
-			$('#disclaimerModal').modal('show');
+			$.mobile.changePage('keygen.html');
 
 		}, function() /* finishCallback */ {
 			
 			// create export keys link
 			crypto.exportKeys(function(url) {
 				// show completion message
-				var anchor = '<a style="float:right" class="btn btn-large btn-danger" download="safewithme.keys.txt" href="' + url + '">Export Keys</a>';
-				var msg = '<h2 class="alert alert-success">Completed! ' + anchor + '</h2>';
-				$('#keygenStatus').html(msg);
+				$.mobile.hidePageLoadingMsg();
+				// go back to app
+				$.mobile.changePage('index.html');
 			});
 		});
 	};

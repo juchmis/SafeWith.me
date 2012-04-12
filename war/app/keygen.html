@@ -2,25 +2,7 @@
 <html>
 	<head>
     <meta charset="utf-8">
-  	<title>SafeWith.me</title> 
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	<link rel="stylesheet" href="../css/jquery.mobile-1.1.0-rc.2.min.css" />
-    <link rel="stylesheet" href="../css/app.css" />
-    <link rel="shortcut icon" href="../favicon.ico">
-  	<script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
-  	<script type="text/javascript" src="../js/lib/jquery.mobile-1.1.0-rc.2.min.js"></script>
-    <script type="text/javascript" src="../js/lib/openpgp.min.js"></script>
-    <script type="text/javascript" src="../js/safewithme.util.js"></script>
-    <script type="text/javascript" src="../js/safewithme.server.js"></script>
-    <script type="text/javascript" src="../js/safewithme.crypto.js"></script>
-    <script type="text/javascript" src="../js/safewithme.crypto.view.js"></script>
-    <script type="text/javascript" src="../js/safewithme.cache.js"></script>
-    <script type="text/javascript" src="../js/safewithme.menu.js"></script>
-    <script type="text/javascript" src="../js/safewithme.menu.view.js"></script>
-    <script type="text/javascript" src="../js/safewithme.fs.cache.js"></script>
-    <script type="text/javascript" src="../js/safewithme.fs.js"></script>
-    <script type="text/javascript" src="../js/safewithme.fs.view.js"></script>
-    <script type="text/javascript" src="../js/safewithme.js"></script>
+  	<title>SafeWith.me</title>
   </head>
   <body>
     
@@ -37,27 +19,6 @@
     	</div><!-- /content -->
   	  
     </div><!-- /page -->
-    
-    <script>
-      
-      $('#keygen').live('pageinit', function(event) {
-      	SAFEWITHME.init();
-      });
-    
-			// no keys found on server -> generate new keypair fot the user
-			$('#genKeys-btn').click(function(e) {
-				e.preventDefault();
-				// clear localstorage (keypairs, passphrases, cached buckets)
-				window.localStorage.clear();
-				// read passphrase
-				var passphrase = $('#passphrase').val();
-				crypto.setPassphrase(passphrase);
-				// display progressbar
-				$.mobile.showPageLoadingMsg();
-				// generate keys
-				genKeysCallback();
-			});
-    </script>
 
   </body>
 </html>

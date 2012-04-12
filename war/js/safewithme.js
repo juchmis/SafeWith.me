@@ -19,6 +19,17 @@
 'use strict';
 
 /**
+ * Start the app on jquery mobile pageinit
+ */
+$('#mainPage').live('pageinit', function(event) {
+	SAFEWITHME.init();
+});
+
+$('#keygen').live('pageinit', function(event) {
+	SAFEWITHME.init();
+});
+
+/**
  * SafeWith.me uses the model-view-presenter (MVP) pattern to seperate 'view'
  * (DOM manipulation) logic from 'presenter' (business) logic. Dependency
  * injection is used to keep presenters decoupled and testable. The
@@ -63,10 +74,3 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 	
 	return self;
 }(window, navigator, MENUVIEW, CRYPTOVIEW, FSVIEW));
-
-/**
- * Start the app on document ready
- */
-$(function() {
-	SAFEWITHME.init();
-});

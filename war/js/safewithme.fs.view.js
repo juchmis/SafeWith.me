@@ -29,7 +29,7 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.init = function(loginInfo) {
 		// drag and drop area
-		var holder = document.getElementById('holder');
+		var holder = document.getElementById('mainPage');
 		// holder.ondragover = function () { this.className = 'hover'; return false; };
 		// holder.ondragend = function () { this.className = ''; return false; };
 		holder.ondragover = function () { return false; };
