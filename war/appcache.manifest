@@ -6,11 +6,11 @@ CACHE MANIFEST
 CACHE:
 favicon.ico
 app/index.html
-css/bootstrap-2.0.1.min.css
-css/safewithme.css
-css/bootstrap-responsive-2.0.1.min.css
+app/about.html
+css/jquery.mobile-1.1.0-rc.2.min.css
+css/app.css
 js/lib/jquery-1.7.1.min.js
-js/lib/bootstrap-2.0.1.min.js
+js/lib/jquery.mobile-1.1.0-rc.2.min.js
 js/lib/openpgp.worker.min.js
 js/lib/openpgp.min.js
 js/safewithme.util.js
@@ -26,8 +26,12 @@ js/safewithme.fs.js
 js/safewithme.fs.view.js
 js/safewithme.js
 img/safe-icon-small.png
-img/glyphicons-halflings.png
-img/glyphicons-halflings-white.png
+css/images/ajax-loader.gif
+css/images/ajax-loader.png
+css/images/icons-18-black.png
+css/images/icons-18-white.png
+css/images/icons-36-black.png
+css/images/icons-36-white.png
 
 NETWORK:
 /login
