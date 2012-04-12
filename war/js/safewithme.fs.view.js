@@ -71,12 +71,12 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.handleFileDrop = function(file) {		
 		// show progress bar
-		$('#encryptModal').modal('show');
+		$.mobile.showPageLoadingMsg();
 			
 		// read, encrypt and upload encrypted file to server
 		fs.storeFile(file, function() {
 			// hide progress bar
-			$('#encryptModal').modal('hide');
+			$.mobile.hidePageLoadingMsg();
 		}, function(fsFile) {
 			// display link to the file
 			self.addLinkToList(fsFile);
@@ -93,12 +93,12 @@ var FSVIEW = (function (window, document, $, fs) {
 		fs.cacheBucketFS(bucket, bucketFS);
 		
 		// add bucket to accordion
-		var html = '<li class="nav-header">' + bucketFS.name + '</li>';
+		//var html = '<li class="nav-header">' + bucketFS.name + '</li>';
 		// var html = '<div>' +
 		// 				'<h3><a href="#">' + bucketFS.name + '</a></h3>' +
 		// 				'<ol id="docList"></ol>' +
 		// 			'</div>';
-		$('#buckets').append(html);
+		//$('#buckets').append(html);
 		
 		// display file links
 		for (var i=0; i < bucketFS.root.length; i++) {
@@ -111,18 +111,22 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.addLinkToList = function(file) {
 		var blobKey = file.blobKey;
-		var item = '<li><div>' +
-				   '<a id="deleteItem" href="' + blobKey + '"><i class="icon-remove icon-black"></i></a>' +
-				   '<a id="showItem" href="' + blobKey + '">' + file.name + '</a>' +
-				   '<a id="shareItem" href="' + blobKey + '"><i class="icon-share-alt icon-black"></i></a>' +
-				   '</div></li>';
-		
-		$('#buckets').append(item);
+		// var item = '<li><div>' +
+		// 		   '<a id="deleteItem" href="' + blobKey + '"><i class="icon-remove icon-black"></i></a>' +
+		// 		   '<a id="showItem" href="' + blobKey + '">' + file.name + '</a>' +
+		// 		   '<a id="shareItem" href="' + blobKey + '"><i class="icon-share-alt icon-black"></i></a>' +
+		// 		   '</div></li>';
+				
+		var item = '<li><a id="showItem" href="' + blobKey + '">' + file.name + '</a></li>';
+		var itemList = $('#itemList');
+		itemList.append(item);
+		itemList.listview("refresh");
 		
 		// show document
 		$('#showItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
 			self.showDocItem(file);
+			return false;
 		});
 		
 		// delete document
@@ -165,12 +169,12 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.showDocItem = function(file) {
 		// show progress bar
-		$('#decryptModal').modal('show');
+		$.mobile.showPageLoadingMsg();
 		
 		// get encrypted fiel and decrypt
 		fs.getFile(file, function(decrypted) {
 			// hide progress bar
-			$('#decryptModal').modal('hide');
+			$.mobile.hidePageLoadingMsg();
 			
 			// if (file.mimeType === 'application/pdf') {
 			// 	window.location.href = 'pdfjs/viewer.html?file=' + decrypted;
@@ -180,8 +184,6 @@ var FSVIEW = (function (window, document, $, fs) {
 			// display the document
 			window.location.href = decrypted;
 		});
-		
-		return false;
 	};
 	
 	self.deleteDocItem = function(file) {
