@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en" manifest="../appcache.manifest">
+<!DOCTYPE html> 
+<html>
   <!--
    - SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
    -
@@ -17,213 +17,70 @@
    - You should have received a copy of the GNU Affero General Public License
    - along with this program. If not, see http://www.gnu.org/licenses/.
    -->
-  <head>
+	<head>
     <meta charset="utf-8">
-    <title>SafeWith.me</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<title>SafeWith.me</title> 
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Store and share your files with OpenPGP encryption on any device via HTML5">
     <meta name="author" content="Tankred Hase">
     <meta name="keywords" content="safe with me, secure online storage, secure cloud storage, secure file sharing, securely share files, open source, privacy, security, client side encryption, pgp, openpgp, html5" />
-
-    <!-- Le styles -->
-    <link href="../css/bootstrap-2.0.1.min.css" rel="stylesheet">
-    <link href="../css/safewithme.css" rel="stylesheet">
-    <style type="text/css">
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-      
-      #holder h1 {
-        padding-bottom: 20px;
-        text-shadow: 1px 2px 5px rgba(64, 64, 64, 0.5);
-        text-align: center;
-      }
-      
-      #logo {
-        width: 128px;
-        height: 128px;
-        margin-left: auto;
-        margin-right: auto;
-        background-image: url('../img/safe-icon-small.png');
-        background-repeat: no-repeat;
-        padding-top: 20px;
-      }
-      
-      .fileinput-button {
-        position: relative;
-        overflow: hidden;
-        float: left;
-        margin-right: 4px;
-      }
-      
-      .fileinput-button input {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        border: solid transparent;
-        border-width: 0 0 100px 200px;
-        opacity: 0;
-        filter: alpha(opacity=0);
-        -moz-transform: translate(-300px, 0) scale(4);
-        direction: ltr;
-        cursor: pointer;
-      }
-    </style>
-    <link href="../css/bootstrap-responsive-2.0.1.min.css" rel="stylesheet">
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Le fav and touch icons -->
+  	<link rel="stylesheet" href="../css/jquery.mobile-1.1.0-rc.2.min.css" />
+    <link rel="stylesheet" href="../css/app.css" />
     <link rel="shortcut icon" href="../favicon.ico">
-    <!-- <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png"> -->
   </head>
+  <body> 
 
-  <body>
+    <div data-role="page" data-theme="a" id="holder">
+      
+    	<div data-role="header" data-position="fixed" data-theme="a">
+        <span data-role="button" data-icon="plus" class="ui-btn-left fileinput-button">
+          <span>Upload</span>
+          <input type="file" id="files" name="files[]" multiple />
+        </span><!-- /fileinput-button -->
+        <h1 class="safewithmebrand">SafeWith.me</h1>
+      	<a href="about.html" data-role="button" data-icon="info" data-transition="flip" data-rel="dialog" class="ui-btn-right">About</a>
+    	</div><!-- /header -->
 
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="safewithmebrand" href="http://safewith.me">SafeWith.me</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><a href="http://safewith.me/about.html">About</a></li>
-              <li><a href="https://github.com/tanx/SafeWith.me/wiki/FAQ">FAQ</a></li>
-              <li><a href="https://github.com/tanx/SafeWith.me/issues/milestones?direction=asc&sort=due_date">Roadmap</a></li>
-              <li><a href="https://github.com/tanx/SafeWith.me">Code</a></li>
-            </ul>
-            <p id="login" class="navbar-text pull-right"></p>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
-
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span4">
-          <div class="well sidebar-nav">
-            <ul id="buckets" class="nav nav-list">
-            </ul>
-          </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span8">
-          
-          <div id="holder" class="hero-unit">
-            <h1>Drag to safe!</h1>
-            <div id="logo"></div>
-            <p>You can drag and drop files onto the safe or use the upload button. Uploaded files are listed on the left</p>
-            <p>
-              <span class="btn btn-success fileinput-button">
-                <span><i class="icon-plus icon-white"></i> Upload... </span>
-                <input type="file" id="files" name="files[]" multiple />
-              </span>
-            </p>
-          </div><!--/hero-unit-->
-          
-          <!-- Modal dialogs -->
-          <div class="modal hide fade" id="encryptModal">
-            <div class="modal-header">
-              <h3>Please wait, our trained bunnies are encrypting your file...</h3>
-            </div>
-            <div class="modal-body">
-              <div class="progress progress-danger progress-striped active">
-                <div class="bar" style="width: 100%;"></div>
-              </div>
-            </div>
-          </div><!--/modal-->
-
-          <div class="modal hide fade" id="decryptModal">
-            <div class="modal-header">
-              <h3>Please wait, our trained bunnies are decrypting your file...</h3>
-            </div>
-            <div class="modal-body">
-              <div class="progress progress-danger progress-striped active">
-                <div class="bar" style="width: 100%;"></div>
-              </div>
-            </div>
-          </div><!--/modal-->
-
-          <div class="modal hide fade" id="shareModal">
-            <div class="modal-header">
-              <h3>Encrypted sharing...</h3>
-            </div>
-            <div class="modal-body">
-              <form id="shareForm" class="form-inline">
-          		  <input id="shareEmail" type="text" class="input-medium" placeholder="recipient's email"/>
-          		  <button type="submit" class="btn btn-success">share</button>
-          		</form>
-            </div>
-            <div class="modal-footer">
-              <p>Files are shared using the recipient's personal key, so only he will be able to read the shared document.</p>
-            </div>
-          </div><!--/modal-->
-
-          <div class="modal hide fade" id="disclaimerModal">
-            <div class="modal-header">
-              <a class="close" data-dismiss="modal">×</a>
-              <h3>Generate your personal keypair...</h3>
-            </div>
-            <div class="modal-body">
-              <div id="keygenStatus">
-                <form id="genKeysForm" class="form-inline">
-                  <label>Passphrase:</label>
-            		  <input id="passphrase" type="password" class="input-medium"/>
-            		  <button type="submit" class="btn btn-success">Generate Keypair</button>
-            		</form>
-              </div>
-              <div class="alert alert-block">
-                <h4 class="alert-heading">Important!</h4>
-                <p>A pair of passphrase protected keys will be generated on your computer. That way only you will have access to your files. Please export a copy of these keys for safekeeping.</p>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <p>Thanks for taking the time to check out SafeWith.me. This is a prerelease alpha version, created so that feedback can be acquired before release. Please do not use this version for production purposes.</p>
-              <p>SafeWith.me comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; for details see the <a href="https://github.com/tanx/SafeWith.me/blob/master/LICENSE.txt">license terms</a>.</p>
-            </div>
-          </div><!--/modal-->
-
-          <div class="modal hide fade" id="importKeysModal">
-            <div class="modal-header">
-              <h3>Key import</h3>
-            </div>
-            <div class="modal-body">
-              <div class="alert alert-info">
-                <h4 class="alert-heading">Please enter your passphrase</h4>
-              </div>
-              <form>
-                <label>Passphrase:</label>
-                <input id="passphraseImport" type="password"/>
-                <div><a id="importBtn" class="btn btn-primary btn-large">Import</a></div>
-              </form>
-            </div>
-          </div><!--/modal-->
-          
-        </div><!--/span-->
-      </div><!--/row-->
-
-      <hr>
-
-      <footer>
-        <p>&copy; 2012 Tankred Hase | Icons by iconleak.com</p>
-      </footer>
-
-    </div><!--/.fluid-container-->
+    	<div data-role="content">
+      	<ul data-role="listview" data-inset="true" data-filter="true" data-theme="c" data-divider-theme="d">
+      	  <li data-role="list-divider">A</li>
+        	<li><a href="#bar" data-rel="dialog" data-transition="slideup">Acura</a></li>
+        	<li><a href="#">Audi</a></li>
+        	<li><a href="#">Arra</a></li>
+        	
+        	<li data-role="list-divider">B</li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	
+        	<li data-role="list-divider">B</li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">Cadillac</a></li>
+        	<li><a href="#">Ferrari</a></li>
+        	
+        	<li data-role="list-divider">B</li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	
+        	<li data-role="list-divider">B</li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        	<li><a href="#">BMW</a></li>
+        </ul>
+    	</div><!-- /content -->
+    	
+    	<div data-role="footer" data-theme="a" role="contentinfo">
+  			<h4 class="safewithmebrand">© 2012 Tankred Hase</h4>
+  		</div><!-- /footer -->
+  		
+    </div><!-- /page -->
     
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="../js/lib/bootstrap-2.0.1.min.js"></script>
+  	<script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
+  	<script type="text/javascript" src="../js/lib/jquery.mobile-1.1.0-rc.2.min.js"></script>
     <script type="text/javascript" src="../js/lib/openpgp.min.js"></script>
     
     <!--     <script type="text/javascript" src="../js/safewithme.min.js"></script> -->

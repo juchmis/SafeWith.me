@@ -1,3 +1,5 @@
+/* application */
+
 .fileinput-button input {
 	position: absolute;
 	top: 0;
@@ -26,6 +28,13 @@
 	text-shadow: 1px 1px 0px #101010, -1px -1px 0px #808080;
 }
 
+a.safewithmebrand:hover {
+	text-decoration: none;
+	color:#505050;
+}
+
+/* about dialog */
+
 #logo {
 	width: 128px;
 	height: 128px;
@@ -35,18 +44,13 @@
 	background-repeat: no-repeat;
 }
 
-a.safewithmebrand:hover {
-	text-decoration: none;
-	color:#505050;
-}
-
 #about p {
 	font: italic 14px/19px Georgia,Times New Roman,serif;
 	font-family: Georgia, 'Times New Roman', serif;
 	color: #777;
 }
 
-.author {
+.emphasize {
 	text-align: center;
 }
 
