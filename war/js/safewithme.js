@@ -25,7 +25,7 @@ $('#mainPage').live('pageinit', function(event) {
 	SAFEWITHME.init();
 });
 
-$('#keygen').live('pageinit', function(event) {
+$('#keygenDlg').live('pageinit', function(event) {
 	SAFEWITHME.init();
 });
 

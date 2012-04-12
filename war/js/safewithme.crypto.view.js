@@ -55,7 +55,7 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 				genKeysCallback();
 			});
 
-			$.mobile.changePage('keygen.html');
+			$.mobile.changePage('keygen.html', {transition:'slidedown'});
 
 		}, function() /* finishCallback */ {
 			
