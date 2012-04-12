@@ -102,6 +102,15 @@ var FSVIEW = (function (window, document, $, fs) {
 		// 			'</div>';
 		//$('#buckets').append(html);
 		
+		// sort files in bucketFS by name
+		bucketFS.root.sort(function (a, b) {
+			var nameA = a.name.toLowerCase( );
+			var nameB = b.name.toLowerCase( );
+			if (nameA < nameB) { return -1; }
+			if (nameA > nameB) { return 1; }
+			return 0;
+		});
+		
 		// display file links
 		for (var i=0; i < bucketFS.root.length; i++) {
 			self.addLinkToList(bucketFS.root[i]);
