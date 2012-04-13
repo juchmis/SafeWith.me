@@ -29,6 +29,11 @@ $('#keygenDlg').live('pageinit', function(event) {
 	SAFEWITHME.init();
 });
 
+$('#importKeysDlg').live('pageinit', function(event) {
+	SAFEWITHME.init();
+});
+
+
 /**
  * SafeWith.me uses the model-view-presenter (MVP) pattern to seperate 'view'
  * (DOM manipulation) logic from 'presenter' (business) logic. Dependency

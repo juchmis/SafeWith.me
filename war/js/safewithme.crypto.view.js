@@ -70,18 +70,21 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 	};
 	
 	self.showImportKeys = function(loginInfo, keyId, callback) {
-		$('#importKeysModal').modal('show');
+		$.mobile.changePage('importkeys.html', {transition:'slideup'});
 		
-		$('#importBtn').click(function() {
+		$('#import-btn').click(function() {
 			// get passphrase
-			var passphrase = $('#passphraseImport').val();
+			var passphrase = $('#passphrase').val();
 			crypto.setPassphrase(passphrase);
+			$.mobile.showPageLoadingMsg();
 			
 			crypto.fetchKeys(loginInfo.email, keyId, function(keys) {
+				$.mobile.hidePageLoadingMsg();
 				// try to read keys from local storage again
 				if (crypto.readKeys(loginInfo.email, keyId)) {
 					window.alert('Key import from server successful!');
-					$('#importKeysModal').modal('hide');
+					// go back to app
+					$.mobile.changePage('index.html');
 					callback();
 				} else {
 					window.alert('Key import failed... please check your passphrase!');
