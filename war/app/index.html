@@ -52,12 +52,14 @@
           <input type="file" id="files" name="files[]" multiple />
         </span><!-- /fileinput-button -->
         <h1 class="safewithmebrand">SafeWith.me</h1>
-      	<a href="about.html" data-role="button" data-icon="info" data-transition="flip" class="ui-btn-right">About</a>
+        <div data-role="controlgroup" data-type="horizontal" class="ui-btn-right">
+        	<a href="#" data-role="button" data-icon="back" data-transition="flip">Logout</a>
+        	<a href="about.html" data-role="button" data-icon="info" data-transition="flip">About</a>
+        </div>
     	</div><!-- /header -->
 
     	<div data-role="content">
-      	<ul id="itemList" data-role="listview" data-inset="true" data-filter="true" data-theme="c" data-divider-theme="d">
-        </ul>
+      	<ul id="itemList" data-role="listview" data-inset="true" data-filter="true" data-theme="c" data-divider-theme="d"></ul>
     	</div><!-- /content -->
     	
     	<div data-role="footer" data-theme="a">

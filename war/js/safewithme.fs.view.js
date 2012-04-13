@@ -134,8 +134,9 @@ var FSVIEW = (function (window, document, $, fs) {
 		// 		   '<a id="shareItem" href="' + blobKey + '"><i class="icon-share-alt icon-black"></i></a>' +
 		// 		   '</div></li>';
 		
-		var anchor = $('<a></a>').attr({ id: "showItem", href: blobKey }).append(file.name);
-		var item = $('<li></li>').append(anchor);
+		var anchor = $('<a></a>').attr({ id: 'showItem', href: blobKey }).append(file.name);
+		var deleteBtn = $('<a></a>').attr({ id: 'deleteItem', href: blobKey, 'data-icon': 'delete', 'data-theme': 'c' }).append('Delete');
+		var item = $('<li></li>').append(anchor).append(deleteBtn);
 		$('#itemList').append(item);
 		
 		// show document
@@ -148,13 +149,17 @@ var FSVIEW = (function (window, document, $, fs) {
 		// delete document
 		$('#deleteItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
-			self.deleteDocItem(file);
+			if(confirm('Delete ' + file.name + '?')) {
+				self.deleteDocItem(file);
+			}
+			return false;
 		});
 		
 		// share document
 		$('#shareItem[href="' + blobKey + '"]').click(function(e) {
 			e.preventDefault();
 			$('#shareModal').modal('show');
+			return false;
 		});	
 			
 		$('#shareForm').submit(function(e) {
@@ -205,6 +210,7 @@ var FSVIEW = (function (window, document, $, fs) {
 	self.deleteDocItem = function(file) {
 		fs.deleteFile(file, function() {
 			$('[href="' + file.blobKey + '"]').remove();
+			$('#itemList').listview("refresh");
 		});
 	};
 	
