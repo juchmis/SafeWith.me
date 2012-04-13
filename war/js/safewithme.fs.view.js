@@ -133,8 +133,9 @@ var FSVIEW = (function (window, document, $, fs) {
 		// 		   '<a id="showItem" href="' + blobKey + '">' + file.name + '</a>' +
 		// 		   '<a id="shareItem" href="' + blobKey + '"><i class="icon-share-alt icon-black"></i></a>' +
 		// 		   '</div></li>';
-				
-		var item = '<li><a id="showItem" href="' + blobKey + '">' + file.name + '</a></li>';
+		
+		var anchor = $('<a></a>').attr({ id: "showItem", href: blobKey }).append(file.name);
+		var item = $('<li></li>').append(anchor);
 		$('#itemList').append(item);
 		
 		// show document
