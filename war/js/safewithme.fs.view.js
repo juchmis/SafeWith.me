@@ -38,15 +38,18 @@ var FSVIEW = (function (window, document, $, fs) {
 		holder.ondrop = function(e) {
 			// this.className = '';			
 			e.preventDefault();
-			var file = e.dataTransfer.files[0];
-			self.handleFileDrop(file);
+			
+			var files = e.dataTransfer.files;
+			for (var i = 0; i < files.length; i++) {
+				self.handleFileDrop(files[i]);
+			}
 		};
 		
 		// upload button
 		function handleFileSelect(e) {
-			//var file = e.target.files[0];
-			for (var i = 0; i < e.target.files.length; i++) {
-				self.handleFileDrop(e.target.files[i]);
+			var files = e.target.files;
+			for (var i = 0; i < files.length; i++) {
+				self.handleFileDrop(files[i]);
 			}
 		}
 		document.getElementById('files').addEventListener('change', handleFileSelect, false);
