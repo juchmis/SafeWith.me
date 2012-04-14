@@ -38,15 +38,11 @@ var MENUVIEW = (function ($, menu) {
 	 * Changes the login anchor archording to the login status
 	 */
 	self.updateLogin = function(loginInfo) {
-		var anchor = '';
 		if (loginInfo.loggedIn) {
-			anchor = 'Logout <a href="' + loginInfo.logoutUrl + '">' + loginInfo.email + '</a>';
-			
+			$('#loginStatus').attr({ href: loginInfo.logoutUrl });
 		} else {
-			anchor = 'Try the alpha: Login with your <a href="' + loginInfo.loginUrl + '">Google Account</a>';
+			window.location.href = loginInfo.loginUrl;
 		}
-		
-		$('#login').html(anchor);
 	};
 	
 	return self;
