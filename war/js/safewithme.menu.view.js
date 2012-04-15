@@ -41,6 +41,7 @@ var MENUVIEW = (function ($, menu) {
 		var anchor = $('#loginStatus');
 		if (loginInfo.loggedIn) {
 			anchor.attr({ href: loginInfo.logoutUrl });
+			anchor.find('span[class="ui-btn-text"]').html('Logout');
 		} else {
 			window.location.href = loginInfo.loginUrl;
 		}

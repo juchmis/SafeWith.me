@@ -42,7 +42,7 @@ $('#importKeysDlg').live('pageinit', function(event) {
  * encrypted before being persisted on the server. This way the server has
  * no knowledge of file meta-data such as filenames.
  */
-var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
+var SAFEWITHME = (function (window, menuView, cryptoView, fsView) {
 	var self = {};
 	
 	/**
@@ -56,9 +56,12 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 		menuView.init('/app/', function(loginInfo) {
 			// check if user is logged in
 			if (!loginInfo.loggedIn || !loginInfo.email) { return; }
-			// init crypto and fs
+			// init crypto
 			cryptoView.init(loginInfo, function() {
-				fsView.init(loginInfo);
+				// init filesystem
+				fsView.init(loginInfo, function() {
+					// init successful
+				});
 			});
 		});
 	};
@@ -78,4 +81,4 @@ var SAFEWITHME = (function (window, navigator, menuView, cryptoView, fsView) {
 	}
 	
 	return self;
-}(window, navigator, MENUVIEW, CRYPTOVIEW, FSVIEW));
+}(window, MENUVIEW, CRYPTOVIEW, FSVIEW));

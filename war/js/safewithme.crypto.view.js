@@ -49,10 +49,13 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 				// read passphrase
 				var passphrase = $('#passphrase').val();
 				crypto.setPassphrase(passphrase);
-				// display progressbar
+				// show loading msg
 				$.mobile.showPageLoadingMsg();
-				// generate keys
-				genKeysCallback();
+				// wait shortly for loading msg to appear since keygen is blocking atm
+				setTimeout(function() {
+					// generate keys
+					genKeysCallback();
+				}, 100);
 			});
 
 			$.mobile.changePage('keygen.html', {transition:'slidedown'});
@@ -61,7 +64,7 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 			
 			// create export keys link
 			crypto.exportKeys(function(url) {
-				// show completion message
+				// hide loading msg
 				$.mobile.hidePageLoadingMsg();
 				// go back to app
 				$.mobile.changePage('index.html');
@@ -76,9 +79,11 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 			// get passphrase
 			var passphrase = $('#passphrase').val();
 			crypto.setPassphrase(passphrase);
+			// show loading msg
 			$.mobile.showPageLoadingMsg();
 			
 			crypto.fetchKeys(loginInfo.email, keyId, function(keys) {
+				// hide loading msg
 				$.mobile.hidePageLoadingMsg();
 				// try to read keys from local storage again
 				if (crypto.readKeys(loginInfo.email, keyId)) {

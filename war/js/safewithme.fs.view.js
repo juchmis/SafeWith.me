@@ -27,7 +27,7 @@ var FSVIEW = (function (window, document, $, fs) {
 	/**
 	 * init UI
 	 */
-	self.init = function(loginInfo) {
+	self.init = function(loginInfo, callback) {
 		// drag and drop area
 		var holder = document.getElementById('mainPage');
 		// holder.ondragover = function () { this.className = 'hover'; return false; };
@@ -53,18 +53,29 @@ var FSVIEW = (function (window, document, $, fs) {
 			}
 		}
 		document.getElementById('files').addEventListener('change', handleFileSelect, false);
-		
+
+		// show loading msg during init
+		$.mobile.showPageLoadingMsg();
+
 		// get user's bucket if logged in
 		fs.getBuckets(loginInfo.email, function(buckets) {
 			// if the user does not have any buckets create a default bucket for him
 			if (buckets.length === 0) {
 				fs.createBucket('Personal Documents', function(bucket) {
 					self.displayBucket(bucket, 0, 1);
+					
+					// finished init.. hide loading msg
+					$.mobile.hidePageLoadingMsg();
+					callback();
 				});
 			} else {
 				for (var i = 0; i < buckets.length; i++) {
 					self.displayBucket(buckets[i], i, buckets.length);
 				}
+				
+				// finished init.. hide loading msg
+				$.mobile.hidePageLoadingMsg();
+				callback();
 			}
 		});
 	};
