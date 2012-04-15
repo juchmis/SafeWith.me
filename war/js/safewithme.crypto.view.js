@@ -27,19 +27,28 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 	/**
 	 * init UI
 	 */
-	self.init = function(loginInfo, callback) {
+	self.init = function(loginInfo, callback) {	
+		// show loading msg
+		$.mobile.showPageLoadingMsg('a', 'init crypto...', true);
 
 		// check server for user's public key ID
 		crypto.initKeyPair(loginInfo, function(keyId) {
 			// read corresponding keys from localstorage
 			if (crypto.readKeys(loginInfo.email, keyId)) {
+				// hide loading msg
+				$.mobile.hidePageLoadingMsg();
 				callback();
 			} else {
+				// hide loading msg
+				$.mobile.hidePageLoadingMsg();
 				// import keys from server if no matching keys are found in local storage
 				self.showImportKeys(loginInfo, keyId, callback);
 			}
 			
-		}, function(genKeysCallback) /* displayCallback */ {
+		}, function(genKeysCallback) /* displayCallback */ {	
+			// hide loading msg
+			$.mobile.hidePageLoadingMsg();
+			$.mobile.changePage('keygen.html', {transition:'slideup'});
 			
 			// no keys found on server -> generate new keypair fot the user
 			$('#genKeys-btn').click(function(e) {
@@ -50,15 +59,13 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 				var passphrase = $('#passphrase').val();
 				crypto.setPassphrase(passphrase);
 				// show loading msg
-				$.mobile.showPageLoadingMsg();
+				$.mobile.showPageLoadingMsg('a', 'generating PGP keys...', true);
 				// wait shortly for loading msg to appear since keygen is blocking atm
 				setTimeout(function() {
 					// generate keys
 					genKeysCallback();
 				}, 100);
 			});
-
-			$.mobile.changePage('keygen.html', {transition:'slidedown'});
 
 		}, function() /* finishCallback */ {
 			
@@ -80,7 +87,7 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 			var passphrase = $('#passphrase').val();
 			crypto.setPassphrase(passphrase);
 			// show loading msg
-			$.mobile.showPageLoadingMsg();
+			$.mobile.showPageLoadingMsg('a', 'importing keys...');
 			
 			crypto.fetchKeys(loginInfo.email, keyId, function(keys) {
 				// hide loading msg

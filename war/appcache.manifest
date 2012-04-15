@@ -1,6 +1,6 @@
 CACHE MANIFEST
-# SafeWith.me v0.7.18
-# Updated 2012-04-15 13:01
+# SafeWith.me v0.7.20
+# Updated 2012-04-15 17:06
 # Git commit SHA1: 434f1ea0efac3e1d295ffb72c9b1d2008a8fcdcf (just an example)
 
 CACHE:
@@ -9,10 +9,17 @@ app/index.html
 app/about.html
 app/keygen.html
 app/importkeys.html
-css/jquery.mobile-1.1.0-rc.2.min.css
+css/jquery.mobile-1.1.0.min.css
 css/app.css
+css/images/ajax-loader.gif
+css/images/ajax-loader.png
+css/images/icons-18-black.png
+css/images/icons-18-white.png
+css/images/icons-36-black.png
+css/images/icons-36-white.png
+img/safe-icon-small.png
 js/lib/jquery-1.7.1.min.js
-js/lib/jquery.mobile-1.1.0-rc.2.min.js
+js/lib/jquery.mobile-1.1.0.min.js
 js/lib/openpgp.worker.min.js
 js/lib/openpgp.min.js
 js/safewithme.util.js
@@ -27,13 +34,6 @@ js/safewithme.fs.cache.js
 js/safewithme.fs.js
 js/safewithme.fs.view.js
 js/safewithme.js
-img/safe-icon-small.png
-css/images/ajax-loader.gif
-css/images/ajax-loader.png
-css/images/icons-18-black.png
-css/images/icons-18-white.png
-css/images/icons-36-black.png
-css/images/icons-36-white.png
 
 NETWORK:
 /login
