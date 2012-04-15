@@ -84,14 +84,17 @@ var FSVIEW = (function (window, document, $, fs) {
 	 * Process a file after it has been droped on the droparea
 	 */
 	self.handleFileDrop = function(file) {		
-		// show progress bar
-		$.mobile.showPageLoadingMsg();
+		// show encrypting msg		
+		$.mobile.showPageLoadingMsg('a', 'encrypting...');
 			
 		// read, encrypt and upload encrypted file to server
 		fs.storeFile(file, function() {
-			// hide progress bar
+			// switch progress
 			$.mobile.hidePageLoadingMsg();
+			$.mobile.showPageLoadingMsg('a', 'uploading...');
 		}, function(fsFile) {
+			// hide progress msg
+			$.mobile.hidePageLoadingMsg();
 			// display link to the file
 			self.addLinkToList(fsFile);
 			// refresh listView
@@ -201,10 +204,15 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.showDocItem = function(file) {
 		// show progress bar
-		$.mobile.showPageLoadingMsg();
+		$.mobile.showPageLoadingMsg('a', 'downloading...');
 		
-		// get encrypted fiel and decrypt
-		fs.getFile(file, function(decryptedUrl) {
+		// get encrypted file and decrypt
+		fs.getFile(file, function() {
+			// show gotten msg
+			$.mobile.hidePageLoadingMsg();
+			$.mobile.showPageLoadingMsg('a', 'decrypting...');
+			
+		}, function(decryptedUrl) {
 			// hide progress bar
 			$.mobile.hidePageLoadingMsg();
 			

@@ -231,7 +231,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	 * using the HTML5 FileReader Api, encrypts the file locally
 	 * and upload encrypted blob to server
 	 */
-	self.storeFile = function(file, cachedCallback, callback) {
+	self.storeFile = function(file, encryptedCallback, callback) {
 		// convert file/blob to binary string
 		util.blob2BinStr(file, function(binStr) {
 			// symmetrically encrypt the string
@@ -240,6 +240,9 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 				// create blob for uploading
 				var blob = util.arrBuf2Blob(util.binStr2ArrBuf(ct.ct), 'application/octet-stream');
 				var ctMd5 = md5(ct.ct);
+				
+				// switch displaying message
+				encryptedCallback();
 
 				// cache the blob locally
 				cache.storeBlob(ctMd5, blob, function(success) {
@@ -274,9 +277,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 			var current = bucketCache.current();
 			self.addFileToBucketFS(fsFile, current.bucketFS, current.bucket, function(updatedBucket) {
 				// add link to the file list
-				callback(fsFile, updatedBucket);					
-				// stop displaying message
-				cachedCallback();
+				callback(fsFile, updatedBucket);
 			});
 		}
 	};
@@ -284,7 +285,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	/**
 	 * Downloads the encrypted document and decrypt it
 	 */
-	self.getFile = function(file, callback) {
+	self.getFile = function(file, gottenCallback, callback) {
 		// try to fetch blob from the local cache
 		cache.readBlob(file.md5, function(blob) {
 			if (blob) {
@@ -293,7 +294,6 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 			} else {
 				// get encrypted ArrayBuffer from server
 				server.downloadBlob(file.blobKey, function(blob) {
-					
 					// cache the downloaded blob
 					cache.storeBlob(file.md5, blob, function(success) {
 						if (success) {
@@ -307,6 +307,9 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		});
 
 		function handleBlob(blob) {
+			// display gotten msg
+			gottenCallback();
+			
 			// read blob as binary string
 			util.blob2BinStr(blob, function(encrStr) {
 				

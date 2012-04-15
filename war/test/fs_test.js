@@ -40,7 +40,7 @@ asyncTest("Create, Get, Delete Bucket", 12, function() {
 			equal(bucket.encryptedFS, updatedBucket.encryptedFS);
 
 			// read file
-			FS.getFile(file, function(url) {
+			FS.getFile(file, function() {}, function(url) {
 				ok(url);
 
 				// delete file from bucket fs
