@@ -38,11 +38,19 @@ var MENUVIEW = (function ($, menu) {
 	 * Changes the login anchor archording to the login status
 	 */
 	self.updateLogin = function(loginInfo) {
+		var anchor = $('#loginStatus');
 		if (loginInfo.loggedIn) {
-			$('#loginStatus').attr({ href: loginInfo.logoutUrl });
+			anchor.attr({ href: loginInfo.logoutUrl });
 		} else {
 			window.location.href = loginInfo.loginUrl;
 		}
+		
+		// override jquery page change, since this causes trouble with external urls
+		anchor.click(function(e) {
+			e.preventDefault();
+			window.location.href = anchor.attr('href');
+			return false;
+		});
 	};
 	
 	return self;
