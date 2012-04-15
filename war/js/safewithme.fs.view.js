@@ -55,7 +55,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
 		// show loading msg during init
-		$.mobile.showPageLoadingMsg('a', 'init fs...', true);
+		$.mobile.showPageLoadingMsg('a', 'init fs...');
 
 		// get user's bucket if logged in
 		fs.getBuckets(loginInfo.email, function(buckets) {

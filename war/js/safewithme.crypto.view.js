@@ -29,7 +29,7 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 	 */
 	self.init = function(loginInfo, callback) {	
 		// show loading msg
-		$.mobile.showPageLoadingMsg('a', 'init crypto...', true);
+		$.mobile.showPageLoadingMsg('a', 'init crypto...');
 
 		// check server for user's public key ID
 		crypto.initKeyPair(loginInfo, function(keyId) {
@@ -59,7 +59,7 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 				var passphrase = $('#passphrase').val();
 				crypto.setPassphrase(passphrase);
 				// show loading msg
-				$.mobile.showPageLoadingMsg('a', 'generating PGP keys...', true);
+				$.mobile.showPageLoadingMsg('a', 'generating PGP keys...');
 				// wait shortly for loading msg to appear since keygen is blocking atm
 				setTimeout(function() {
 					// generate keys

@@ -48,9 +48,12 @@ var SAFEWITHME = (function (window, menuView, cryptoView, fsView) {
 	/**
 	 * Single point of entry for the application
 	 */
-	self.init = function() {		
+	self.init = function() {
 		// check if the browser supports all necessary HTML5 Apis
 		if (!checkBrowser()) { return; }
+		
+		// set jqm to display loading texts
+		$.mobile.loadingMessageTextVisible = true;
 
 		// init views
 		menuView.init('/app/', function(loginInfo) {
