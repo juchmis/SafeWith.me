@@ -1,0 +1,18 @@
+{
+  "name": "SafeWith.me",
+  "description": "Store and share your files with OpenPGP encryption on any device via HTML5.",
+  "version": "0.7.20",
+  "icons": { "128": "safe-icon-128.png" },
+  "app": {
+    "urls": [
+      "https://safewith-me.appspot.com/app/"
+    ],
+    "launch": {
+      "web_url": "https://safewith-me.appspot.com/app/"
+    }
+  },
+  "permissions": [
+    "unlimitedStorage"
+  ],
+  "offline_enabled": true
+}
