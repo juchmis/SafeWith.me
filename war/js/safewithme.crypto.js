@@ -198,7 +198,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			passphrase = window.localStorage.getItem(email + 'Passphrase');
 		}
 		if (!passphrase && passphrase !== '') {
-			throw 'No passphrase for that user in localstorage!';
+			return false;
 		}
 		
 		return true;
