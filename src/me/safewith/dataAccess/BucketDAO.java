@@ -52,7 +52,7 @@ public class BucketDAO {
 		Bucket bucket = new GenericDAO().get(Bucket.class, bucketId);
 		
 		// check if it's the owners bucket
-		if (bucket.getOwnerEmail().equals(email)) {
+		if (bucket != null && bucket.getOwnerEmail().equals(email)) {
 			return bucket;
 			
 		} else {

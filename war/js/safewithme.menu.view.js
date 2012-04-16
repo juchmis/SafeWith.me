@@ -28,8 +28,16 @@ var MENUVIEW = (function ($, menu) {
 	 * init UI
 	 */
 	self.init = function(goal, callback) {
+		
+		// show loading msg during init
+		$.mobile.showPageLoadingMsg('a', 'authenticating...');
+		
 		menu.getLoginInfo(goal, function(loginInfo) {
 			self.updateLogin(loginInfo);
+			
+			// finished init.. hide loading msg
+			$.mobile.hidePageLoadingMsg();
+			
 			callback(loginInfo);
 		});
 	};

@@ -19,12 +19,8 @@
 'use strict';
 
 /**
- * Start the app on jquery mobile pageinit
+ * Init module for varous subpages on jquery mobile pageinit
  */
-$('#mainPage').live('pageinit', function(event) {
-	SAFEWITHME.init();
-});
-
 $('#keygenDlg').live('pageinit', function(event) {
 	SAFEWITHME.init();
 });
@@ -32,7 +28,6 @@ $('#keygenDlg').live('pageinit', function(event) {
 $('#importKeysDlg').live('pageinit', function(event) {
 	SAFEWITHME.init();
 });
-
 
 /**
  * SafeWith.me uses the model-view-presenter (MVP) pattern to seperate 'view'
