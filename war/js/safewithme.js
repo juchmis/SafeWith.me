@@ -19,7 +19,8 @@
 'use strict';
 
 /**
- * Init module for varous subpages on jquery mobile pageinit
+ * Init module for subpages on jquery mobile pageinit
+ * TODO: refactor and modularize
  */
 $('#keygenDlg').live('pageinit', function(event) {
 	SAFEWITHME.init();
