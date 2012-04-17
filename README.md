@@ -1,7 +1,8 @@
 ##Store and share your files with OpenPGP encryption on any device via HTML5
 
-* http://safewith.me
-* http://openpgpjs.org
+* Learn more in the FAQ: https://github.com/tanx/SafeWith.me/wiki/FAQ
+* Homepage: http://safewith.me
+* Powered by: http://openpgpjs.org
 
 ### In order to run a server locally, you must:
 
