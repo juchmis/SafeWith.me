@@ -190,7 +190,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 			},
 			error: function(err) {
 				console.log('No connection to server... bucket not updated on server!');
-				callback();
+				callback(bucket);
 			}
 		});
 	};
