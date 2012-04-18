@@ -28,6 +28,12 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	//
 	// BucketFS json model
 	//
+	
+	self.Bucket = function(ownerEmail) {
+		this.id = util.UUID();
+		this.ownerEmail = ownerEmail;
+		this.lastUpdate = new Date().toISOString();
+	};
 
 	self.BucketFS = function(id, name, ownerEmail) {
 		this.version = "1.0";
@@ -66,19 +72,33 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	 * The bucket FS is then ecrypted and persited on the server in order to
 	 * get a new blob-key, which is then updated on the bucket pointer.
 	 */
-	self.createBucket = function(name, callback) {
+	self.createBucket = function(name, email, callback) {
+		var bucket = new self.Bucket(email);
+		var bucketJson = JSON.stringify(bucket);
+		
 		server.xhr({
 			type: 'POST',
 			uri: '/app/buckets',
+			contentType: 'application/json',
+			body: bucketJson,
 			expected: 201,
-			success: function(bucket) {
-				// initialize bucket file system
-				var bucketFS = new self.BucketFS(bucket.id, name, bucket.ownerEmail);
-				persistBucketFS(bucketFS, bucket, function(updatedBucket) {
-					callback(updatedBucket);
-				});
+			success: function(updatedBucket) {
+				console.log('Bucket successfully created on server.');
+				initFS(updatedBucket);
+			},
+			error: function(err) {
+				console.log('No connection to server... bucket not created on server!');
+				initFS(bucket);
 			}
 		});
+		
+		function initFS(bucket) {
+			// initialize bucket file system
+			var bucketFS = new self.BucketFS(bucket.id, name, bucket.ownerEmail);
+			persistBucketFS(bucketFS, bucket, function(updatedBucket) {
+				callback(updatedBucket);
+			});
+		}
 	};
 	
 	/**

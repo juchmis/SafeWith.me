@@ -75,7 +75,9 @@ public class PrivateKey implements PGPKey {
 
 	@Override
 	public void setAsciiArmored(String asciiArmored) {
-		this.asciiArmored = new Text(asciiArmored);
+		if (asciiArmored != null) {
+			this.asciiArmored = new Text(asciiArmored);
+		}
 	}
 
 }

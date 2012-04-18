@@ -3,6 +3,7 @@ package me.safewith.test;
 import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -50,7 +51,15 @@ public class BucketDAOTest {
 		new GenericDAO().persist(user);
 		
 		// create bucket
-		Bucket bucket = new BucketDAO().createBucket(user.getEmail());
+		Bucket falseBucket = new Bucket();
+		falseBucket.setId("asdf");
+		falseBucket.setOwnerEmail(user.getEmail());
+		assertNull(new BucketDAO().createBucket(falseBucket, user.getEmail()));
+		Bucket trueBucket = new Bucket();
+		trueBucket.setId(UUID.randomUUID().toString());
+		trueBucket.setOwnerEmail(user.getEmail());
+		Bucket bucket = new BucketDAO().createBucket(trueBucket, user.getEmail());
+		assertNotNull(bucket);
 		
 		// read single bucket
 		Bucket single = new BucketDAO().readBucket(bucket.getId(), user.getEmail());

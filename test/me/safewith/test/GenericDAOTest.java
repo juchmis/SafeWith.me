@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.UUID;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -85,6 +86,7 @@ public class GenericDAOTest {
 		
 		// persist bucket
 		Bucket bucket = new Bucket();
+		bucket.setId(UUID.randomUUID().toString());
 		bucket.setOwnerEmail(user.getEmail());
 		new GenericDAO().persist(bucket);
 		

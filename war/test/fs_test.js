@@ -5,12 +5,10 @@ asyncTest("Create, Get, Delete Bucket", 12, function() {
 	if(!CRYPTO.readKeys(email)) {
 		return;
 	}
-	
-	FS.email = email;
 
 	var name = 'Test Bucket';
 	// create
-	FS.createBucket(name, function(bucket) {
+	FS.createBucket(name, email, function(bucket) {
 		ok(bucket);
 		ok(bucket.encryptedFS);
 		

@@ -19,6 +19,7 @@
 package me.safewith.dataAccess;
 
 import java.util.List;
+import java.util.UUID;
 
 import me.safewith.model.Bucket;
 import me.safewith.model.BucketMsg;
@@ -28,13 +29,23 @@ public class BucketDAO {
 	/**
 	 * Create new bucket for a user
 	 */
-	public Bucket createBucket(String email) {
-		// create new bucket
-		Bucket bucket = new Bucket();
-		bucket.setOwnerEmail(email);
-		new GenericDAO().persist(bucket);
+	public Bucket createBucket(Bucket bucket, String email) {
+		// check user and id
+		if (bucket.getId() == null ||
+				bucket.getOwnerEmail() == null ||
+				!bucket.getOwnerEmail().equals(email)) {
+			return null;
+		}
 		
-		return bucket;
+		// check if bucket id from client has valid UUID
+		try {
+			UUID.fromString(bucket.getId());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+		
+		// persist client bucket		
+		return new GenericDAO().persist(bucket);
 	}
 
 	/**

@@ -77,7 +77,7 @@ asyncTest("Single bucket: Cache <-> Server", 4, function() {
 	var createdBucketId = undefined;
 	
 	// create bucket on server (this also caches it locally after)
-	FS.createBucket('Test Bucket1', function(bucket) {
+	FS.createBucket('Test Bucket1', email, function(bucket) {
 		var bucketFS = FS.getBucketFS(bucket);
 		
 		createdBucketId = bucket.id;
@@ -209,9 +209,12 @@ asyncTest("BucketCache <- Server", 2, function() {
 		createdBucketId = undefined;
 	
 	// create a bucket on the server
+	var bucketJson = JSON.stringify(new FS.Bucket(email));
 	server.xhr({
 		type: 'POST',
 		uri: '/app/buckets',
+		contentType: 'application/json',
+		body: bucketJson,
 		expected: 201,
 		success: function(bucket) {
 			

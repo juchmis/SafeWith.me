@@ -1,6 +1,6 @@
 module("Util");
 
-test("JQuery and basic requirements", 10, function() {
+test("JQuery and basic requirements", 11, function() {
 	ok( Array.prototype.push, "Array.push()" );
 	ok( Function.prototype.apply, "Function.apply()" );
 	ok( document.getElementById, "getElementById" );
@@ -11,6 +11,7 @@ test("JQuery and basic requirements", 10, function() {
 	ok( UTIL.arrBuf2Blob('', ''), "BlobBuilder Api" );
 	ok( window.requestFileSystem || window.webkitRequestFileSystem, "FileSystem Api" );
 	ok( window.URL || window.webkitURL || window.mozURL, "ObjectURL Api" );
+	ok( window.crypto.getRandomValues, "crypto.getRandomValues()" );
 });
 
 asyncTest("String -> ArrayBuffer -> String", 5, function() {
@@ -51,4 +52,10 @@ asyncTest("Create URL", 2, function() {
 			start();
 		});
 	});
+});
+
+test("Generate UUID", 1,  function() {
+	var uuid = UTIL.UUID();
+	
+	ok(uuid.length === 36);
 });

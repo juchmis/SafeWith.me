@@ -61,7 +61,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		fs.getBuckets(loginInfo.email, function(buckets) {
 			// if the user does not have any buckets create a default bucket for him
 			if (buckets.length === 0) {
-				fs.createBucket('Personal Documents', function(bucket) {
+				fs.createBucket('Personal Documents', loginInfo.email, function(bucket) {
 					self.displayBucket(bucket, 0, 1);
 					
 					// finished init.. hide loading msg

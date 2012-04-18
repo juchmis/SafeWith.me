@@ -18,8 +18,6 @@
 
 package me.safewith.model;
 
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -34,8 +32,6 @@ public class Bucket implements DTO {
 	 */
 	
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
 	private String id;
 
 	@Persistent
@@ -99,7 +95,9 @@ public class Bucket implements DTO {
 	}
 
 	public void setEncryptedFS(String encryptedFS) {
-		this.encryptedFS = new Text(encryptedFS);
+		if (encryptedFS != null) {
+			this.encryptedFS = new Text(encryptedFS);
+		}
 	}
 	
 }

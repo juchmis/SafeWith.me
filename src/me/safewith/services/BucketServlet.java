@@ -100,8 +100,22 @@ public class BucketServlet extends HttpServlet {
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
 				
-				// create new bucket
-				Bucket bucket = new BucketDAO().createBucket(user.getEmail());
+				// read json from request body
+				String bucketJson = RequestHelper.readRequestBody(req);
+				BucketMsg bucketMsg = new GsonBuilder().create().fromJson(bucketJson, BucketMsg.class);
+				if (bucketMsg == null) {
+					resp.sendError(400, "Invalid bucket!");
+					return;
+				}
+				Bucket clientBucket = BucketDAO.msg2dto(bucketMsg);
+				
+				// create new bucket				
+				Bucket bucket = new BucketDAO().createBucket(clientBucket, user.getEmail());
+				if (bucket == null) {
+					resp.sendError(400, "The bucket must have a valid UUID and belong to your user!");
+					return;
+				}
+				
 				BucketMsg msg = BucketDAO.dto2msg(bucket);
 				
 				String json = new GsonBuilder().create().toJson(msg);
@@ -119,13 +133,17 @@ public class BucketServlet extends HttpServlet {
 		
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
+				
 				// read json from request body
 				String bucketJson = RequestHelper.readRequestBody(req);
-				
-				// update bucket
 				BucketMsg bucketMsg = new GsonBuilder().create().fromJson(bucketJson, BucketMsg.class);
+				if (bucketMsg == null) {
+					resp.sendError(400, "Invalid bucket!");
+					return;
+				}
 				Bucket bucket = BucketDAO.msg2dto(bucketMsg);
 				
+				// update bucket				
 				Bucket updated = new BucketDAO().updateBucket(bucket, user.getEmail());
 				BucketMsg updatedMsg = BucketDAO.dto2msg(updated);
 				String json = new GsonBuilder().create().toJson(updatedMsg);
