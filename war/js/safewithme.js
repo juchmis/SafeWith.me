@@ -19,18 +19,6 @@
 'use strict';
 
 /**
- * Init module for subpages on jquery mobile pageinit
- * TODO: refactor and modularize
- */
-$('#keygenDlg').live('pageinit', function(event) {
-	SAFEWITHME.init();
-});
-
-$('#importKeysDlg').live('pageinit', function(event) {
-	SAFEWITHME.init();
-});
-
-/**
  * SafeWith.me uses the model-view-presenter (MVP) pattern to seperate 'view'
  * (DOM manipulation) logic from 'presenter' (business) logic. Dependency
  * injection is used to keep presenters decoupled and testable. The

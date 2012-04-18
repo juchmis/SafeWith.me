@@ -45,6 +45,19 @@
       $(function() {
         SAFEWITHME.init();  // init main module on document ready
       });
+      
+      /**
+       * Init module for subpages on jquery mobile pageinit
+       * TODO: refactor and modularize
+       */
+      $('#keygenDlg').live('pageinit', function(event) {
+      	SAFEWITHME.init();
+      });
+
+      $('#importKeysDlg').live('pageinit', function(event) {
+      	SAFEWITHME.init();
+      });
+
     </script>
   </head>
   <body> 
