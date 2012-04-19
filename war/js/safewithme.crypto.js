@@ -92,6 +92,12 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			body: jsonPublicKey,
 			success: function(resp) {
 				uploadPrivateKeys();
+			},
+			error: function(e) {
+				// if server is not available, just continue
+				// and read the user's keys from local storage
+				console.log('Server unavailable: keys were not synced to server!');
+				callback(keyId);
 			}
 		});
 		
