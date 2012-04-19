@@ -141,27 +141,38 @@ var FSVIEW = (function (window, document, $, fs) {
 	 * Add new documents link to the list of available documents
 	 */
 	self.addLinkToList = function(file) {
-		var blobKey = file.blobKey;
 		// var item = '<li><div>' +
 		// 		   '<a id="deleteItem" href="' + blobKey + '"><i class="icon-remove icon-black"></i></a>' +
 		// 		   '<a id="showItem" href="' + blobKey + '">' + file.name + '</a>' +
 		// 		   '<a id="shareItem" href="' + blobKey + '"><i class="icon-share-alt icon-black"></i></a>' +
 		// 		   '</div></li>';
 		
-		var anchor = $('<a></a>').attr({ id: 'showItem', href: blobKey }).append(file.name);
-		var deleteBtn = $('<a></a>').attr({ id: 'deleteItem', href: blobKey, 'data-icon': 'delete', 'data-theme': 'c' }).append('Delete');
+		var anchor = $('<a></a>').attr({
+				id: 'showItem',
+				href: '#',
+				md5: file.md5
+			}).append(file.name);
+			
+		var deleteBtn = $('<a></a>').attr({
+				id: 'deleteItem',
+				href: '#',
+				md5: file.md5,
+				'data-icon': 'delete',
+				'data-theme': 'c'
+			}).append('Delete');
+			
 		var item = $('<li></li>').append(anchor).append(deleteBtn);
 		$('#itemList').append(item);
 		
 		// show document
-		$('#showItem[href="' + blobKey + '"]').click(function(e) {
+		$('#showItem[md5="' + file.md5 + '"]').click(function(e) {
 			e.preventDefault();
 			self.showDocItem(file);
 			return false;
 		});
 		
 		// delete document
-		$('#deleteItem[href="' + blobKey + '"]').click(function(e) {
+		$('#deleteItem[md5="' + file.md5 + '"]').click(function(e) {
 			e.preventDefault();
 			if(confirm('Delete ' + file.name + '?')) {
 				self.deleteDocItem(file);
@@ -170,7 +181,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		});
 		
 		// share document
-		$('#shareItem[href="' + blobKey + '"]').click(function(e) {
+		$('#shareItem[md5="' + file.md5 + '"]').click(function(e) {
 			e.preventDefault();
 			$('#shareModal').modal('show');
 			return false;
@@ -228,7 +239,7 @@ var FSVIEW = (function (window, document, $, fs) {
 	
 	self.deleteDocItem = function(file) {
 		fs.deleteFile(file, function() {
-			$('[href="' + file.blobKey + '"]').remove();
+			$('[md5="' + file.md5 + '"]').remove();
 			$('#itemList').listview("refresh");
 		});
 	};

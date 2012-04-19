@@ -356,12 +356,20 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		cache.removeBlob(file.md5, function(success) {
 			// delete from server
 			server.deleteBlob(file.blobKey, function(resp) {
-				var current = bucketCache.current();
-				self.deleteFileFromBucketFS(file.blobKey, current.bucketFS, current.bucket, function() {
-					callback();
-				});
+				afterDelete();
+				
+			}, function(e) /* errCallback */ {
+				afterDelete();
 			});
 		});
+		
+		function afterDelete() {
+			// update bucketFS
+			var current = bucketCache.current();
+			self.deleteFileFromBucketFS(file.blobKey, current.bucketFS, current.bucket, function() {
+				callback();
+			});
+		}
 	};
 	
 	//
