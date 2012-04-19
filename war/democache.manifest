@@ -4,10 +4,9 @@ CACHE MANIFEST
 
 CACHE:
 favicon.ico
-app/index.html
-app/about.html
-app/keygen.html
-app/importkeys.html
+demo/index.html
+demo/about.html
+demo/keygen.html
 css/jquery.mobile-1.1.0.min.css
 css/app.css
 css/images/ajax-loader.gif
@@ -36,8 +35,5 @@ js/safewithme.fs.view.js
 js/safewithme.js
 
 NETWORK:
-/login
-/ws
-/_ah
 
 FALLBACK:

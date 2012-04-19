@@ -202,7 +202,9 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 		// read passphrase from local storage if no passphrase is specified
 		if(!passphrase && passphrase !== '') {
 			var cachedPass = cache.readObject(email + 'Passphrase');
-			passphrase = cachedPass.pass;
+			if (cachedPass) {
+				passphrase = cachedPass.pass;
+			}
 		}
 		if (!passphrase && passphrase !== '') {
 			return false;

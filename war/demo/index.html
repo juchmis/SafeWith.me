@@ -1,5 +1,5 @@
 <!DOCTYPE html> 
-<html manifest="../appcache.manifest">
+<html manifest="../democache.manifest">
   <!--
    - SafeWith.me - store and share your files with OpenPGP encryption on any device via HTML5
    -
@@ -42,6 +42,21 @@
     <script type="text/javascript" src="../js/safewithme.crypto.js"></script>
     <script type="text/javascript" src="../js/safewithme.crypto.view.js"></script>
     <script type="text/javascript" src="../js/safewithme.menu.js"></script>
+    <script type="text/javascript">
+      MENU.getLoginInfo = function(goal, callback) {
+        var demoEmail = 'demo_user@safewith.me';
+        var loginInfo = CACHE.readObject('lastLoginInfo');
+        if (loginInfo && loginInfo.email === demoEmail) {
+          callback(loginInfo);
+        } else {
+          // mock loginInfo for first connect
+          callback({
+            loggedIn: true,
+            email: demoEmail
+          });
+        }
+      };
+    </script>
     <script type="text/javascript" src="../js/safewithme.menu.view.js"></script>
     <script type="text/javascript" src="../js/safewithme.fs.cache.js"></script>
     <script type="text/javascript" src="../js/safewithme.fs.js"></script>
@@ -107,22 +122,6 @@
     	  <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://github.com/tanx/SafeWith.me/blob/master/LICENSE.txt" target="new">GNU Affero General Public License</a> for more details.</p>
       	<a href="index.html" data-role="button" data-transition="flow" data-theme="a">Close</a>
   	  </div><!-- /content -->
-
-    </div><!-- /page -->
-    
-    <!-- Keygen Dialog -->
-
-    <div data-role="dialog" data-theme="c" id="keygenDlg">
-
-    	<div data-role="header" data-position="fixed" data-theme="a">
-        <h1>Generate keys</h1>
-    	</div><!-- /header -->
-
-    	<div data-role="content">
-        <label>Passphrase:</label>
-  		  <input id="passphrase" type="password"/>
-  		  <a id="genKeys-btn" data-role="button">Create my keypair</a>
-    	</div><!-- /content -->
 
     </div><!-- /page -->
 
