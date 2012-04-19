@@ -21,7 +21,7 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var CRYPTOVIEW = (function (window, $, crypto) {
+var CRYPTOVIEW = (function (window, $, crypto, cache) {
 	var self = {};
 
 	/**
@@ -53,13 +53,18 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 			// no keys found on server -> generate new keypair fot the user
 			$('#genKeys-btn').click(function(e) {
 				e.preventDefault();
+				
 				// clear localstorage (keypairs, passphrases, cached buckets)
-				window.localStorage.clear();
+				cache.clearObjectCache();
+				// store loginInfo again after clearing chache
+				cache.storeObject('lastLoginInfo', loginInfo);
+				
 				// read passphrase
 				var passphrase = $('#passphrase').val();
 				crypto.setPassphrase(passphrase);
 				// show loading msg
 				$.mobile.showPageLoadingMsg('a', 'generating PGP keys...');
+				
 				// wait shortly for loading msg to appear since keygen is blocking atm
 				setTimeout(function() {
 					// generate keys
@@ -107,4 +112,4 @@ var CRYPTOVIEW = (function (window, $, crypto) {
 	};
 	
 	return self;
-}(window, $, CRYPTO));
+}(window, $, CRYPTO, CACHE));

@@ -28,7 +28,6 @@ var MENUVIEW = (function ($, menu) {
 	 * init UI
 	 */
 	self.init = function(goal, callback) {
-		
 		// show loading msg during init
 		$.mobile.showPageLoadingMsg('a', 'authenticating...');
 		
@@ -43,7 +42,7 @@ var MENUVIEW = (function ($, menu) {
 	};
 	
 	/**
-	 * Changes the login anchor archording to the login status
+	 * Changes the login anchor arccording to the login status
 	 */
 	self.updateLogin = function(loginInfo) {
 		var anchor = $('#loginStatus');

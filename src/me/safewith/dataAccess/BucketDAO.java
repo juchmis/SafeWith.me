@@ -67,7 +67,7 @@ public class BucketDAO {
 			return bucket;
 			
 		} else {
-			throw new IllegalArgumentException("Only the owner can read his buckets!");
+			return null;
 		}
 	}
 	

@@ -123,7 +123,7 @@ asyncTest("Upload blob", 4, function() {
 
 module("Asymmetric Crypto");
 
-CRYPTO.setPassphrase('');
+CRYPTO.setPassphrase('asdf');
 var email = 'test@asdf.com';
 
 test("Generate keys", 7, function() {

@@ -52,6 +52,13 @@ var CACHE = (function (window) {
 		window.localStorage.removeItem(key);
 	};
 	
+	/**
+	 * Clears the whole local storage cache
+	 */
+	self.clearObjectCache = function() {
+		window.localStorage.clear();
+	};
+	
 	//
 	// Blob cache using FileSystem Apis
 	//

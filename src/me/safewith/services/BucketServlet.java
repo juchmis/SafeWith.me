@@ -70,6 +70,11 @@ public class BucketServlet extends HttpServlet {
 				if (bucketId != null) {
 					// read single bucket by ID
 					Bucket bucket = new BucketDAO().readBucket(bucketId, user.getEmail());
+					if (bucket == null) {
+						resp.sendError(403, "Only the owner can read his buckets!");
+						return;
+					}
+					
 					BucketMsg bucketMsg = BucketDAO.dto2msg(bucket);
 					json = new GsonBuilder().create().toJson(bucketMsg);
 					

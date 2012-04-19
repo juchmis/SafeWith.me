@@ -21,7 +21,7 @@
 /**
  * A wrapper for OpenPGP encryption logic
  */
-var CRYPTO = (function (window, openpgp, util, server) {
+var CRYPTO = (function (window, openpgp, util, server, cache) {
 	var self = {};
 	
 	var privateKey;		// user's private key
@@ -148,7 +148,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		openpgp.keyring.store();
 		
 		// store the passphrase in local storage
-		window.localStorage.setItem(email + 'Passphrase', passphrase);
+		cache.storeObject(email + 'Passphrase', { pass : passphrase });
 	};
 
 	/**
@@ -201,7 +201,8 @@ var CRYPTO = (function (window, openpgp, util, server) {
 
 		// read passphrase from local storage if no passphrase is specified
 		if(!passphrase && passphrase !== '') {
-			passphrase = window.localStorage.getItem(email + 'Passphrase');
+			var cachedPass = cache.readObject(email + 'Passphrase');
+			passphrase = cachedPass.pass;
 		}
 		if (!passphrase && passphrase !== '') {
 			return false;
@@ -369,7 +370,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	};
 	
 	return self;
-}(window, openpgp, UTIL, SERVER));
+}(window, openpgp, UTIL, SERVER, CACHE));
 
 /**
  * This function needs to be implemented, since it is used by the openpgp utils
