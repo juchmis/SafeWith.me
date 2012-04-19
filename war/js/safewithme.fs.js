@@ -30,7 +30,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	//
 	
 	self.Bucket = function(ownerEmail) {
-		this.id = util.UUID();
+		this.id = uuid.v4();	// generate new UUID
 		this.ownerEmail = ownerEmail;
 		this.lastUpdate = new Date().toISOString();
 	};
