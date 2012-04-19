@@ -52,7 +52,7 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 				// generate new key pair
 				self.createAndPersistKeys(loginInfo.email, function(keyId) {
 					callback(keyId);
-					finishCallback();
+					finishCallback(window.btoa(keyId));
 				});
 			});
 		}

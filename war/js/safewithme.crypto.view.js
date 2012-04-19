@@ -56,8 +56,6 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 				
 				// clear localstorage (keypairs, passphrases, cached buckets)
 				cache.clearObjectCache();
-				// store loginInfo again after clearing chache
-				cache.storeObject('lastLoginInfo', loginInfo);
 				
 				// read passphrase
 				var passphrase = $('#passphrase').val();
@@ -72,7 +70,11 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 				}, 100);
 			});
 
-		}, function() /* finishCallback */ {
+		}, function(keyId) /* finishCallback */ {
+				
+			// store loginInfo again after clearing chache
+			loginInfo.publicKeyId = keyId;
+			cache.storeObject('lastLoginInfo', loginInfo);
 			
 			// create export keys link
 			crypto.exportKeys(function(url) {
