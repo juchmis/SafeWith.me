@@ -218,7 +218,7 @@ asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 			
 			SERVER.xhr({
 				type: 'DELETE',
-				uri: '/app/publicKeys?keyId=' + encodedKeyId,
+				uri: '/ws/publicKeys?keyId=' + encodedKeyId,
 				expected: 200,
 				success: function(resp) {
 					equal(resp, "");
@@ -230,7 +230,7 @@ asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 			function deletePrivateKey() {
 				SERVER.xhr({
 					type: 'DELETE',
-					uri: '/app/privateKeys?keyId=' + encodedKeyId,
+					uri: '/ws/privateKeys?keyId=' + encodedKeyId,
 					expected: 200,
 					success: function(resp) {
 						equal(resp, "");

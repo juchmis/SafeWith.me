@@ -86,7 +86,7 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 		// first upload public key
 		server.xhr({
 			type: 'POST',
-			uri: '/app/publicKeys',
+			uri: '/ws/publicKeys',
 			contentType: 'application/json',
 			expected: 201,
 			body: jsonPublicKey,
@@ -105,7 +105,7 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 		function uploadPrivateKeys() {
 			server.xhr({
 				type: 'POST',
-				uri: '/app/privateKeys',
+				uri: '/ws/privateKeys',
 				contentType: 'application/json',
 				expected: 201,
 				body: jsonPrivateKey,
@@ -221,7 +221,7 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 		// get public key
 		server.xhr({
 			type: 'GET',
-			uri: '/app/publicKeys?keyId=' + encodedKeyId,
+			uri: '/ws/publicKeys?keyId=' + encodedKeyId,
 			expected: 200,
 			success: function(pubKey) {
 				getPrivateKey(pubKey);
@@ -232,7 +232,7 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 		function getPrivateKey(pubKey) {
 			server.xhr({
 				type: 'GET',
-				uri: '/app/privateKeys?keyId=' + encodedKeyId,
+				uri: '/ws/privateKeys?keyId=' + encodedKeyId,
 				expected: 200,
 				success: function(privKey) {
 					// import keys

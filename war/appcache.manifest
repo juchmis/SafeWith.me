@@ -37,5 +37,7 @@ js/safewithme.js
 
 NETWORK:
 /login
-/app
+/ws
 /_ah
+
+FALLBACK:

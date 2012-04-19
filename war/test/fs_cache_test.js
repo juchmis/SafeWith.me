@@ -142,7 +142,7 @@ asyncTest("Single bucket: Cache <-> Server", 4, function() {
 		// delete bucket DTO in datastore
 		SERVER.xhr({
 			type: 'DELETE',
-			uri: '/app/buckets?bucketId=' + createdBucketId,
+			uri: '/ws/buckets?bucketId=' + createdBucketId,
 			expected: 200,
 			success: function(resp) {
 				// clean cache
@@ -212,7 +212,7 @@ asyncTest("BucketCache <- Server", 2, function() {
 	var bucketJson = JSON.stringify(new FS.Bucket(email));
 	server.xhr({
 		type: 'POST',
-		uri: '/app/buckets',
+		uri: '/ws/buckets',
 		contentType: 'application/json',
 		body: bucketJson,
 		expected: 201,
@@ -234,7 +234,7 @@ asyncTest("BucketCache <- Server", 2, function() {
 			// compare buckets on server with the ones in local storage
 			server.xhr({
 				type: 'GET',
-				uri: '/app/buckets',
+				uri: '/ws/buckets',
 				expected: 200,
 				success: function(updatedServerBuckets) {
 					// check if buckets match
@@ -256,7 +256,7 @@ asyncTest("BucketCache <- Server", 2, function() {
 		// delete bucket DTO in datastore
 		server.xhr({
 			type: 'DELETE',
-			uri: '/app/buckets?bucketId=' + createdBucketId,
+			uri: '/ws/buckets?bucketId=' + createdBucketId,
 			expected: 200,
 			success: function(resp) {
 				// clean cache

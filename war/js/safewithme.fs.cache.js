@@ -213,7 +213,7 @@ var BUCKETCACHE = (function (cache, server) {
 		// try fetching buckets from server
 		server.xhr({
 			type: 'GET',
-			uri: '/app/buckets',
+			uri: '/ws/buckets',
 			expected: 200,
 			success: function(serverBuckets) {
 				// start by syncing local changes to server

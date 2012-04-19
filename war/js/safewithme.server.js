@@ -96,7 +96,7 @@ var SERVER = (function (util) {
 		// first get upload url from blobstore
 		self.xhr({
 			type: 'GET',
-			uri: '/app/uploadBlob?md5=' + md5,
+			uri: '/ws/uploadBlob?md5=' + md5,
 			expected: 200,
 			success: function(resp) {
 				if (resp.blobKey) {
@@ -139,7 +139,7 @@ var SERVER = (function (util) {
 	self.downloadBlob = function(blobKey, callback, errCallback) {
 		self.xhr({
 			type: 'GET',
-			uri: '/app/blobs?blob-key=' + blobKey,
+			uri: '/ws/blobs?blob-key=' + blobKey,
 			responseType: 'arraybuffer',
 			expected: 200,
 			success: function(resp) {
@@ -158,7 +158,7 @@ var SERVER = (function (util) {
 	self.deleteBlob = function(blobKey, callback, errCallback) {
 		self.xhr({
 			type: 'DELETE',
-			uri: '/app/blobs?blob-key=' + blobKey,
+			uri: '/ws/blobs?blob-key=' + blobKey,
 			expected: 200,
 			success: function(resp) {
 				callback(resp);

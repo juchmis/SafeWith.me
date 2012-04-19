@@ -36,7 +36,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   </servlet>  
   <servlet-mapping>
     <servlet-name>PublicKeyServlet</servlet-name>
-    <url-pattern>/app/publicKeys</url-pattern>
+    <url-pattern>/ws/publicKeys</url-pattern>
   </servlet-mapping>
 
   <!-- Http Servlet for serving private keys -->  
@@ -46,7 +46,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   </servlet>  
   <servlet-mapping>
     <servlet-name>PrivateKeyServlet</servlet-name>
-    <url-pattern>/app/privateKeys</url-pattern>
+    <url-pattern>/ws/privateKeys</url-pattern>
   </servlet-mapping>
 
   <!-- Http Servlet for serving buckets -->  
@@ -56,7 +56,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   </servlet>  
   <servlet-mapping>
     <servlet-name>BucketServlet</servlet-name>
-    <url-pattern>/app/buckets</url-pattern>
+    <url-pattern>/ws/buckets</url-pattern>
   </servlet-mapping>
 
   <!-- Http Servlet for uploading blobs -->  
@@ -66,7 +66,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   </servlet>  
   <servlet-mapping>
     <servlet-name>UploadBlobServlet</servlet-name>
-    <url-pattern>/app/uploadBlob</url-pattern>
+    <url-pattern>/ws/uploadBlob</url-pattern>
   </servlet-mapping>
 
   <!-- Http Servlet for serving blobs -->  
@@ -76,7 +76,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   </servlet>  
   <servlet-mapping>
     <servlet-name>ServeBlobServlet</servlet-name>
-    <url-pattern>/app/blobs</url-pattern>
+    <url-pattern>/ws/blobs</url-pattern>
   </servlet-mapping>
 
   <!-- Make HTTPS mandatory -->
@@ -89,10 +89,19 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </user-data-constraint>
   </security-constraint>
 
-  <!-- Users must be logged in for the following url pattern -->
+  <!-- Users must be logged in for the following url patterns -->
   <security-constraint>
     <web-resource-collection>
       <url-pattern>/app/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>*</role-name>
+    </auth-constraint>
+  </security-constraint>
+  
+  <security-constraint>
+    <web-resource-collection>
+      <url-pattern>/ws/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>*</role-name>

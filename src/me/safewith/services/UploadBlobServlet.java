@@ -73,7 +73,7 @@ public class UploadBlobServlet extends HttpServlet {
 //				}
 
 				// build upload url for the upload form
-				String uploadUrl = blobstoreService.createUploadUrl("/app/uploadBlob");
+				String uploadUrl = blobstoreService.createUploadUrl("/ws/uploadBlob");
 				
 				resp.setContentType("application/json");
 				String json = "{ \"uploadUrl\" : \"" + uploadUrl + "\" }";

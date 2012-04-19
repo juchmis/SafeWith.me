@@ -78,7 +78,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		
 		server.xhr({
 			type: 'POST',
-			uri: '/app/buckets',
+			uri: '/ws/buckets',
 			contentType: 'application/json',
 			body: bucketJson,
 			expected: 201,
@@ -118,7 +118,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	self.getBucket = function(bucketId, callback) {
 		server.xhr({
 			type: 'GET',
-			uri: '/app/buckets?id=' + bucketId,
+			uri: '/ws/buckets?id=' + bucketId,
 			expected: 200,
 			success: function(bucket) {
 				callback(bucket);
@@ -137,7 +137,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		// delete bucket DTO in datastore
 		server.xhr({
 			type: 'DELETE',
-			uri: '/app/buckets?bucketId=' + bucket.id,
+			uri: '/ws/buckets?bucketId=' + bucket.id,
 			expected: 200,
 			success: function(resp) {
 				callback(resp);
@@ -180,7 +180,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		var updatedBucketJson = JSON.stringify(bucket);
 		server.xhr({
 			type: 'PUT',
-			uri: '/app/buckets',
+			uri: '/ws/buckets',
 			contentType: 'application/json',
 			body: updatedBucketJson,
 			expected: 200,
@@ -381,7 +381,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	 */
 	self.shareFile = function(file, shareBucketName, shareEmail, callback, displayCallback) {
 		// get recipient's public
-		server.call('GET', '/app/publicKeys?email=' + shareEmail, function(recipientKey) {
+		server.call('GET', '/ws/publicKeys?email=' + shareEmail, function(recipientKey) {
 			
 			// display message if recipient's public key is available
 			if (recipientKey && displayCallback) {
@@ -389,7 +389,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 			}
 			
 			// create a new bucket for the recipient
-			server.call('POST', '/app/buckets', function(shareBucket) {
+			server.call('POST', '/ws/buckets', function(shareBucket) {
 
 				// add all the encrypted files to fs
 				var shareFS = new self.BucketFS(shareBucket.id, shareBucketName, shareEmail);
