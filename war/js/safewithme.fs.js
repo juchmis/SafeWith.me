@@ -284,6 +284,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 				// store file and file-metadata in BucketFS with blob-key
 				console.log(file.name + ' encrypted blob uploaded successful!');
 				createFSFile(file, ctMd5, encryptionkey, blobKey);
+				
 			}, function(err) {
 				// store file and file-metadata in BucketFS without blob-key
 				console.log('No connection to server... ' + file.name + ' (encrypted) was not uploaded!');	

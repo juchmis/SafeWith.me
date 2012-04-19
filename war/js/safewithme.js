@@ -57,7 +57,8 @@ var SAFEWITHME = (function (window, menuView, cryptoView, fsView) {
 	 * Check browser support
 	 */
 	function checkBrowser() {
-		if (!window.Worker ||
+		if (!window.crypto.getRandomValues ||
+			!window.Worker ||
 			!window.BlobBuilder ||
 			!window.requestFileSystem ||
 			!window.storageInfo) {
