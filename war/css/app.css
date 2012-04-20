@@ -39,6 +39,10 @@ p {
 	color: #777;
 }
 
+.emphasize {
+	text-align: center;
+}
+
 .icon {
 	position: absolute;
 	width: 48px;
@@ -49,7 +53,7 @@ p {
 /* keygen dialog */
 
 #keygenInstruct  {
-	padding-bottom: 10px;
+	padding-bottom: 5px;
 }
 
 #keygenInstruct p {
@@ -69,16 +73,6 @@ p {
 	margin-right: auto;
 	background-image: url('../img/safe-icon-small.png');
 	background-repeat: no-repeat;
-}
-
-#about p {
-	font: italic 14px/19px Georgia,Times New Roman,serif;
-	font-family: Georgia, 'Times New Roman', serif;
-	color: #777;
-}
-
-.emphasize {
-	text-align: center;
 }
 
 #about a {

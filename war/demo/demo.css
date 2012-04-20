@@ -1,0 +1,9 @@
+/* intro dialog */
+
+#introDlg p {
+	margin-left: 60px;
+}
+
+#safeIcon {
+	background-image:url('../img/safe-icon.png');
+}

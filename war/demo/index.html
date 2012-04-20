@@ -26,6 +26,7 @@
     <meta name="keywords" content="safe with me, secure online storage, secure cloud storage, secure file sharing, securely share files, open source, privacy, security, client side encryption, pgp, openpgp, html5" />
   	<link rel="stylesheet" href="../css/jquery.mobile-1.1.0.min.css" />
     <link rel="stylesheet" href="../css/app.css" />
+    <link rel="stylesheet" href="demo.css" />
     <link rel="shortcut icon" href="../favicon.ico">
   	<script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
   	<script type="text/javascript" src="../js/lib/jquery.mobile-1.1.0.min.js"></script>
@@ -35,21 +36,22 @@
     <script type="text/javascript" src="../js/safewithme.cache.js"></script>
     <script type="text/javascript" src="../js/safewithme.server.js"></script>
     <script type="text/javascript">
+      // never phone home during the demo
       SERVER.xhr = function(args) {
-        args.error(); // never phone home during the demo
+        args.error();
       };
     </script>
     <script type="text/javascript" src="../js/safewithme.crypto.js"></script>
     <script type="text/javascript" src="../js/safewithme.crypto.view.js"></script>
     <script type="text/javascript" src="../js/safewithme.menu.js"></script>
     <script type="text/javascript">
+      // mock loginInfo for demo
       MENU.getLoginInfo = function(goal, callback) {
         var demoEmail = 'demo_user@safewith.me';
         var loginInfo = CACHE.readObject('lastLoginInfo');
         if (loginInfo && loginInfo.email === demoEmail) {
           callback(loginInfo);
         } else {
-          // mock loginInfo for first connect
           callback({
             loggedIn: true,
             email: demoEmail
@@ -63,24 +65,38 @@
     <script type="text/javascript" src="../js/safewithme.fs.view.js"></script>
     <script type="text/javascript" src="../js/safewithme.js"></script>
     <script>
-      $(function() {
-        SAFEWITHME.init();  // init main module on document ready
+      // Init module for subpages on jquery mobile pageinit
+      $('#mainPage').live('pageinit', function(event) {
+        SAFEWITHME.init();
       });
-      
-      /**
-       * Init module for subpages on jquery mobile pageinit
-       * TODO: refactor and modularize
-       */
+       
       $('#keygenDlg').live('pageinit', function(event) {
-      	SAFEWITHME.init();
-      });
-
-      $('#importKeysDlg').live('pageinit', function(event) {
       	SAFEWITHME.init();
       });
     </script>
   </head>
   <body>
+    
+    <!--
+    Intro page
+    -->
+
+    <div data-role="dialog" data-theme="c" data-transition="slidefade" id="introDlg">
+      
+    	<div data-role="header" data-position="fixed" data-theme="a">
+        <h1 class="safewithmebrand">SafeWith.me</h1>
+    	</div><!-- /header -->
+
+    	<div data-role="content">
+    	  <div id="keygenInstruct">
+        	<div id="safeIcon" class="icon"></div>
+      	  <p>Thanks for taking the time to check out SafeWith.me! This demo is completely offline capable and absolutely no data will be uploaded. So go ahead and turn off your WIFI or put your phone into airplane mode...</p>
+      	  <p>Now that you're offline, try refreshing the browser!</p>
+    	  </div>
+      	<a href="#mainPage" data-role="button" data-transition="flow" data-theme="a">Next</a>
+    	</div><!-- /content -->
+  		
+    </div><!-- /page -->
     
     <!--
     Main page
@@ -94,7 +110,6 @@
           <input type="file" id="files" name="files[]" multiple />
         </span><!-- /fileinput-button -->
         <h1 class="safewithmebrand">SafeWith.me</h1>
-        <a id="loginStatus" href="#" data-role="button" data-icon="back" data-iconpos="right" class="ui-btn-right">init...</a>
     	</div><!-- /header -->
 
     	<div data-role="content">
@@ -106,23 +121,6 @@
       	<a href="about.html" data-role="button" data-icon="info" data-iconpos="notext" data-transition="flip" class="ui-btn-right"></a>
   		</div><!-- /footer -->
   		
-    </div><!-- /page -->
-    
-    <!--
-    About Dialog
-    -->
-
-    <div data-role="dialog" data-theme="c" id="about">
-
-    	<div data-role="content">
-    	  <div id="logo"></div>
-    	  <p class="emphasize"><a href="http://safewith.me" target="new">SafeWith.me</a> - store and share your files</br> with OpenPGP encryption on any device via HTML5</p>
-    	  <p class="emphasize">&copy; 2012 Tankred Hase</p>
-    	  <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3 of the License.</p>
-    	  <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://github.com/tanx/SafeWith.me/blob/master/LICENSE.txt" target="new">GNU Affero General Public License</a> for more details.</p>
-      	<a href="index.html" data-role="button" data-transition="flow" data-theme="a">Close</a>
-  	  </div><!-- /content -->
-
     </div><!-- /page -->
 
   </body>

@@ -81,7 +81,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 				// hide loading msg
 				$.mobile.hidePageLoadingMsg();
 				// go back to app
-				$.mobile.changePage('index.html');
+				$.mobile.changePage($('#mainPage'));
 			});
 		});
 	};
