@@ -1,6 +1,6 @@
 CACHE MANIFEST
 # SafeWith.me v0.7.22
-# Updated 2012-04-19 12:06
+# Updated 2012-04-19 12:01
 
 CACHE:
 favicon.ico
@@ -40,5 +40,3 @@ NETWORK:
 /login
 /ws
 /_ah
-
-FALLBACK:

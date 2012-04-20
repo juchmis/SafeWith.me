@@ -91,7 +91,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		fs.storeFile(file, function() {
 			// switch progress
 			$.mobile.hidePageLoadingMsg();
-			$.mobile.showPageLoadingMsg('a', 'uploading...');
+			$.mobile.showPageLoadingMsg('a', 'syncing...');
 		}, function(fsFile) {
 			// hide progress msg
 			$.mobile.hidePageLoadingMsg();
@@ -141,6 +141,8 @@ var FSVIEW = (function (window, document, $, fs) {
 	 * Add new documents link to the list of available documents
 	 */
 	self.addLinkToList = function(file) {
+		$('#helpMsg').remove();
+		
 		// var item = '<li><div>' +
 		// 		   '<a id="deleteItem" href="' + blobKey + '"><i class="icon-remove icon-black"></i></a>' +
 		// 		   '<a id="showItem" href="' + blobKey + '">' + file.name + '</a>' +
@@ -215,7 +217,7 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.showDocItem = function(file) {
 		// show progress bar
-		$.mobile.showPageLoadingMsg('a', 'downloading...');
+		$.mobile.showPageLoadingMsg('a', 'syncing...');
 		
 		// get encrypted file and decrypt
 		fs.getFile(file, function() {
