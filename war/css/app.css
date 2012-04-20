@@ -33,6 +33,33 @@ a.safewithmebrand:hover {
 	color:#505050;
 }
 
+p {
+	font: italic 14px/19px Georgia,Times New Roman,serif;
+	font-family: Georgia, 'Times New Roman', serif;
+	color: #777;
+}
+
+.icon {
+	position: absolute;
+	width: 48px;
+	height: 48px;
+	background-repeat: no-repeat;
+}
+
+/* keygen dialog */
+
+#keygenInstruct  {
+	padding-bottom: 10px;
+}
+
+#keygenInstruct p {
+	margin-left: 60px;
+}
+
+#keyIcon {
+	background-image:url('../img/key-icon.png');
+}
+
 /* about dialog */
 
 #logo {

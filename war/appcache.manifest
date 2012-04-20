@@ -1,6 +1,6 @@
 CACHE MANIFEST
 # SafeWith.me v0.7.22
-# Updated 2012-04-19 12:07
+# Updated 2012-04-19 12:05
 
 CACHE:
 favicon.ico
@@ -17,6 +17,7 @@ css/images/icons-18-white.png
 css/images/icons-36-black.png
 css/images/icons-36-white.png
 img/safe-icon-small.png
+img/key-icon.png
 js/lib/jquery-1.7.1.min.js
 js/lib/jquery.mobile-1.1.0.min.js
 js/lib/openpgp.worker.min.js
