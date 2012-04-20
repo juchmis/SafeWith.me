@@ -91,7 +91,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		fs.storeFile(file, function() {
 			// switch progress
 			$.mobile.hidePageLoadingMsg();
-			$.mobile.showPageLoadingMsg('a', 'syncing...');
+			$.mobile.showPageLoadingMsg('a', 'syncing files...');
 		}, function(fsFile) {
 			// hide progress msg
 			$.mobile.hidePageLoadingMsg();
@@ -217,7 +217,7 @@ var FSVIEW = (function (window, document, $, fs) {
 	 */
 	self.showDocItem = function(file) {
 		// show progress bar
-		$.mobile.showPageLoadingMsg('a', 'syncing...');
+		$.mobile.showPageLoadingMsg('a', 'syncing files...');
 		
 		// get encrypted file and decrypt
 		fs.getFile(file, function() {

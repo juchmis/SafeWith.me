@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <application>safewith-me</application>
-  <version>0-7-22</version>
+  <version>0-7-23</version>
 
   <static-files>
     <include path="/**.gif" expiration="1d" />
