@@ -24,4 +24,4 @@ echo "Minimizing..."
 java -jar "$_compiler" --js "$_raw" --js_output_file "$_min" # --language_in=ECMASCRIPT5
 
 echo "Deploying minified version..."
-cp $_min war/js
+cp $_min war/js/lib
