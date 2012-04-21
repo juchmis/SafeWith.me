@@ -205,6 +205,13 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		if (!passphrase && passphrase !== '') {
 			return false;
 		}
+		// do test encrypt/decrypt to verify passphrase
+		try {
+			var testCt = self.asymmetricEncrypt('test');
+			self.asymmetricDecrypt(testCt);
+		} catch (e) {
+			return false;
+		}
 		
 		return true;
 	};
