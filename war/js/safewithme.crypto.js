@@ -21,7 +21,7 @@
 /**
  * A wrapper for OpenPGP encryption logic
  */
-var CRYPTO = (function (window, openpgp, util, server, cache) {
+var CRYPTO = (function (window, openpgp, util, server) {
 	var self = {};
 	
 	var privateKey;		// user's private key
@@ -146,9 +146,6 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 		openpgp.keyring.importPrivateKey(privateKeyArmored, passphrase);
 		openpgp.keyring.importPublicKey(publicKeyArmored);
 		openpgp.keyring.store();
-		
-		// store the passphrase in local storage
-		cache.storeObject(email + 'Passphrase', { pass : passphrase });
 	};
 
 	/**
@@ -198,14 +195,13 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 			// no amtching keys found in the key store
 			return false;
 		}
-
+		
 		// read passphrase from local storage if no passphrase is specified
 		if(!passphrase && passphrase !== '') {
-			var cachedPass = cache.readObject(email + 'Passphrase');
-			if (cachedPass) {
-				passphrase = cachedPass.pass;
-			}
+			passphrase = window.sessionStorage.getItem(email + 'Passphrase');
 		}
+
+		// check passphrase
 		if (!passphrase && passphrase !== '') {
 			return false;
 		}
@@ -227,6 +223,11 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 			expected: 200,
 			success: function(pubKey) {
 				getPrivateKey(pubKey);
+			},
+			error: function(e) {
+				// if server is not available, just continue
+				console.log('Server unavailable: keys could not be fetched from server!');
+				callback();
 			}
 		});
 		
@@ -271,8 +272,10 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 	/**
 	 * Get the user's passphrase for decrypting their private key
 	 */
-	self.setPassphrase = function(pass) {
+	self.setPassphrase = function(pass, email) {
 		passphrase = pass;
+		// store the passphrase in session storage
+		window.sessionStorage.setItem(email + 'Passphrase', passphrase);
 	};
 	
 	//
@@ -372,7 +375,7 @@ var CRYPTO = (function (window, openpgp, util, server, cache) {
 	};
 	
 	return self;
-}(window, openpgp, UTIL, SERVER, CACHE));
+}(window, openpgp, UTIL, SERVER));
 
 /**
  * This function needs to be implemented, since it is used by the openpgp utils

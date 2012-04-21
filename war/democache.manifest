@@ -1,12 +1,13 @@
 CACHE MANIFEST
 # SafeWith.me demo
-# Updated 2012-04-20 13:00
+# Updated 2012-04-21 13:09
 
 CACHE:
 favicon.ico
 demo/index.html
 demo/about.html
 demo/keygen.html
+demo/importkeys.html
 css/jquery.mobile-1.1.0.min.css
 css/app.css
 demo/demo.css

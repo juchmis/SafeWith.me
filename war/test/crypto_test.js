@@ -123,8 +123,8 @@ asyncTest("Upload blob", 4, function() {
 
 module("Asymmetric Crypto");
 
-CRYPTO.setPassphrase('asdf');
 var email = 'test@asdf.com';
+CRYPTO.setPassphrase('asdf', email);
 
 test("Generate keys", 7, function() {
 	var start = (new Date).getTime();
@@ -200,7 +200,7 @@ asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 	var loginInfo = {
 		email : email
 	};
-	CRYPTO.setPassphrase('');
+	CRYPTO.setPassphrase('', email);
 	
 	CRYPTO.initKeyPair(loginInfo, function(keyId) {
 		ok(keyId);

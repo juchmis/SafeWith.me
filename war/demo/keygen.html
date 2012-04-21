@@ -11,13 +11,14 @@
     	<div data-role="header" data-position="fixed" data-theme="a">
         <h1>Generate PGP keys</h1>
     	</div><!-- /header -->
-      
+
     	<div data-role="content">
     	  <div id="keygenInstruct">
       	  <div id="keyIcon" class="icon"></div>
-      	  <p>Time to generate your personal keypair. This will be used to encrypt your files as well as the filesystem, containing all file meta-data.</p>
+      	  <p>Time to generate your personal keypair. This will be used to encrypt your files as well as the filesystem, containing all file meta-data. You can protect your private key with a passphrase.</p>
     	  </div>
-  		  <input id="passphrase" type="hidden"/>
+        <label>Passphrase:</label>
+  		  <input id="passphrase" type="password"/>
   		  <a id="genKeys-btn" data-role="button" data-theme="a">Create my keypair</a>
     	</div><!-- /content -->
   	  

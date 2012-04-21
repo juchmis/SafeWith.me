@@ -59,7 +59,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 				
 				// read passphrase
 				var passphrase = $('#passphrase').val();
-				crypto.setPassphrase(passphrase);
+				crypto.setPassphrase(passphrase, loginInfo.email);
 				// show loading msg
 				$.mobile.showPageLoadingMsg('a', 'generating PGP keys...');
 				
@@ -92,18 +92,18 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 		$('#import-btn').click(function() {
 			// get passphrase
 			var passphrase = $('#passphrase').val();
-			crypto.setPassphrase(passphrase);
-			// show loading msg
-			$.mobile.showPageLoadingMsg('a', 'importing keys...');
+			crypto.setPassphrase(passphrase, loginInfo.email);
 			
-			crypto.fetchKeys(loginInfo.email, keyId, function(keys) {
-				// hide loading msg
-				$.mobile.hidePageLoadingMsg();
+			// show loading msg while fetching keys
+			$.mobile.showPageLoadingMsg('a', 'importing keys...');
+			crypto.fetchKeys(loginInfo.email, keyId, function() {
+				
 				// try to read keys from local storage again
 				if (crypto.readKeys(loginInfo.email, keyId)) {
-					window.alert('Key import from server successful!');
+					// hide loading msg
+					$.mobile.hidePageLoadingMsg();
 					// go back to app
-					$.mobile.changePage('index.html');
+					$.mobile.changePage($('#mainPage'));
 					callback();
 				} else {
 					window.alert('Key import failed... please check your passphrase!');
