@@ -1,14 +1,14 @@
 {
   "name": "SafeWith.me",
-  "description": "Store and share your files with OpenPGP encryption on any device via HTML5.",
-  "version": "0.7.20",
+  "description": "SafeWith.me is your portable safe. It lets you store and share files with End-to-End encryption on any device via HTML5.",
+  "version": "0.7.24",
   "icons": { "128": "safe-icon-128.png" },
   "app": {
     "urls": [
-      "https://safewith-me.appspot.com/app/"
+      "https://safewith-me.appspot.com/demo/"
     ],
     "launch": {
-      "web_url": "https://safewith-me.appspot.com/app/"
+      "web_url": "https://safewith-me.appspot.com/demo/"
     }
   },
   "permissions": [
