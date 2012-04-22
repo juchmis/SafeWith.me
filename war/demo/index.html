@@ -65,9 +65,8 @@
     <script type="text/javascript" src="../js/safewithme.fs.view.js"></script>
     <script type="text/javascript" src="../js/safewithme.js"></script>
     <script>
-      // Init module for subpages on jquery mobile pageinit
-      $('#mainPage').live('pageinit', function(event) {
-        SAFEWITHME.init();
+      $(function() {
+        SAFEWITHME.init();  // init main module on document ready
       });
        
       $('#keygenDlg').live('pageinit', function(event) {
@@ -80,31 +79,6 @@
     </script>
   </head>
   <body>
-    
-    <!--
-    Intro page
-    -->
-
-    <div data-role="dialog" data-theme="c" data-transition="slidefade" id="introDlg">
-      
-    	<div data-role="header" data-position="fixed" data-theme="a">
-        <h1 class="safewithmebrand">SafeWith.me</h1>
-    	</div><!-- /header -->
-
-    	<div data-role="content">
-    	  <div id="keygenInstruct">
-        	<div id="safeIcon" class="icon"></div>
-        	<p>Thanks for taking the time to check out SafeWith.me! <b>SafeWith.me</b> is your portable safe. It lets you store and share files with End-to-End encryption on any device via HTML5.</p>
-      	  <p>This demo is completely offline capable and absolutely no data will be uploaded. So go ahead and turn off your wifi or put your phone into airplane mode...</p>
-    	  </div>
-      	<a href="#mainPage" data-role="button" data-transition="flow" data-theme="a">Next</a>
-    	</div><!-- /content -->
-  		
-    </div><!-- /page -->
-    
-    <!--
-    Main page
-    -->
 
     <div data-role="page" data-theme="a" id="mainPage">
       
