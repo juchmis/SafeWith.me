@@ -45,37 +45,42 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 				self.showImportKeys(loginInfo, keyId, callback);
 			}
 			
-		}, function(genKeysCallback) /* displayCallback */ {	
+		}, showGenKeyDlg /* displayCallback */,
+		keyGenFinished /* finishCallback */ );
+
+		function showGenKeyDlg(genKeysCallback) {
+			$('#keygenDlg').live('pageinit', function(event) {
+				// no keys found on server -> generate new keypair fot the user
+				$('#genKeys-btn').click(function(e) {
+					e.preventDefault();
+
+					// clear localstorage (keypairs, passphrases, cached buckets)
+					cache.clearObjectCache();
+
+					// read passphrase
+					var passphrase = $('#passphrase').val();
+					crypto.setPassphrase(passphrase, loginInfo.email);
+					// show loading msg
+					$.mobile.showPageLoadingMsg('a', 'generating PGP keys...');
+
+					// wait shortly for loading msg to appear since keygen is blocking atm
+					setTimeout(function() {
+						// generate keys
+						genKeysCallback();
+					}, 100);
+				});
+			});
+
 			// hide loading msg
 			$.mobile.hidePageLoadingMsg();
 			$.mobile.changePage('keygen.html', {transition:'slideup'});
-			
-			// no keys found on server -> generate new keypair fot the user
-			$('#genKeys-btn').click(function(e) {
-				e.preventDefault();
-				
-				// clear localstorage (keypairs, passphrases, cached buckets)
-				cache.clearObjectCache();
-				
-				// read passphrase
-				var passphrase = $('#passphrase').val();
-				crypto.setPassphrase(passphrase, loginInfo.email);
-				// show loading msg
-				$.mobile.showPageLoadingMsg('a', 'generating PGP keys...');
-				
-				// wait shortly for loading msg to appear since keygen is blocking atm
-				setTimeout(function() {
-					// generate keys
-					genKeysCallback();
-				}, 100);
-			});
+		}
 
-		}, function(keyId) /* finishCallback */ {
-				
+		function keyGenFinished(keyId) {
 			// store loginInfo again after clearing chache
 			loginInfo.publicKeyId = keyId;
 			cache.storeObject('lastLoginInfo', loginInfo);
-			
+
 			// create export keys link
 			crypto.exportKeys(function(url) {
 				// hide loading msg
@@ -83,34 +88,38 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 				// go back to app
 				$.mobile.changePage($('#mainPage'));
 			});
-		});
+		}
 	};
 	
 	self.showImportKeys = function(loginInfo, keyId, callback) {
-		$.mobile.changePage('importkeys.html', {transition:'slideup'});
+		$('#importKeysDlg').live('pageinit', function(event) {
 		
-		$('#import-btn').click(function() {
-			// get passphrase
-			var passphrase = $('#passphrase').val();
-			crypto.setPassphrase(passphrase, loginInfo.email);
-			
-			// show loading msg while fetching keys
-			$.mobile.showPageLoadingMsg('a', 'importing keys...');
-			crypto.fetchKeys(loginInfo.email, keyId, function() {
-				
-				// try to read keys from local storage again
-				if (crypto.readKeys(loginInfo.email, keyId)) {
-					// go back to app
-					$.mobile.changePage($('#mainPage'));
-					callback();
-				} else {
-					window.alert('Key import failed... please check your passphrase!');
-				}
-				
-				// hide loading msg
-				$.mobile.hidePageLoadingMsg();
+			$('#import-btn').click(function() {
+				// get passphrase
+				var passphrase = $('#passphrase').val();
+				crypto.setPassphrase(passphrase, loginInfo.email);
+
+				// show loading msg while fetching keys
+				$.mobile.showPageLoadingMsg('a', 'importing keys...');
+				crypto.fetchKeys(loginInfo.email, keyId, function() {
+
+					// try to read keys from local storage again
+					if (crypto.readKeys(loginInfo.email, keyId)) {
+						// go back to app
+						$.mobile.changePage($('#mainPage'));
+						callback();
+					} else {
+						window.alert('Key import failed... please check your passphrase!');
+					}
+
+					// hide loading msg
+					$.mobile.hidePageLoadingMsg();
+				});
 			});
+
 		});
+		
+		$.mobile.changePage('importkeys.html', {transition:'slideup'});
 	};
 	
 	return self;

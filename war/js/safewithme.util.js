@@ -18,7 +18,7 @@
 
 'use strict';
 
-var UTIL = (function (window) {
+var UTIL = (function (window, uuid) {
 	var self = {};
 	
 	// set browser prefixes for HTML5 Apis in UTIL since it is initialized first
@@ -26,6 +26,13 @@ var UTIL = (function (window) {
 	window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 	window.storageInfo = window.storageInfo || window.webkitStorageInfo;
 	window.URL = window.URL || window.webkitURL || window.mozURL;
+	
+	/**
+	 * Generates a new RFC 4122 version 4 compliant random UUID
+	 */
+	self.UUID = function() {
+		return uuid.v4();
+	};
 	
 	/**
 	 * Converts a binary String (e.g. from the FileReader Api) to an ArrayBuffer
@@ -135,4 +142,4 @@ var UTIL = (function (window) {
 	};
 	
 	return self;
-}(window));
+}(window, uuid));

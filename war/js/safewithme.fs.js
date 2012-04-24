@@ -22,7 +22,7 @@
  * This class implements all logic required for filesystem and
  * I/O between the browser's HTML5 File Apis and the application.
  */
-var FS = (function (crypto, server, util, cache,  bucketCache, uuid) {
+var FS = (function (crypto, server, util, cache,  bucketCache) {
 	var self = {};
 	
 	//
@@ -30,7 +30,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache, uuid) {
 	//
 	
 	self.Bucket = function(ownerEmail) {
-		this.id = uuid.v4();	// generate new UUID
+		this.id = util.UUID();	// generate new UUID
 		this.ownerEmail = ownerEmail;
 		this.lastUpdate = new Date().toISOString();
 	};
@@ -407,4 +407,4 @@ var FS = (function (crypto, server, util, cache,  bucketCache, uuid) {
 	};
 	
 	return self;
-}(CRYPTO, SERVER, UTIL, CACHE, BUCKETCACHE, uuid));
+}(CRYPTO, SERVER, UTIL, CACHE, BUCKETCACHE));
