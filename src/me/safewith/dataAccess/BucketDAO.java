@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import me.safewith.model.Bucket;
 import me.safewith.model.BucketMsg;
+import me.safewith.model.PublicKey;
 
 public class BucketDAO {
 	
@@ -32,8 +33,8 @@ public class BucketDAO {
 	public Bucket createBucket(Bucket bucket, String email) {
 		// check user and id
 		if (bucket.getId() == null ||
-				bucket.getOwnerEmail() == null ||
-				!bucket.getOwnerEmail().equals(email)) {
+				bucket.getPublicKeyId() == null ||
+				!checkUser(bucket, email)) {
 			return null;
 		}
 		
@@ -52,7 +53,11 @@ public class BucketDAO {
 	 * Get the user's bucket in a json repsonse
 	 */
 	public List<Bucket> listUserBuckets(String email) {
-		List<Bucket> buckets = new GenericDAO().filterBy(Bucket.class, "ownerEmail", email);
+		PublicKey pubKey = PGPKeyDAO.getKeyForUser(PublicKey.class, email);
+		if (pubKey == null) {
+			throw new IllegalArgumentException("No public key stored for that user yet!");
+		}
+		List<Bucket> buckets = new GenericDAO().filterBy(Bucket.class, "publicKeyId", pubKey.getKeyId());
 		return buckets;
 	}
 
@@ -63,7 +68,7 @@ public class BucketDAO {
 		Bucket bucket = new GenericDAO().get(Bucket.class, bucketId);
 		
 		// check if it's the owners bucket
-		if (bucket != null && bucket.getOwnerEmail().equals(email)) {
+		if (bucket != null && checkUser(bucket, email)) {
 			return bucket;
 			
 		} else {
@@ -76,7 +81,7 @@ public class BucketDAO {
 		Bucket currentBucket = dao.get(Bucket.class, bucket.getId());
 
 		// check if it's the owners bucket
-		if (currentBucket.getOwnerEmail().equals(email)) {
+		if (checkUser(currentBucket, email)) {
 			Bucket updated = dao.persist(bucket);
 			return updated;
 			
@@ -93,18 +98,29 @@ public class BucketDAO {
 		Bucket bucket = dao.get(Bucket.class, bucketId);
 		
 		// check if it's the user's own bucket
-		if (bucket.getOwnerEmail().equals(email)) {
+		if (checkUser(bucket, email)) {
 			dao.delete(Bucket.class, bucketId);
 		} else {
 			throw new IllegalArgumentException("Only the owner can delete his buckets!");
 		}
 	}
 	
+	/**
+	 * Checks if the bucket belongs to a user by his public key
+	 */
+	public boolean checkUser(Bucket bucket, String email) {
+		PublicKey pubKey = PGPKeyDAO.getKeyForUser(PublicKey.class, email);
+		if (pubKey == null || bucket.getPublicKeyId() == null) {
+			return false;
+		}
+		
+		return pubKey.getKeyId().equals(bucket.getPublicKeyId());
+	}
+	
 	public static Bucket msg2dto(BucketMsg msg) {
 		Bucket b = new Bucket();
 		
 		b.setId(msg.getId());
-		b.setOwnerEmail(msg.getOwnerEmail());
 		b.setPublicKeyId(msg.getPublicKeyId());
 		b.setLastUpdate(msg.getLastUpdate());
 		b.setEncryptedFS(msg.getEncryptedFS());
@@ -116,7 +132,6 @@ public class BucketDAO {
 		BucketMsg msg = new BucketMsg();
 		
 		msg.setId(b.getId());
-		msg.setOwnerEmail(b.getOwnerEmail());
 		msg.setPublicKeyId(b.getPublicKeyId());
 		msg.setLastUpdate(b.getLastUpdate());
 		msg.setEncryptedFS(b.getEncryptedFS());

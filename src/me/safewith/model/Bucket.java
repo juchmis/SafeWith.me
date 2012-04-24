@@ -33,9 +33,6 @@ public class Bucket implements DTO {
 	
 	@PrimaryKey
 	private String id;
-
-	@Persistent
-	private String ownerEmail;
 	
 	@Persistent
 	private String publicKeyId;
@@ -60,14 +57,6 @@ public class Bucket implements DTO {
 		} else {
 			this.id = id;
 		}
-	}
-
-	public String getOwnerEmail() {
-		return ownerEmail;
-	}
-
-	public void setOwnerEmail(String ownerEmail) {
-		this.ownerEmail = ownerEmail;
 	}
 
 	public String getPublicKeyId() {

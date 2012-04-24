@@ -49,10 +49,16 @@ public class BucketServlet extends HttpServlet {
 		RequestHelper.tryRequest(req, resp, logger, new Command() {
 			public void execute(HttpServletRequest req, HttpServletResponse resp, ValidUser user) throws IOException {
 				
-				// delete the user's bucket
-				String bucketId = req.getParameter("bucketId");
-				new BucketDAO().deleteBucket(bucketId, user.getEmail());
-				resp.getWriter().close();
+				try {
+					// delete the user's bucket
+					String bucketId = req.getParameter("bucketId");
+					new BucketDAO().deleteBucket(bucketId, user.getEmail());
+					resp.getWriter().close();
+					
+				} catch (Exception e) {
+					resp.sendError(403, e.getMessage());
+					return;
+				}
 			}
 		});
 	}
@@ -148,14 +154,20 @@ public class BucketServlet extends HttpServlet {
 				}
 				Bucket bucket = BucketDAO.msg2dto(bucketMsg);
 				
-				// update bucket				
-				Bucket updated = new BucketDAO().updateBucket(bucket, user.getEmail());
-				BucketMsg updatedMsg = BucketDAO.dto2msg(updated);
-				String json = new GsonBuilder().create().toJson(updatedMsg);
-				
-				resp.setContentType("application/json");
-				resp.getWriter().print(json);
-				resp.getWriter().close();
+				try {
+					// update bucket
+					Bucket updated = new BucketDAO().updateBucket(bucket, user.getEmail());
+					BucketMsg updatedMsg = BucketDAO.dto2msg(updated);
+					String json = new GsonBuilder().create().toJson(updatedMsg);
+					
+					resp.setContentType("application/json");
+					resp.getWriter().print(json);
+					resp.getWriter().close();
+					
+				} catch(Exception e) {
+					resp.sendError(403, e.getMessage());
+					return;
+				}
 			}
 		});
 	}

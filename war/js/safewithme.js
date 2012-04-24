@@ -41,8 +41,6 @@ var SAFEWITHME = (function (window, menuView, cryptoView, fsView) {
 
 		// init views
 		menuView.init('/app/', function(loginInfo) {
-			// check if user is logged in
-			if (!loginInfo.loggedIn || !loginInfo.email) { return; }
 			// init crypto
 			cryptoView.init(loginInfo, function() {
 				// init filesystem

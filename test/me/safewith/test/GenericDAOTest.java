@@ -84,19 +84,21 @@ public class GenericDAOTest {
 		user.setEmail("test@asdf.com");
 		new GenericDAO().persist(user);
 		
+		String publicKeyId = "12345";
+		
 		// persist bucket
 		Bucket bucket = new Bucket();
 		bucket.setId(UUID.randomUUID().toString());
-		bucket.setOwnerEmail(user.getEmail());
+		bucket.setPublicKeyId(publicKeyId);
 		new GenericDAO().persist(bucket);
 		
 		// read bucket
 		Bucket readBucket = new GenericDAO().get(Bucket.class, bucket.getId());
 		assertEquals(bucket.getId(), readBucket.getId());
-		assertEquals(user.getEmail(), readBucket.getOwnerEmail());
+		assertEquals(publicKeyId, readBucket.getPublicKeyId());
 		
 		// filter by
-		List<Bucket> buckets = new GenericDAO().filterBy(Bucket.class, "ownerEmail", user.getEmail());
+		List<Bucket> buckets = new GenericDAO().filterBy(Bucket.class, "publicKeyId", publicKeyId);
 		assertEquals(bucket.getId(), buckets.get(0).getId());
 	}
 

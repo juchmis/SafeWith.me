@@ -11,6 +11,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import me.safewith.dataAccess.BucketDAO;
 import me.safewith.dataAccess.GenericDAO;
 import me.safewith.model.Bucket;
+import me.safewith.model.PublicKey;
 import me.safewith.model.ValidUser;
 
 import org.junit.After;
@@ -50,20 +51,25 @@ public class BucketDAOTest {
 		user.setEmail("test@asdf.com");
 		new GenericDAO().persist(user);
 		
+		PublicKey pubKey = new PublicKey();
+		pubKey.setOwnerEmail(user.getEmail());
+		pubKey.setKeyId("12345");
+		new GenericDAO().persist(pubKey);
+		
 		// create bucket
 		Bucket falseBucket = new Bucket();
 		falseBucket.setId("asdf");
-		falseBucket.setOwnerEmail(user.getEmail());
+		falseBucket.setPublicKeyId("67890");
 		assertNull(new BucketDAO().createBucket(falseBucket, user.getEmail()));
 		Bucket trueBucket = new Bucket();
 		trueBucket.setId(UUID.randomUUID().toString());
-		trueBucket.setOwnerEmail(user.getEmail());
+		trueBucket.setPublicKeyId(pubKey.getKeyId());
 		Bucket bucket = new BucketDAO().createBucket(trueBucket, user.getEmail());
 		assertNotNull(bucket);
 		
 		// read single bucket
 		Bucket single = new BucketDAO().readBucket(bucket.getId(), user.getEmail());
-		assertEquals(bucket.getOwnerEmail(), single.getOwnerEmail());
+		assertEquals(bucket.getPublicKeyId(), single.getPublicKeyId());
 		
 		assertNull(bucket.getEncryptedFS());
 		String newKey = "asdf";

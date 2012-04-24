@@ -31,6 +31,12 @@ var MENU = (function (server, cache) {
 			uri: '/login?requestUri=' + goal,
 			expected: 200,
 			success: function(loginInfo) {
+				// check if user logged in after already having generated keys	
+				var lastLoginInfo = cache.readObject('lastLoginInfo');
+				if (lastLoginInfo.publicKeyId && !loginInfo.publicKeyId) {
+					loginInfo.publicKeyId = lastLoginInfo.publicKeyId;
+				}
+				
 				// remember last user in local storage
 				cache.storeObject('lastLoginInfo', loginInfo);
 				// got loginInfo from server

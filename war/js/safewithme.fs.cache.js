@@ -65,7 +65,7 @@ var BUCKETCACHE = (function (cache, server) {
 		// cache bucket in local storage
 		cache.storeObject(bucket.id, bucket);
 		// update cached bucket ids
-		var bucketIds = cache.readObject(bucket.ownerEmail + 'BucketIds');
+		var bucketIds = cache.readObject(bucket.publicKeyId + 'BucketIds');
 		if (bucketIds) {
 			// check if bucket id is already in the array
 			var contained = false;
@@ -83,16 +83,16 @@ var BUCKETCACHE = (function (cache, server) {
 			bucketIds = [];
 			bucketIds.push(bucket.id);
 		}
-		cache.storeObject(bucket.ownerEmail + 'BucketIds', bucketIds);
+		cache.storeObject(bucket.publicKeyId + 'BucketIds', bucketIds);
 	};
 
 	/**
 	 * Returns all the cached buckets
 	 */
-	self.getAllBuckets = function(email) {
+	self.getAllBuckets = function(publicKeyId) {
 		var cachedBuckets = [];
 		// get cached bucket ids
-		var bucketIds = cache.readObject(email + 'BucketIds');
+		var bucketIds = cache.readObject(publicKeyId + 'BucketIds');
 		if (!bucketIds) {
 			return cachedBuckets;
 		}
@@ -111,22 +111,22 @@ var BUCKETCACHE = (function (cache, server) {
 		// remove bucket from local storage
 		cache.removeObject(bucket.id);
 		// update cached bucket ids
-		var bucketIds = cache.readObject(bucket.ownerEmail + 'BucketIds');
+		var bucketIds = cache.readObject(bucket.publicKeyId + 'BucketIds');
 		for (var i = 0; i < bucketIds.length; i++) {
 			if (bucketIds[i] === bucket.id) {
 				bucketIds.splice(i, 1);
 				break;
 			}
 		}
-		cache.storeObject(bucket.ownerEmail + 'BucketIds', bucketIds);
+		cache.storeObject(bucket.publicKeyId + 'BucketIds', bucketIds);
 	};
 	
 	/**
 	 * Clears the bucket cache for a ceratin user
 	 */
-	self.clearBucketCache = function(email) {
+	self.clearBucketCache = function(publicKeyId) {
 		// get cached bucket ids
-		var bucketIds = cache.readObject(email + 'BucketIds');
+		var bucketIds = cache.readObject(publicKeyId + 'BucketIds');
 		if (!bucketIds) {
 			return;
 		}
@@ -206,9 +206,9 @@ var BUCKETCACHE = (function (cache, server) {
 	 * but in the local filesystem (e.g. because the user imported files offline)
 	 * @return [Bucket] the synchronoized buckets that are to be displayed
 	 */
-	self.syncBuckets = function(email, fs, callback) {
+	self.syncBuckets = function(publicKeyId, fs, callback) {
 		// fetch cached buckets
-		var cachedBuckets = self.getAllBuckets(email);
+		var cachedBuckets = self.getAllBuckets(publicKeyId);
 		
 		// try fetching buckets from server
 		server.xhr({
@@ -263,7 +263,7 @@ var BUCKETCACHE = (function (cache, server) {
 				
 			}, function() {
 				// loop1 is finished
-				var syncedBuckets = self.getAllBuckets(email);
+				var syncedBuckets = self.getAllBuckets(publicKeyId);
 				callback(syncedBuckets);
 			});
 		}

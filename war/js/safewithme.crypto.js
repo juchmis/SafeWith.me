@@ -49,8 +49,8 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		} else {
 			// user has no key on the server yet
 			displayCallback(function() {
-				// generate new key pair
-				self.createAndPersistKeys(loginInfo.email, function(keyId) {
+				// generate new key pair with 2048 bit RSA keys
+				self.createAndPersistKeys(loginInfo.email, 2048, function(keyId) {
 					callback(keyId);
 					finishCallback(window.btoa(keyId));
 				});
@@ -61,9 +61,9 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	/**
 	 * Generate a new key pair for the user and persist the public key on the server
 	 */
-	self.createAndPersistKeys = function(email, callback) {
+	self.createAndPersistKeys = function(email, keySize, callback) {
 		// generate 2048 bit RSA keys
-		var keys = self.generateKeys(2048);
+		var keys = self.generateKeys(keySize);
 		
 		// persist public key to server
 		var keyId = keys.privateKey.getKeyId();

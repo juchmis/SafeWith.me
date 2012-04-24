@@ -29,17 +29,16 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	// BucketFS json model
 	//
 	
-	self.Bucket = function(ownerEmail) {
+	self.Bucket = function(publicKeyId) {
 		this.id = util.UUID();	// generate new UUID
-		this.ownerEmail = ownerEmail;
+		this.publicKeyId = publicKeyId;
 		this.lastUpdate = new Date().toISOString();
 	};
 
-	self.BucketFS = function(id, name, ownerEmail) {
+	self.BucketFS = function(id, name) {
 		this.version = "1.0";
 		this.id = id;
 		this.name = name;
-		this.ownerEmail = ownerEmail;
 		this.created = new Date().toISOString();
 		this.root = [];	// format the fs :)
 	};
@@ -72,8 +71,8 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	 * The bucket FS is then ecrypted and persited on the server in order to
 	 * get a new blob-key, which is then updated on the bucket pointer.
 	 */
-	self.createBucket = function(name, email, callback) {
-		var bucket = new self.Bucket(email);
+	self.createBucket = function(name, publicKeyId, callback) {
+		var bucket = new self.Bucket(publicKeyId);
 		var bucketJson = JSON.stringify(bucket);
 		
 		server.xhr({
@@ -94,7 +93,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		
 		function initFS(bucket) {
 			// initialize bucket file system
-			var bucketFS = new self.BucketFS(bucket.id, name, bucket.ownerEmail);
+			var bucketFS = new self.BucketFS(bucket.id, name);
 			persistBucketFS(bucketFS, bucket, function(updatedBucket) {
 				callback(updatedBucket);
 			});
@@ -104,9 +103,9 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	/**
 	 * Get all the user's buckets from server
 	 */
-	self.getBuckets = function(email, callback) {
+	self.getBuckets = function(publicKeyId, callback) {
 		// synchronize the server's with local buckets
-		bucketCache.syncBuckets(email, self, function(syncedBuckets) {
+		bucketCache.syncBuckets(publicKeyId, self, function(syncedBuckets) {
 			// cache <-> server buckets are in sync
 			callback(syncedBuckets);
 		});
