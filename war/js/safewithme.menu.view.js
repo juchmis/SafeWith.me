@@ -32,33 +32,48 @@ var MENUVIEW = (function ($, menu) {
 		$.mobile.showPageLoadingMsg('a', 'authenticating...');
 		
 		menu.getLoginInfo(goal, function(loginInfo) {
-			self.updateLogin(loginInfo);
-			
 			// finished init.. hide loading msg
 			$.mobile.hidePageLoadingMsg();
 			
+			updateLoginAnchor(loginInfo);
+			
 			callback(loginInfo);
 		});
-	};
-	
-	/**
-	 * Changes the login anchor arccording to the login status
-	 */
-	self.updateLogin = function(loginInfo) {
-		var anchor = $('#loginStatus');
-		if (loginInfo.loggedIn) {
-			anchor.attr({ href: loginInfo.logoutUrl });
-			anchor.find('span[class="ui-btn-text"]').html('Logout');
-		} else {
-			window.location.href = loginInfo.loginUrl;
+		
+		function updateLoginAnchor(loginInfo) {
+			// Changes the login anchor arccording to the login status
+			var anchor = $('#loginStatus');
+			
+			if (loginInfo.loggedIn) {
+				// user is logged in
+				anchor.attr({ href: 'menu.html' });
+				anchor.find('span[class="ui-btn-text"]').html('Menu');
+				initLoggedInUser(loginInfo);
+				
+			} else {
+				// user is not logged in
+				anchor.attr({ href: loginInfo.loginUrl });
+				anchor.find('span[class="ui-btn-text"]').html('Login');
+				
+				// override jquery page change, since this causes trouble with external urls
+				anchor.click(function(e) {
+					e.preventDefault();
+					window.location.href = loginInfo.loginUrl;
+					return false;
+				});
+			}
 		}
 		
-		// override jquery page change, since this causes trouble with external urls
-		anchor.click(function(e) {
-			e.preventDefault();
-			window.location.href = anchor.attr('href');
-			return false;
-		});
+		function initLoggedInUser(loginInfo) {
+			$('#menuDlg').live('pageinit', function(event) {
+				// init logou button
+				$('#logout-btn').click(function(e) {
+					e.preventDefault();
+					window.location.href = loginInfo.logoutUrl;
+					return false;
+				});
+			});
+		}
 	};
 	
 	return self;
