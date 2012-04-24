@@ -58,7 +58,7 @@ var FSVIEW = (function (window, document, $, fs) {
 		$.mobile.showPageLoadingMsg('a', 'syncing fs...');
 
 		// get user's bucket if logged in
-		fs.getBuckets(loginInfo.email, function(buckets) {
+		fs.getBuckets(loginInfo.publicKeyId, function(buckets) {
 			// if the user does not have any buckets create a default bucket for him
 			if (buckets.length === 0) {
 				fs.createBucket('Personal Documents', loginInfo.email, function(bucket) {

@@ -77,18 +77,17 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 		}
 
 		function keyGenFinished(keyId) {
-			// store loginInfo again after clearing chache
-			loginInfo.publicKeyId = keyId;
-			cache.storeObject('lastLoginInfo', loginInfo);
+			// remember passphrase
 			crypto.rememberPassphrase(keyId);
-
-			// create export keys link
-			crypto.exportKeys(function(url) {
-				// hide loading msg
-				$.mobile.hidePageLoadingMsg();
-				// go back to app
-				$.mobile.changePage($('#mainPage'));
-			});
+			
+			// store loginInfo again after clearing chache
+			loginInfo.publicKeyId = window.btoa(keyId);
+			cache.storeObject('lastLoginInfo', loginInfo);
+			
+			// hide loading msg
+			$.mobile.hidePageLoadingMsg();
+			// go back to app
+			$.mobile.changePage($('#mainPage'));
 		}
 	};
 	

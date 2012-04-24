@@ -51,8 +51,9 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			displayCallback(function() {
 				// generate new key pair with 2048 bit RSA keys
 				self.createAndPersistKeys(loginInfo.email, 2048, function(keyId) {
+					// display finish
+					finishCallback(keyId);
 					callback(keyId);
-					finishCallback(window.btoa(keyId));
 				});
 			});
 		}
@@ -177,7 +178,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		
 		// read passphrase from local storage if no passphrase is specified
 		if(!passphrase && passphrase !== '') {
-			passphrase = window.sessionStorage.getItem(keyId + 'Passphrase');
+			passphrase = window.sessionStorage.getItem(window.btoa(keyId) + 'Passphrase');
 		}
 
 		// check passphrase
@@ -266,7 +267,8 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 * Store the passphrase for the current session
 	 */
 	self.rememberPassphrase = function(keyId) {
-		window.sessionStorage.setItem(keyId + 'Passphrase', passphrase);
+		var base64KeyId = window.btoa(keyId);
+		window.sessionStorage.setItem(base64KeyId + 'Passphrase', passphrase);
 	};
 	
 	//

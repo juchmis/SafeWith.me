@@ -21,7 +21,7 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var MENUVIEW = (function ($, menu) {
+var MENUVIEW = (function ($, menu, server) {
 	var self = {};
 
 	/**
@@ -55,6 +55,11 @@ var MENUVIEW = (function ($, menu) {
 				anchor.attr({ href: loginInfo.loginUrl });
 				anchor.find('span[class="ui-btn-text"]').html('Login');
 				
+				// automatically trigger error handler for all REST calls if not logged in
+				server.xhr = function(args) {
+					args.error('Not logged in!');
+				};
+				
 				// override jquery page change, since this causes trouble with external urls
 				anchor.click(function(e) {
 					e.preventDefault();
@@ -77,4 +82,4 @@ var MENUVIEW = (function ($, menu) {
 	};
 	
 	return self;
-}($, MENU));
+}($, MENU, SERVER));
