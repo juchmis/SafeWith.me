@@ -123,17 +123,18 @@ asyncTest("Upload blob", 4, function() {
 
 module("Asymmetric Crypto");
 
-var email = 'test@asdf.com';
-CRYPTO.setPassphrase('asdf', email);
+var keyId;
+
+CRYPTO.setPassphrase('asdf');
 
 test("Generate keys", 7, function() {
 	var start = (new Date).getTime();
-	var keySize = 2048;
-	var keys = CRYPTO.generateKeys(keySize, email);
+	var keySize = 1024;
+	var keys = CRYPTO.generateKeys(keySize);
 	var diff = (new Date).getTime() - start;
 
-	var keyId = keys.privateKey.getKeyId();
-	CRYPTO.readKeys(email, keyId);
+	keyId = keys.privateKey.getKeyId();
+	CRYPTO.readKeys(keyId);
 
 	console.log('Time taken for key generation [ms]: ' + diff + ' (' + keySize + ' bit RSA keypair)');
 	ok(CRYPTO.getPrivateKey());
@@ -146,7 +147,7 @@ test("Generate keys", 7, function() {
 
 function helperEncrDecr(plaintext) {
 	if (!CRYPTO.getPublicKey()) {
-		CRYPTO.readKeys(email);
+		CRYPTO.readKeys(keyId);
 	}
 	
 	console.log('plaintext size [bytes]: ' + plaintext.length);
@@ -200,13 +201,12 @@ asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 	var loginInfo = {
 		email : email
 	};
-	CRYPTO.setPassphrase('', email);
 	
 	CRYPTO.initKeyPair(loginInfo, function(keyId) {
 		ok(keyId);
 		
 		CRYPTO.fetchKeys(email, keyId, function(keys) {
-			ok(CRYPTO.readKeys(loginInfo.email, keyId));
+			ok(CRYPTO.readKeys(keyId));
 
 			equal(keys.publicKey.asciiArmored, CRYPTO.getPublicKey());
 			equal(keys.publicKey.keyId, CRYPTO.getPublicKeyIdBase64());

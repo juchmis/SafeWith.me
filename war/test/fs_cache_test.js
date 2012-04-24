@@ -70,8 +70,11 @@ asyncTest("Single bucket: Cache <-> Server", 4, function() {
 	var email = "test@example.com";
 	bucketCache.clearBucketCache(email);
 	
-	if(!CRYPTO.readKeys(email)) {
-		return;
+	CRYPTO.setPassphrase('asdf');
+	var keys = CRYPTO.generateKeys(1024);
+	keyId = keys.privateKey.getKeyId();
+	if (!CRYPTO.readKeys(keyId)) {
+		throw 'keys could not be read!';
 	}
 	
 	var createdBucketId = undefined;

@@ -63,7 +63,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 */
 	self.createAndPersistKeys = function(email, callback) {
 		// generate 2048 bit RSA keys
-		var keys = self.generateKeys(2048, email);
+		var keys = self.generateKeys(2048);
 		
 		// persist public key to server
 		var keyId = keys.privateKey.getKeyId();
@@ -123,14 +123,14 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 * @email [string] user's email address
 	 * @pass [string] a passphrase used to protect the private key
 	 */
-	self.generateKeys = function(numBits, email) {
+	self.generateKeys = function(numBits) {
 		// check passphrase
 		if (!passphrase && passphrase !== '') { throw 'No passphrase set!'; }
 		
-		var userId = 'SafeWith.me User <' + email + '>';
+		var userId = 'SafeWith.me User <anonymous@dunno.com>';
 		var keys = openpgp.generate_key_pair(1, numBits, userId, passphrase); // keytype 1=RSA
 
-		self.importKeys(keys.publicKeyArmored, keys.privateKeyArmored, email);
+		self.importKeys(keys.publicKeyArmored, keys.privateKeyArmored);
 
 		return keys;
 	};
@@ -138,7 +138,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	/**
 	 * Import the users key into the HTML5 local storage
 	 */
-	self.importKeys = function(publicKeyArmored, privateKeyArmored, email) {
+	self.importKeys = function(publicKeyArmored, privateKeyArmored) {
 		// check passphrase
 		if (!passphrase && passphrase !== '') { throw 'No passphrase set!'; }
 		
@@ -164,31 +164,10 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 * @email [string] user's email address
 	 * @keyId [string] the public key ID in unicode (not base 64)
 	 */
-	self.readKeys = function(email, keyId, callback, errorCallback) {
-		// read keys from local storage
-		var storedPrivateKeys = openpgp.keyring.getPrivateKeyForAddress(email);
-		var storedPublicKeys = openpgp.keyring.getPublicKeyForAddress(email);
-		
-		if (keyId) {
-			// find keys by id
-			for (var i=0; i < storedPrivateKeys.length; i++) {
-				if (storedPrivateKeys[i].keyId === keyId) {
-					privateKey = storedPrivateKeys[i];
-					break;
-				}
-			}
-			for (var j=0; j < storedPublicKeys.length; j++) {
-				if (storedPublicKeys[j].keyId === keyId) {
-					publicKey = storedPublicKeys[j];
-					break;
-				}
-			}
-			
-		} else {
-			// take first keys if no keyId is available
-			privateKey = storedPrivateKeys[0];
-			publicKey = storedPublicKeys[0];
-		}
+	self.readKeys = function(keyId, callback, errorCallback) {		
+		// read keys from keyring (local storage)
+		privateKey = openpgp.keyring.getPrivateKeyForKeyId(keyId)[0].key;
+		publicKey = openpgp.keyring.getPublicKeysForKeyId(keyId)[0];
 		
 		// check keys
 		if (!publicKey || !privateKey || (publicKey.keyId !== privateKey.keyId)) {
@@ -198,7 +177,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		
 		// read passphrase from local storage if no passphrase is specified
 		if(!passphrase && passphrase !== '') {
-			passphrase = window.sessionStorage.getItem(email + 'Passphrase');
+			passphrase = window.sessionStorage.getItem(keyId + 'Passphrase');
 		}
 
 		// check passphrase
@@ -279,10 +258,15 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	/**
 	 * Get the user's passphrase for decrypting their private key
 	 */
-	self.setPassphrase = function(pass, email) {
+	self.setPassphrase = function(pass) {
 		passphrase = pass;
-		// store the passphrase in session storage
-		window.sessionStorage.setItem(email + 'Passphrase', passphrase);
+	};
+	
+	/**
+	 * Store the passphrase for the current session
+	 */
+	self.rememberPassphrase = function(keyId) {
+		window.sessionStorage.setItem(keyId + 'Passphrase', passphrase);
 	};
 	
 	//

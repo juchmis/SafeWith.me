@@ -34,7 +34,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 		// check server for user's public key ID
 		crypto.initKeyPair(loginInfo, function(keyId) {
 			// read corresponding keys from localstorage
-			if (crypto.readKeys(loginInfo.email, keyId)) {
+			if (crypto.readKeys(keyId)) {
 				// hide loading msg
 				$.mobile.hidePageLoadingMsg();
 				callback();
@@ -59,7 +59,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 
 					// read passphrase
 					var passphrase = $('#passphrase').val();
-					crypto.setPassphrase(passphrase, loginInfo.email);
+					crypto.setPassphrase(passphrase);
 					// show loading msg
 					$.mobile.showPageLoadingMsg('a', 'generating PGP keys...');
 
@@ -80,6 +80,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 			// store loginInfo again after clearing chache
 			loginInfo.publicKeyId = keyId;
 			cache.storeObject('lastLoginInfo', loginInfo);
+			crypto.rememberPassphrase(keyId);
 
 			// create export keys link
 			crypto.exportKeys(function(url) {
@@ -97,14 +98,15 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 			$('#import-btn').click(function() {
 				// get passphrase
 				var passphrase = $('#passphrase').val();
-				crypto.setPassphrase(passphrase, loginInfo.email);
+				crypto.setPassphrase(passphrase);
+				crypto.rememberPassphrase(keyId);
 
 				// show loading msg while fetching keys
 				$.mobile.showPageLoadingMsg('a', 'importing keys...');
 				crypto.fetchKeys(loginInfo.email, keyId, function() {
 
 					// try to read keys from local storage again
-					if (crypto.readKeys(loginInfo.email, keyId)) {
+					if (crypto.readKeys(keyId)) {
 						// go back to app
 						$.mobile.changePage($('#mainPage'));
 						callback();

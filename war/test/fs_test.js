@@ -2,8 +2,12 @@ module("FS");
 
 asyncTest("Create, Get, Delete Bucket", 12, function() {
 	var email = "test@example.com";
-	if(!CRYPTO.readKeys(email)) {
-		return;
+	
+	CRYPTO.setPassphrase('asdf');
+	var keys = CRYPTO.generateKeys(1024);
+	keyId = keys.privateKey.getKeyId();
+	if (!CRYPTO.readKeys(keyId)) {
+		throw 'keys could not be read!';
 	}
 
 	var name = 'Test Bucket';

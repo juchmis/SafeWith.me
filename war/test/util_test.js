@@ -1,6 +1,6 @@
 module("Util");
 
-test("JQuery and basic requirements", 12, function() {
+test("JQuery and basic requirements", 11, function() {
 	ok( Array.prototype.push, "Array.push()" );
 	ok( Function.prototype.apply, "Function.apply()" );
 	ok( document.getElementById, "getElementById" );
@@ -12,7 +12,11 @@ test("JQuery and basic requirements", 12, function() {
 	ok( window.requestFileSystem || window.webkitRequestFileSystem, "FileSystem Api" );
 	ok( window.URL || window.webkitURL || window.mozURL, "ObjectURL Api" );
 	ok( window.crypto.getRandomValues, "crypto.getRandomValues()" );
-	ok( uuid.v4(), "UUID: " + uuid.v4() );
+});
+
+test("UUID", 1, function() {
+	var id = UTIL.UUID();
+	ok( id, "UUID: " + id );
 });
 
 asyncTest("String -> ArrayBuffer -> String", 5, function() {
