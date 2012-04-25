@@ -204,7 +204,7 @@ asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 	ok(CRYPTO.readKeys(keyId));
 	
 	// try to sync to server
-	CRYPTO.syncKeysToServer(keyId, keys.publicKeyArmored, keys.privateKeyArmored, email, function(keyId) {
+	CRYPTO.syncKeysToServer(email, function(keyId) {
 		ok(keyId);
 		
 		checkServerKeys(keyId);

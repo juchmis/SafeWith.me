@@ -78,7 +78,7 @@ asyncTest("Single bucket: Cache <-> Server", 8, function() {
 	ok(CRYPTO.readKeys(keyId));
 	
 	// try to sync to server
-	CRYPTO.syncKeysToServer(keyId, keys.publicKeyArmored, keys.privateKeyArmored, 'test@example.com', function(keyId) {
+	CRYPTO.syncKeysToServer('test@example.com', function(keyId) {
 		ok(keyId);
 		
 		publicKeyId = window.btoa(keyId);
@@ -211,7 +211,7 @@ asyncTest("BucketCache <- Server", 6, function() {
 	ok(CRYPTO.readKeys(keyId));
 	
 	// try to sync to server
-	CRYPTO.syncKeysToServer(keyId, keys.publicKeyArmored, keys.privateKeyArmored, 'test@example.com', function(keyId) {
+	CRYPTO.syncKeysToServer('test@example.com', function(keyId) {
 		ok(keyId);
 		
 		publicKeyId = window.btoa(keyId);

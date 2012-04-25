@@ -47,7 +47,7 @@ public class PGPKeyDAOTest {
 		PublicKey pk1 = new PublicKey();
 		pk1.setOwnerEmail(email);
 		pk1.setKeyId("1");
-		new GenericDAO().persist(pk1);
+		PGPKeyDAO.putKeyForUser(pk1, PublicKey.class, email);
 		
 		assertEquals(pk1.getKeyId(), PGPKeyDAO.getKeyForUser(PublicKey.class, email).getKeyId());
 	}
@@ -66,8 +66,23 @@ public class PGPKeyDAOTest {
 		pk2.setKeyId("2");
 		new GenericDAO().persist(pk2);
 		
-		
 		PGPKeyDAO.getKeyForUser(PublicKey.class, email);
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testErrorPutKeyForUser() {
+		String email = "test@asdf.com";
+
+		PublicKey pk1 = new PublicKey();
+		pk1.setOwnerEmail(email);
+		pk1.setKeyId("1");
+		PGPKeyDAO.putKeyForUser(pk1, PublicKey.class, email);
+
+		PublicKey pk2 = new PublicKey();
+		pk2.setOwnerEmail(email);
+		pk2.setKeyId("2");
+		PGPKeyDAO.putKeyForUser(pk2, PublicKey.class, email);
+	}
+
 
 }

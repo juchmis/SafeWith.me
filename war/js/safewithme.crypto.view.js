@@ -35,9 +35,14 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 		crypto.initKeyPair(loginInfo, function(keyId) {
 			// read corresponding keys from localstorage
 			if (crypto.readKeys(keyId)) {
-				// hide loading msg
-				$.mobile.hidePageLoadingMsg();
-				callback();
+				
+				// try to sync keys to server
+				crypto.syncKeysToServer(loginInfo.email, function() {
+					// hide loading msg
+					$.mobile.hidePageLoadingMsg();
+					callback();
+				});
+				
 			} else {
 				// hide loading msg
 				$.mobile.hidePageLoadingMsg();

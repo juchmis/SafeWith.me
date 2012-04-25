@@ -126,7 +126,13 @@ public class PublicKeyServlet extends HttpServlet {
 					return;
 				}
 				
-				new GenericDAO().persist(pk);
+				try {
+					PGPKeyDAO.putKeyForUser(pk, PublicKey.class, user.getEmail());
+				} catch (Exception e) {
+					resp.sendError(400, e.getMessage());
+					return;
+				}
+				
 				resp.setStatus(201);
 				resp.getWriter().close();
 			}

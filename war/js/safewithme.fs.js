@@ -73,6 +73,23 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	 */
 	self.createBucket = function(name, publicKeyId, callback) {
 		var bucket = new self.Bucket(publicKeyId);
+		self.createBucketOnServer(bucket, function(updatedBucket) {
+			initFS(updatedBucket);
+		});
+		
+		function initFS(bucket) {
+			// initialize bucket file system
+			var bucketFS = new self.BucketFS(bucket.id, name);
+			persistBucketFS(bucketFS, bucket, function(updatedBucket) {
+				callback(updatedBucket);
+			});
+		}
+	};
+	
+	/**
+	 * POSTs the bucket to the server
+	 */
+	self.createBucketOnServer = function(bucket, callback) {
 		var bucketJson = JSON.stringify(bucket);
 		
 		server.xhr({
@@ -83,21 +100,13 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 			expected: 201,
 			success: function(updatedBucket) {
 				console.log('Bucket successfully created on server.');
-				initFS(updatedBucket);
+				callback(updatedBucket);
 			},
 			error: function(err) {
 				console.log('No connection to server... bucket not created on server!');
-				initFS(bucket);
+				callback(bucket);
 			}
 		});
-		
-		function initFS(bucket) {
-			// initialize bucket file system
-			var bucketFS = new self.BucketFS(bucket.id, name);
-			persistBucketFS(bucketFS, bucket, function(updatedBucket) {
-				callback(updatedBucket);
-			});
-		}
 	};
 	
 	/**

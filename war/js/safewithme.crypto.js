@@ -39,7 +39,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 * generate a new keypait for the user
 	 */
 	self.initKeyPair = function(loginInfo, callback, displayCallback, finishCallback) {
-		// check if user already has a key on the server
+		// check if user already has a keypair in local storage
 		if (loginInfo.publicKeyId) {
 			// decode base 64 key ID
 			var keyId = window.atob(loginInfo.publicKeyId);
@@ -47,7 +47,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			callback(keyId);
 			
 		} else {
-			// user has no key on the server yet
+			// user has no key pair yet
 			displayCallback(function() {
 				// generate new key pair with 2048 bit RSA keys
 				var keys = self.generateKeys(2048);
@@ -55,6 +55,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 				
 				// display finish
 				finishCallback(keyId);
+				// read the user's keys from local storage
 				callback(keyId);
 			});
 		}
@@ -141,18 +142,19 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	/**
 	 * Generate a new key pair for the user and persist the public key on the server
 	 */
-	self.syncKeysToServer = function(keyId, pubKeyArm, privKeyArm, email, callback) {
+	self.syncKeysToServer = function(email, callback) {
 		// base64 encode key ID
+		var keyId = publicKey.keyId;
 		var encodedKeyId = window.btoa(keyId);
 		var pubKey = {
 			keyId : encodedKeyId,
 			ownerEmail : email,
-			asciiArmored : pubKeyArm
+			asciiArmored : publicKey.armored
 		};
 		var privKey = {
 			keyId : encodedKeyId,
 			ownerEmail : email,
-			asciiArmored : privKeyArm
+			asciiArmored : privateKey.armored
 		};
 		
 		var jsonPublicKey = JSON.stringify(pubKey);

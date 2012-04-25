@@ -32,10 +32,21 @@ public class PGPKeyDAO {
 			return pkList.get(0); 
 			
 		} else if (pkList.size() > 1) {
-			throw new IllegalArgumentException("It seems as though " + email + " has " + pkList.size() + " public keys stored!");
+			throw new IllegalArgumentException("It seems as though " + email + " already has " + pkList.size() + " keys stored!");
 		
 		} else {
 			return null;
+		}
+	}
+	
+	public static <T extends PGPKey> T putKeyForUser(T key,Class<T> cl, String email) {
+		List<T> pkList = new GenericDAO().filterBy(cl, "ownerEmail", email);
+
+		if (pkList.size() == 0) {
+			return new GenericDAO().persist(key);
+			
+		} else {
+			throw new IllegalArgumentException("It seems as though " + email + " already has " + pkList.size() + " keys stored!");
 		}
 	}
 	
