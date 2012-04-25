@@ -73,7 +73,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	 */
 	self.createBucket = function(name, publicKeyId, callback) {
 		var bucket = new self.Bucket(publicKeyId);
-		self.createBucketOnServer(bucket, function(updatedBucket) {
+		self.postBucket(bucket, function(updatedBucket) {
 			initFS(updatedBucket);
 		});
 		
@@ -89,7 +89,7 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 	/**
 	 * POSTs the bucket to the server
 	 */
-	self.createBucketOnServer = function(bucket, callback) {
+	self.postBucket = function(bucket, callback) {
 		var bucketJson = JSON.stringify(bucket);
 		
 		server.xhr({

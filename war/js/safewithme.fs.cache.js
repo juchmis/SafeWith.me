@@ -216,20 +216,44 @@ var BUCKETCACHE = (function (cache, server) {
 			uri: '/ws/buckets',
 			expected: 200,
 			success: function(serverBuckets) {
-				// start by syncing local changes to server
-				syncToServer(cachedBuckets, serverBuckets);
+				if (serverBuckets.length === 0) {
+					// sync offline created bucket to server
+					syncToServer(cachedBuckets);
+				} else {
+					// start by syncing local changes to server
+					syncFromServer(cachedBuckets, serverBuckets);
+				}
 			},
 			error: function(e) {
-				// no buckets from server... use cache
+				// server not available... use cache
 				callback(cachedBuckets);
 			}
 		});
+
+		//
+		// BucketCache (LocalStorage) -> Server (Buckets cannot be created without server)
+		//
+		
+		function syncToServer(cachedBuckets) {
+			asyncLoop(cachedBuckets.length, function(loop) {
+				// get current iterations cached bucket
+				var cb = cachedBuckets[loop.iteration()];
+
+				fs.postBucket(cb, function(updatedBucket) {
+					loop.next();
+				});
+
+			}, function(){	
+				// loop is finished
+				callback(cachedBuckets);
+			});
+		}
 		
 		//
 		// BucketCache (LocalStorage) <- Server (Buckets cannot be created without server)
 		//
 		
-		function syncToServer(cachedBuckets, serverBuckets) {
+		function syncFromServer(cachedBuckets, serverBuckets) {
 			
 			asyncLoop(serverBuckets.length, function(loop1) {
 				// get current iteration os server bucket
