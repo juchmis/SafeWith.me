@@ -65,22 +65,25 @@ test("Bucket Cache (in local storage)", 6, function() {
 
 module("Sync: FS Cache");
 
-asyncTest("Single bucket: Cache <-> Server", 6, function() {
+asyncTest("Single bucket: Cache <-> Server", 8, function() {
 
 	var createdBucketId = undefined;
 	var publicKeyId = undefined;
 	
 	// create public key
 	CRYPTO.setPassphrase('asdf');
-	CRYPTO.createAndPersistKeys('test@example.com', 1024, function(keyId) {
-		if (!CRYPTO.readKeys(keyId)) {
-			throw 'keys could not be read!';
-		}
+	
+	var keys = CRYPTO.generateKeys(1024);
+	var keyId = keys.privateKey.getKeyId();
+	ok(CRYPTO.readKeys(keyId));
+	
+	// try to sync to server
+	CRYPTO.syncKeysToServer(keyId, keys.publicKeyArmored, keys.privateKeyArmored, 'test@example.com', function(keyId) {
+		ok(keyId);
 		
-		CRYPTO.readKeys(keyId);
 		publicKeyId = window.btoa(keyId);
 		
-		createBucket();		
+		createBucket();
 	});
 	
 	function createBucket() {
@@ -194,7 +197,7 @@ function cleanup(createdBucketId, publicKeyId) {
 	
 }
 
-asyncTest("BucketCache <- Server", 4, function() {
+asyncTest("BucketCache <- Server", 6, function() {
 	
 	var server = SERVER;
 	var createdBucketId = undefined;
@@ -202,15 +205,18 @@ asyncTest("BucketCache <- Server", 4, function() {
 
 	// create public key
 	CRYPTO.setPassphrase('asdf');
-	CRYPTO.createAndPersistKeys('test@example.com', 1024, function(keyId) {
-		if (!CRYPTO.readKeys(keyId)) {
-			throw 'keys could not be read!';
-		}
-
-		CRYPTO.readKeys(keyId);
+	
+	var keys = CRYPTO.generateKeys(1024);
+	var keyId = keys.privateKey.getKeyId();
+	ok(CRYPTO.readKeys(keyId));
+	
+	// try to sync to server
+	CRYPTO.syncKeysToServer(keyId, keys.publicKeyArmored, keys.privateKeyArmored, 'test@example.com', function(keyId) {
+		ok(keyId);
+		
 		publicKeyId = window.btoa(keyId);
-
-		createTestData();		
+		
+		createTestData();
 	});
 	
 	function createTestData() {

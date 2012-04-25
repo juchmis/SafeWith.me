@@ -198,16 +198,21 @@ asyncTest("Export keys", 3, function() {
 
 asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 	var email = "test@example.com";
-	var loginInfo = {
-		email : email
-	};
 	
-	CRYPTO.initKeyPair(loginInfo, function(keyId) {
+	var keys = CRYPTO.generateKeys(1024);
+	var keyId = keys.privateKey.getKeyId();
+	ok(CRYPTO.readKeys(keyId));
+	
+	// try to sync to server
+	CRYPTO.syncKeysToServer(keyId, keys.publicKeyArmored, keys.privateKeyArmored, email, function(keyId) {
 		ok(keyId);
 		
+		checkServerKeys(keyId);
+	});
+	
+	function checkServerKeys(keyId) {
+		
 		CRYPTO.fetchKeys(email, keyId, function(keys) {
-			ok(CRYPTO.readKeys(keyId));
-
 			equal(keys.publicKey.asciiArmored, CRYPTO.getPublicKey());
 			equal(keys.publicKey.keyId, CRYPTO.getPublicKeyIdBase64());
 			equal(keys.privateKey.asciiArmored, CRYPTO.getPrivateKey());
@@ -241,7 +246,6 @@ asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 			}
 		});
 		
-	}, function(modalShown) {
-		modalShown();
-	}, function() {});
+	}
+		
 });

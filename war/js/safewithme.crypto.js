@@ -50,70 +50,12 @@ var CRYPTO = (function (window, openpgp, util, server) {
 			// user has no key on the server yet
 			displayCallback(function() {
 				// generate new key pair with 2048 bit RSA keys
-				self.createAndPersistKeys(loginInfo.email, 2048, function(keyId) {
-					// display finish
-					finishCallback(keyId);
-					callback(keyId);
-				});
-			});
-		}
-	};
-	
-	/**
-	 * Generate a new key pair for the user and persist the public key on the server
-	 */
-	self.createAndPersistKeys = function(email, keySize, callback) {
-		// generate 2048 bit RSA keys
-		var keys = self.generateKeys(keySize);
-		
-		// persist public key to server
-		var keyId = keys.privateKey.getKeyId();
-		// base64 encode key ID
-		var encodedKeyId = window.btoa(keyId);
-		var publicKey = {
-			keyId : encodedKeyId,
-			ownerEmail : email,
-			asciiArmored : keys.publicKeyArmored
-		};
-		var privateKey = {
-			keyId : encodedKeyId,
-			ownerEmail : email,
-			asciiArmored : keys.privateKeyArmored
-		};
-		
-		var jsonPublicKey = JSON.stringify(publicKey);
-		var jsonPrivateKey = JSON.stringify(privateKey);
-		
-		// first upload public key
-		server.xhr({
-			type: 'POST',
-			uri: '/ws/publicKeys',
-			contentType: 'application/json',
-			expected: 201,
-			body: jsonPublicKey,
-			success: function(resp) {
-				uploadPrivateKeys();
-			},
-			error: function(e) {
-				// if server is not available, just continue
-				// and read the user's keys from local storage
-				console.log('Server unavailable: keys were not synced to server!');
+				var keys = self.generateKeys(2048);
+				var keyId = keys.privateKey.getKeyId();
+				
+				// display finish
+				finishCallback(keyId);
 				callback(keyId);
-			}
-		});
-		
-		// then upload private key
-		function uploadPrivateKeys() {
-			server.xhr({
-				type: 'POST',
-				uri: '/ws/privateKeys',
-				contentType: 'application/json',
-				expected: 201,
-				body: jsonPrivateKey,
-				success: function(resp) {
-					// read the user's keys from local storage
-					callback(keyId);
-				}
 			});
 		}
 	};
@@ -194,6 +136,60 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		}
 		
 		return true;
+	};
+	
+	/**
+	 * Generate a new key pair for the user and persist the public key on the server
+	 */
+	self.syncKeysToServer = function(keyId, pubKeyArm, privKeyArm, email, callback) {
+		// base64 encode key ID
+		var encodedKeyId = window.btoa(keyId);
+		var pubKey = {
+			keyId : encodedKeyId,
+			ownerEmail : email,
+			asciiArmored : pubKeyArm
+		};
+		var privKey = {
+			keyId : encodedKeyId,
+			ownerEmail : email,
+			asciiArmored : privKeyArm
+		};
+		
+		var jsonPublicKey = JSON.stringify(pubKey);
+		var jsonPrivateKey = JSON.stringify(privKey);
+		
+		// first upload public key
+		server.xhr({
+			type: 'POST',
+			uri: '/ws/publicKeys',
+			contentType: 'application/json',
+			expected: 201,
+			body: jsonPublicKey,
+			success: function(resp) {
+				uploadPrivateKeys();
+			},
+			error: function(e) {
+				// if server is not available, just continue
+				// and read the user's keys from local storage
+				console.log('Server unavailable: keys were not synced to server!');
+				callback(keyId);
+			}
+		});
+		
+		// then upload private key
+		function uploadPrivateKeys() {
+			server.xhr({
+				type: 'POST',
+				uri: '/ws/privateKeys',
+				contentType: 'application/json',
+				expected: 201,
+				body: jsonPrivateKey,
+				success: function(resp) {
+					// read the user's keys from local storage
+					callback(keyId);
+				}
+			});
+		}
 	};
 	
 	/**

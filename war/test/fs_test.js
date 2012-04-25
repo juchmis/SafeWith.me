@@ -1,20 +1,23 @@
 module("FS");
 
-asyncTest("Create, Get, Delete Bucket", 14, function() {
+asyncTest("Create, Get, Delete Bucket", 16, function() {
 	var email = "test@example.com";
 	var publicKeyId = undefined;
 	
 	// create public key
 	CRYPTO.setPassphrase('asdf');
-	CRYPTO.createAndPersistKeys(email, 1024, function(keyId) {
-		if (!CRYPTO.readKeys(keyId)) {
-			throw 'keys could not be read!';
-		}
-
-		CRYPTO.readKeys(keyId);
+	
+	var keys = CRYPTO.generateKeys(1024);
+	var keyId = keys.privateKey.getKeyId();
+	ok(CRYPTO.readKeys(keyId));
+	
+	// try to sync to server
+	CRYPTO.syncKeysToServer(keyId, keys.publicKeyArmored, keys.privateKeyArmored, 'test@example.com', function(keyId) {
+		ok(keyId);
+		
 		publicKeyId = window.btoa(keyId);
 
-		createTestData();		
+		createTestData();
 	});
 	
 	function createTestData() {
