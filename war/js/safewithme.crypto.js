@@ -110,7 +110,10 @@ var CRYPTO = (function (window, openpgp, util, server) {
 	 */
 	self.readKeys = function(keyId, callback, errorCallback) {		
 		// read keys from keyring (local storage)
-		privateKey = openpgp.keyring.getPrivateKeyForKeyId(keyId)[0].key;
+		var privKeyQuery = openpgp.keyring.getPrivateKeyForKeyId(keyId)[0];
+		if (privKeyQuery) {
+			privateKey = privKeyQuery.key;
+		}
 		publicKey = openpgp.keyring.getPublicKeysForKeyId(keyId)[0];
 		
 		// check keys
