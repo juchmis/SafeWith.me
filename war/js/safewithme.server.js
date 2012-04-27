@@ -41,6 +41,7 @@ var SERVER = (function (util) {
 	 *   contentType: 'application/json',	(optional)
 	 *   responseType: 'arraybuffer',		(optional)
 	 *   body: '{"foo":"bar"}',				(optional)
+	 *   cors: true
 	 *   success: function(resp) {...},
 	 *   error: function(e) {...}
 	 * }
@@ -55,6 +56,12 @@ var SERVER = (function (util) {
 		}
 		if (args.responseType) {
 			xhr.responseType = args.responseType;
+		}
+		
+		// check for CORS support
+		if (args.cors && xhr.withCredentials !== undefined) {
+			// send credentials
+			xhr.withCredentials = true;
 		}
 		
 		// response handler
@@ -111,13 +118,13 @@ var SERVER = (function (util) {
 				errCallback(e);
 			}
 		});
-
+		
 		// upload blob to blobstore
 		function postBlob(postUrl) {
 			var formData = new FormData();	// multipart/form-data
 			formData.append('file', blob);
 			formData.append('md5', md5);
-
+		
 			self.xhr({
 				type: 'POST',
 				uri: postUrl,
@@ -167,6 +174,20 @@ var SERVER = (function (util) {
 				errCallback(e);
 			}
 		});
+	};
+	
+	//
+	// Google Drive specific requests
+	//
+	
+	var gdriveBaseUri = 'https://www.googleapis.com/drive/v1';
+	
+	self.getFile = function() {
+		
+	};
+	
+	self.authenticate = function() {
+		var oauthEndpoint = 'https://accounts.google.com/o/oauth2/auth';
 	};
 	
 	return self;

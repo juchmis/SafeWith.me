@@ -1,7 +1,7 @@
 ##Store and share your files with OpenPGP encryption on any device via HTML5
 
-* Learn more in the FAQ: https://github.com/tanx/SafeWith.me/wiki/FAQ
 * Homepage: http://safewith.me
+* Project FAQ: https://github.com/tanx/SafeWith.me/wiki/FAQ
 * Powered by: http://openpgpjs.org
 
 ## DEV Tutorial:
