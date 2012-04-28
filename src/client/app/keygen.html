@@ -1,0 +1,29 @@
+<!DOCTYPE html> 
+<html manifest="../appcache.manifest">
+	<head>
+    <meta charset="utf-8">
+  	<title>SafeWith.me</title>
+  </head>
+  <body>
+    
+    <div data-role="dialog" data-theme="c" id="keygenDlg">
+
+    	<div data-role="header" data-position="fixed" data-theme="a">
+        <h1>Generate PGP keys</h1>
+    	</div><!-- /header -->
+      
+    	<div data-role="content">
+    	  <div id="keygenInstruct">
+      	  <div id="keyIcon" class="icon"></div>
+      	  <p>Time to generate your personal keypair. This will be used to encrypt your files as well as the filesystem, containing all meta-data, such as file names and types.</p>
+      	  <p>You can protect your private key with a passphrase. When you close the browser tab, your passphrase is forgotten and the data is completely locked up in your safe, until you open it again!</p>
+    	  </div>
+        <label>Passphrase:</label>
+  		  <input id="passphrase" type="password"/>
+  		  <a id="genKeys-btn" data-role="button" data-theme="a">Create my keypair</a>
+    	</div><!-- /content -->
+  	  
+    </div><!-- /page -->
+
+  </body>
+</html>

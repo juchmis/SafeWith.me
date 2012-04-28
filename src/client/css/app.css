@@ -1,0 +1,85 @@
+/* application */
+
+.fileinput-button input {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	border: solid transparent;
+	border-width: 0 0 100px 200px;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	-moz-transform: translate(-300px, 0) scale(4);
+	direction: ltr;
+	cursor: pointer;
+}
+
+.safewithmebrand {
+	display: block;
+	padding: 10px 20px 10px;
+	margin-left: -20px;
+	font-size: 20px;
+	font-weight: 200;
+	line-height: 1;
+	font-family: Georgia, serif;
+	font-weight: bold;
+	font-style: italic;
+	color:#505050;
+	text-shadow: 1px 1px 0px #101010, -1px -1px 0px #808080;
+}
+
+a.safewithmebrand:hover {
+	text-decoration: none;
+	color:#505050;
+}
+
+#helpMsg {
+	padding-top: 50px;
+	padding-bottom: 25px;
+	text-align: center;
+	font-size: 20px; text-transform: uppercase;
+	color: #000;
+	text-shadow: 0px 2px 3px #666;
+}
+
+p {
+	font: italic 14px/19px Georgia,Times New Roman,serif;
+	font-family: Georgia, 'Times New Roman', serif;
+	color: #777;
+}
+
+.emphasize {
+	text-align: center;
+}
+
+.icon {
+	position: absolute;
+	width: 48px;
+	height: 48px;
+	background-repeat: no-repeat;
+}
+
+/* keygen dialog */
+
+#keygenInstruct  {
+	padding-bottom: 5px;
+}
+
+#keygenInstruct p {
+	margin-left: 60px;
+}
+
+#keyIcon {
+	background-image:url('../img/key-icon.png');
+}
+
+/* about dialog */
+
+#logo {
+	width: 128px;
+	height: 128px;
+	margin-left: auto;
+	margin-right: auto;
+	background-image: url('../img/safe-icon-small.png');
+	background-repeat: no-repeat;
+}

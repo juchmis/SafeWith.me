@@ -1,0 +1,3 @@
+Quick start:
+
+    make server
