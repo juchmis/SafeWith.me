@@ -20,7 +20,7 @@ minify:
 	@./res/minimize.sh
 
 server:
-	@echo Starting fresh server
+	@echo Starting server...
 	@./res/run_server.sh --wipe
 
 clean-chrome:

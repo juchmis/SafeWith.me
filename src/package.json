@@ -6,6 +6,6 @@
 	},
 	"dependencies" : {
 		"express" : "2.5.9",
-		"qunit" : "latest"
+		"qunit" : "0.5.1"
 	}
 }

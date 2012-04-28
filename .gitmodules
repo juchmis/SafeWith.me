@@ -1,0 +1,6 @@
+[submodule "lib/openpgpjs"]
+	path = lib/openpgpjs
+	url = https://github.com/openpgpjs/openpgpjs.git
+[submodule "lib/node-uuid"]
+	path = lib/node-uuid
+	url = https://github.com/broofa/node-uuid.git
