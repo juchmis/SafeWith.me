@@ -21,7 +21,7 @@ minify:
 
 server:
 	@echo Starting server...
-	@./res/run_server.sh --wipe
+	@./res/run_server.sh
 
 clean-chrome:
 	@echo Deleting Chrome LocalStorage, AppCache and FileSystem data
