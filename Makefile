@@ -28,4 +28,5 @@ clean-chrome:
 	@./res/clean_chrome.sh
 
 test:
-	@echo to be implemented
+	@echo Running tests...
+	@./src/server/test/test.sh

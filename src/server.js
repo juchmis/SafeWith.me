@@ -18,7 +18,7 @@
 
 var express = require('express'),
 	app = express.createServer(),
-	port = 8080;
+	port = 8888;
 
 app.configure(function(){
     app.use(app.router);
