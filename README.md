@@ -6,9 +6,10 @@
 
 ## Quick start:
 
-1. Install node.js, npm, couchdb (e.g. with Macports):
+Install node.js, npm and couchdb (e.g. with Macports):
+
     port install nodejs npm couchdb
 
-2. Start the server:
+Start the server:
 
     make server
