@@ -10,4 +10,4 @@ if [ "$1" = "--wipe" ]; then
 fi
 
 npm install
-node server.js
+node server.js 8888

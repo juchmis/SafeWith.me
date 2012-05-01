@@ -17,8 +17,14 @@
  */
 
 var express = require('express'),
-	app = express.createServer(),
-	port = 8888;
+	oauth = require('./server/oauth'),
+	fs = require('fs'),
+	ssl = {
+	  key: fs.readFileSync('../ssl.key'),
+	  cert: fs.readFileSync('../ssl.crt')
+	},
+	app = express.createServer(ssl),
+	port = process.argv[2];
 
 app.configure(function(){
     app.use(app.router);
@@ -29,14 +35,40 @@ app.configure(function(){
 // REST service mapping
 //
 
-app.get('/login', function(req, res){
+app.get('/login', function(req, res) {
 	res.send(JSON.stringify({loggedIn:true}));
 });
+
+app.get('/oauth2callback', function(req, res) {
+	var oauthClient = oauth.createClient('https://www.googleapis.com', 443);
+	
+	// handle repsonse
+	oauthClient.on('data', function(resBody) {
+		res.writeHead(200, {'content-type': 'application/json'});
+		res.end('{"ok":"true"}');
+	});
+	oauthClient.on('error', function(code, msg) {
+		console.log(code, msg);
+		respError(res, code, msg);
+	});
+	
+	// parse request
+	var access_token = req.query['access_token'];
+	oauthClient.verifyToken(access_token);
+});
+
+/**
+ * Global error handling
+ */
+function respError(res, code, msg) {
+	var error = { errMsg : msg };
+	res.writeHead(code, {'content-type': 'application/json'});
+	res.end(JSON.stringify(error));
+}
 
 //
 // init server
 //
 
 app.listen(port);
-
 console.log(' > server started on localhost:' + port);
