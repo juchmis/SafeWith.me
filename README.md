@@ -8,7 +8,7 @@
 
 Install node.js, npm and couchdb (e.g. with Macports):
 
-    port install nodejs npm couchdb
+    sudo port install nodejs npm couchdb
 
 Start the server:
 
