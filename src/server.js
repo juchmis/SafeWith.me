@@ -20,8 +20,9 @@ var express = require('express'),
 	oauth = require('./server/oauth'),
 	fs = require('fs'),
 	ssl = {
-	  key: fs.readFileSync('../ssl.key'),
-	  cert: fs.readFileSync('../ssl.crt')
+		ca: fs.readFileSync('./../ssl/sub.class1.server.ca.pem'),
+		key: fs.readFileSync('./../ssl/ssl.key'),
+		cert: fs.readFileSync('./../ssl/ssl.crt')
 	},
 	app = express.createServer(ssl),
 	port = process.argv[2];
