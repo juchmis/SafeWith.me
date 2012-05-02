@@ -4,11 +4,11 @@ CACHE MANIFEST
 
 CACHE:
 favicon.ico
-app/index.html
-app/menu.html
-app/about.html
-app/keygen.html
-app/importkeys.html
+index.html
+menu.html
+about.html
+keygen.html
+importkeys.html
 css/jquery.mobile-1.1.0.min.css
 css/app.css
 css/images/ajax-loader.gif
