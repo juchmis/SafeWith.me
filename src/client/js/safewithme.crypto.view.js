@@ -78,7 +78,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 
 			// hide loading msg
 			$.mobile.hidePageLoadingMsg();
-			$.mobile.changePage('keygen.html', {transition:'slideup'});
+			$.mobile.changePage('keygen.html', {transition:'slide'});
 		}
 
 		function keyGenFinished(keyId) {
@@ -92,7 +92,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 			// hide loading msg
 			$.mobile.hidePageLoadingMsg();
 			// go back to app
-			$.mobile.changePage($('#mainPage'));
+			$.mobile.changePage($('#mainPage'), {transition:'turn'});
 		}
 	};
 	
@@ -112,7 +112,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 					// try to read keys from local storage again
 					if (crypto.readKeys(keyId)) {
 						// go back to app
-						$.mobile.changePage($('#mainPage'));
+						$.mobile.changePage($('#mainPage'), {transition:'turn'});
 						callback();
 					} else {
 						window.alert('Key import failed... please check your passphrase!');
@@ -125,7 +125,7 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 
 		});
 		
-		$.mobile.changePage('importkeys.html', {transition:'slideup'});
+		$.mobile.changePage('importkeys.html', {transition:'slide'});
 	};
 	
 	return self;
