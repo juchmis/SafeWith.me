@@ -1,4 +1,4 @@
-module("Crypto Integration");
+module("Integration - Crypto");
 
 asyncTest("Upload, Download, Delete encrypted blob", 4, function() {
 	var util = new Util(window);

@@ -1,4 +1,4 @@
-module("Convergent/Symmetric Crypto");
+module("Unit - Symmetric Crypto");
 
 function initCrypto() {
 	var util = new Util(window);
@@ -89,7 +89,7 @@ asyncTest("WebWorker", 2, function() {
 // 	equal(pt, message);
 // });
 
-module("Asymmetric Crypto");
+module("Unit - Asymmetric Crypto");
 
 var keyId;
 

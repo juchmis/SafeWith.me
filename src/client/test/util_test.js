@@ -1,4 +1,4 @@
-module("Util");
+module("Unit - Util");
 
 test("JQuery and basic requirements", 13, function() {
 	ok( Array.prototype.push, "Array.push()" );

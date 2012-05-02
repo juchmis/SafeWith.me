@@ -127,7 +127,15 @@ var Util = function(window, uuid) {
 				fileEntry.createWriter(function(fileWriter) {
 					fileWriter.onwriteend = function(e) {
 						var url = fileEntry.toURL();
+						// return decrypted file url
 						callback(url);
+						
+						// delete file again
+						setTimeout(function() {
+							fileEntry.remove(function() {
+								console.log('Decrypted file removed from temp fs.');
+						    }, errorHandler);
+						}, 500);
 					};
 					fileWriter.onerror = function(e) {
 					  console.log('Write failed: ' + e.toString());
@@ -137,11 +145,11 @@ var Util = function(window, uuid) {
 			});
 		}
 		
-		if (window.requestFileSystem && fileName) {
+		if (!window.requestFileSystem && fileName) {
 			// try using HTML5 filesystem api
 			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
 			
-		} else if (window.URL) {
+		} else if (!window.URL) {
 			// use blob URL api
 			var url = window.URL.createObjectURL(blob);
 			callback(url);

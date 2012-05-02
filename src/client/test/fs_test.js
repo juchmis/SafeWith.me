@@ -1,4 +1,4 @@
-module("FS");
+module("Unit - FS");
 
 asyncTest("Create, Get, Delete Bucket", 16, function() {
 	var util = new Util(window, uuid);

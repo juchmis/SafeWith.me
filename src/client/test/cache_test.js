@@ -1,4 +1,4 @@
-module("Cache");
+module("Unit - Cache");
 
 test("CRUD object literal", 3, function() {
 	var cache = new Cache(window);

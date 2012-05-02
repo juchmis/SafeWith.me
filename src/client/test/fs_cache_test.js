@@ -1,4 +1,4 @@
-module("FS Cache");
+module("Unit - FS Cache");
 
 function initBucketCache() {
 	var util = new Util(window, uuid);

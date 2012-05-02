@@ -1,4 +1,4 @@
-module("FS Cache Integration");
+module("Integration - FS Cache");
 
 asyncTest("Single bucket: Cache <-> Server", 8, function() {
 	var util = new Util(window, uuid);

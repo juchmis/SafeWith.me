@@ -1,4 +1,4 @@
-module("Server Integration");
+module("Integration - Server");
 
 asyncTest("Upload, Download, Delete blob", 4, function() {
 	var util = new Util(window);
