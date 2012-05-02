@@ -6,9 +6,9 @@
 
 ## Quick start:
 
-Install node.js, npm and couchdb (e.g. with Macports):
+Install node.js, npm and mongodb (e.g. with Macports):
 
-    sudo port install nodejs npm couchdb
+    sudo port install nodejs npm mongodb
 
 Start the server:
 
