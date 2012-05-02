@@ -51,7 +51,8 @@ app.configure(function(){
 //
 
 app.get('/login', function(req, res) {
-	res.send(JSON.stringify({loggedIn:true}));
+	res.writeHead(200, {'content-type': 'application/json'});
+	res.end(JSON.stringify({loggedIn:false}));
 });
 
 app.get('/oauth2callback', function(req, res) {
