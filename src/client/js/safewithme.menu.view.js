@@ -21,7 +21,7 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var MenuView = function($, menu, server) {
+var MenuView = function(window, $, menu, server) {
 	var self = this;
 
 	/**
