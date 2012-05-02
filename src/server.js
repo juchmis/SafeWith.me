@@ -19,13 +19,27 @@
 var express = require('express'),
 	oauth = require('./server/oauth'),
 	fs = require('fs'),
-	ssl = {
+	prot, port, app;
+
+// set port
+if (process.argv[2]) {
+	port = process.argv[2];
+} else {
+	port = 8888;
+}
+
+// set ssl
+if (process.argv[3] === '--nossl') {
+	prot = 'http';
+	app = express.createServer();
+} else {	
+	prot = 'https';
+	app = express.createServer({
 		ca: fs.readFileSync('./../ssl/sub.class1.server.ca.pem'),
 		key: fs.readFileSync('./../ssl/ssl.key'),
 		cert: fs.readFileSync('./../ssl/ssl.crt')
-	},
-	app = express.createServer(ssl),
-	port = process.argv[2];
+	});
+}
 
 app.configure(function(){
     app.use(app.router);
@@ -72,4 +86,4 @@ function respError(res, code, msg) {
 //
 
 app.listen(port);
-console.log(' > server started on localhost:' + port);
+console.log(' > listening on ' + prot + '://localhost:' + port);
