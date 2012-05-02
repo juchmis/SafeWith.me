@@ -12,5 +12,4 @@ Install node.js, npm and couchdb (e.g. with Macports):
 
 Start the server:
 
-    cd src
-    node server.js 8888 --nossl
+    node src/server.js 8888 --nossl
