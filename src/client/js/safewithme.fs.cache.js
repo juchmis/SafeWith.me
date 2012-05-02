@@ -22,8 +22,8 @@
  * This module handles caching both Buckets in local storage
  * as well as decrypted BucketFS objects in memory
  */
-var BUCKETCACHE = (function (cache, server) {
-	var self = {};
+var BucketCache = function(cache, server) {
+	var self = this;
 
 	//
 	// Decrypted BucketFS caching in memory
@@ -323,5 +323,4 @@ var BUCKETCACHE = (function (cache, server) {
 	    return loop;
 	}
 	
-	return self;
-}(CACHE, SERVER));
+};

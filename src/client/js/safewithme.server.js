@@ -21,8 +21,8 @@
 /**
  * This class handles all communication with the server
  */
-var SERVER = (function (util) {
-	var self = {};
+var Server = function(util) {
+	var self = this;
 	
 	//
 	// Generic REST service requests
@@ -176,19 +176,4 @@ var SERVER = (function (util) {
 		});
 	};
 	
-	//
-	// Google Drive specific requests
-	//
-	
-	var gdriveBaseUri = 'https://www.googleapis.com/drive/v1';
-	
-	self.getFile = function() {
-		
-	};
-	
-	self.authenticate = function() {
-		var oauthEndpoint = 'https://accounts.google.com/o/oauth2/auth';
-	};
-	
-	return self;
-}(UTIL));
+};

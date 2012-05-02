@@ -1,8 +1,10 @@
 module("FS Cache");
 
-var bucketCache = BUCKETCACHE;
-
 test("Bucket FS Cache (in memory)", 6, function() {
+	var cache = new Cache(window);
+	var server = new Server();
+	var bucketCache = new BucketCache(cache, server);
+	
 	ok(!bucketCache.current());
 	ok(!bucketCache.current());
 	

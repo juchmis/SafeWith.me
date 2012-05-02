@@ -33,8 +33,10 @@ var SAFEWITHME = (function (window, menuView, cryptoView, fsView) {
 	 * Single point of entry for the application
 	 */
 	self.init = function() {
+		var util = new Util(window, uuid);
+		
 		// check if the browser supports all necessary HTML5 Apis
-		if (!checkBrowser()) { return; }
+		if (!util.checkRuntime()) { return; }
 		
 		// set jqm to display loading texts
 		$.mobile.loadingMessageTextVisible = true;
@@ -50,21 +52,6 @@ var SAFEWITHME = (function (window, menuView, cryptoView, fsView) {
 			});
 		});
 	};
-	
-	/**
-	 * Check browser support
-	 */
-	function checkBrowser() {
-		if (!window.crypto.getRandomValues ||
-			!window.Worker ||
-			!window.BlobBuilder ||
-			!window.requestFileSystem ||
-			!window.storageInfo) {
-			window.alert('Sorry, your browser doesn\'t support all the necessary HTML5 features yet. Try using Chrome.');
-			return false;
-		}
-		return true;
-	}
 	
 	return self;
 }(window, MENUVIEW, CRYPTOVIEW, FSVIEW));

@@ -1,6 +1,8 @@
 module("Cache");
 
 test("CRUD object literal", 3, function() {
+	var cache = new Cache(window);
+	
 	var key = 'asdf';
 	var data = {
 		name : 'testName',
@@ -8,46 +10,49 @@ test("CRUD object literal", 3, function() {
 	};
 	
 	// create
-	CACHE.storeObject(key, data);
+	cache.storeObject(key, data);
 	
 	// read
-	var read = CACHE.readObject(key);
+	var read = cache.readObject(key);
 	equal(data.name, read.name);
 	
 	// update
 	var newName = 'updatedName';
 	read.name = newName;
-	CACHE.storeObject(key, read);
-	var updated = CACHE.readObject(key);
+	cache.storeObject(key, read);
+	var updated = cache.readObject(key);
 	equal(updated.name, newName);
 	
 	// delete
-	CACHE.removeObject(key);
-	equal(CACHE.readObject(key), null);
+	cache.removeObject(key);
+	equal(cache.readObject(key), null);
 });
 
 asyncTest("Create, Get, Delete Blob", 5, function() {
+	var cache = new Cache(window);
+	var util = new Util(window);
+	
 	var data = "Hello, World!",
-		buf = UTIL.binStr2ArrBuf("Hello, World!"),
-		blob = UTIL.arrBuf2Blob(buf, 'application/octet-stream'),
+		buf = util.binStr2ArrBuf("Hello, World!"),
+		blob = util.arrBuf2Blob(buf, 'application/octet-stream'),
 		fileName = 'test.txt';
 	
-	CACHE.storeBlob(fileName, blob, function() {
+	cache.storeBlob(fileName, blob, function() {
 		
-		CACHE.readBlob(fileName, function(file) {
+		cache.readBlob(fileName, function(file) {
 			ok(file);
 			
-			UTIL.blob2BinStr(file, function(str) {
+			util.blob2BinStr(file, function(str) {
 				equal(data, str);
 			});
 			
-			CACHE.removeBlob(fileName, function(success) {
+			cache.removeBlob(fileName, function(success) {
 				ok(success);
 				
-				CACHE.readBlob(fileName, function(file) {
+				cache.readBlob(fileName, function(file) {
 					ok(!file);
 					
-					CACHE.removeBlob(fileName, function(success) {
+					cache.removeBlob(fileName, function(success) {
 						ok(!success);
 						
 						start();

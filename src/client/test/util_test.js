@@ -1,6 +1,6 @@
 module("Util");
 
-test("JQuery and basic requirements", 11, function() {
+test("JQuery and basic requirements", 13, function() {
 	ok( Array.prototype.push, "Array.push()" );
 	ok( Function.prototype.apply, "Function.apply()" );
 	ok( document.getElementById, "getElementById" );
@@ -8,19 +8,23 @@ test("JQuery and basic requirements", 11, function() {
 	ok( RegExp, "RegExp" );
 	ok( jQuery, "jQuery" );
 	ok( $, "$" );
-	ok( UTIL.arrBuf2Blob('', ''), "BlobBuilder Api" );
-	ok( window.requestFileSystem || window.webkitRequestFileSystem, "FileSystem Api" );
-	ok( window.URL || window.webkitURL || window.mozURL, "ObjectURL Api" );
+	ok( window.Worker, "Web Worker" );
+	ok( window.BlobBuilder, "BlobBuilder Api" );
+	ok( window.requestFileSystem, "FileSystem Api" );
+	ok( window.URL, "ObjectURL Api" );
+	ok( window.storageInfo, "StorageInfo Api" );
 	ok( window.crypto.getRandomValues, "crypto.getRandomValues()" );
 });
 
-test("UUID", 1, function() {
-	var id = UTIL.UUID();
-	ok( id, "UUID: " + id );
+test("UUID", 2, function() {
+	var util = new Util(window, uuid);
+	var id = util.UUID();
+	ok(id, "UUID: " + id);
+	ok(id.length === 36, "UUID length");
 });
 
 asyncTest("String -> ArrayBuffer -> String", 5, function() {
-	var util = UTIL;
+	var util = new Util(window);
 	
 	var input = "asdf";
 	var buf = util.binStr2ArrBuf(input);
@@ -43,7 +47,7 @@ asyncTest("String -> ArrayBuffer -> String", 5, function() {
 });
 
 asyncTest("Create URL", 2, function() {
-	var util = UTIL;
+	var util = new Util(window);
 	
 	// Create a new Blob and write it to log.txt.
 	var blob = util.arrBuf2Blob('asdf', 'text/plain');

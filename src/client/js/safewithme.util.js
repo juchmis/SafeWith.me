@@ -18,14 +18,30 @@
 
 'use strict';
 
-var UTIL = (function (window, uuid) {
-	var self = {};
+var Util = function(window, uuid) {
+	var self = this;
 	
-	// set browser prefixes for HTML5 Apis in UTIL since it is initialized first
-	window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
-	window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-	window.storageInfo = window.storageInfo || window.webkitStorageInfo;
-	window.URL = window.URL || window.webkitURL || window.mozURL;
+	/**
+	 * Set Vendor prefixes for HTML5 Api and check browser support
+	 */
+	self.checkRuntime = function() {
+		// set vendor prefixes for HTML5 Apis
+		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
+		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+		window.storageInfo = window.storageInfo || window.webkitStorageInfo;
+		window.URL = window.URL || window.webkitURL || window.mozURL;
+
+		// check for browser support
+		if (!window.crypto.getRandomValues ||
+			!window.Worker ||
+			!window.BlobBuilder ||
+			!window.requestFileSystem ||
+			!window.storageInfo) {
+			window.alert('Sorry, your browser doesn\'t support all the necessary HTML5 features yet. Try using Chrome.');
+			return false;
+		}
+		return true;
+	};
 	
 	/**
 	 * Generates a new RFC 4122 version 4 compliant random UUID
@@ -141,5 +157,4 @@ var UTIL = (function (window, uuid) {
 		}
 	};
 	
-	return self;
-}(window, uuid));
+};

@@ -22,8 +22,8 @@
  * This module handles generic caching of both JSON oobjects in LocalStorage
  * as well as Blobs in the local FileSystem
  */
-var CACHE = (function (window) {
-	var self = {};
+var Cache = function(window) {
+	var self = this;
 	
 	//
 	// Object cache using LocalStorage Apis
@@ -139,5 +139,4 @@ var CACHE = (function (window) {
 		console.log('Error', e);
 	}
 	
-	return self;
-}(window));
+};

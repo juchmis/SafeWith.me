@@ -22,8 +22,8 @@
  * This class implements all logic required for filesystem and
  * I/O between the browser's HTML5 File Apis and the application.
  */
-var FS = (function (crypto, server, util, cache,  bucketCache) {
-	var self = {};
+var FS = function(crypto, server, util, cache,  bucketCache) {
+	var self = this;
 	
 	//
 	// BucketFS json model
@@ -414,5 +414,4 @@ var FS = (function (crypto, server, util, cache,  bucketCache) {
 		});
 	};
 	
-	return self;
-}(CRYPTO, SERVER, UTIL, CACHE, BUCKETCACHE));
+};

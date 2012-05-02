@@ -21,8 +21,8 @@
 /**
  * A wrapper for OpenPGP encryption logic
  */
-var CRYPTO = (function (window, openpgp, util, server) {
-	var self = {};
+var Crypto = function(window, openpgp, util, server) {
+	var self = this;
 	
 	var privateKey;		// user's private key
 	var publicKey;		// user's public key
@@ -368,8 +368,7 @@ var CRYPTO = (function (window, openpgp, util, server) {
 		worker.postMessage({type: 'decrypt', key: key, ciphertext: ciphertext});
 	};
 	
-	return self;
-}(window, openpgp, UTIL, SERVER));
+};
 
 /**
  * This function needs to be implemented, since it is used by the openpgp utils
