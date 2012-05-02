@@ -1,9 +1,9 @@
-module("FS");
+module("FS Integration");
 
 asyncTest("Create, Get, Delete Bucket", 16, function() {
 	var util = new Util(window, uuid);
 	var cache = new Cache(window);	
-	var server = new ServerDummy("");
+	var server = new Server(util);
 	var bucketCache = new BucketCache(cache, server);
 	var crypto = new Crypto(window, openpgp, util, server);
 	var fs = new FS(crypto, server, util, cache,  bucketCache);
@@ -83,6 +83,11 @@ asyncTest("Create, Get, Delete Bucket", 16, function() {
 							equal(resp, "", "Remove Bucket");
 
 							deletePublicKey();
+							
+						}, function(err) {
+							// test failed
+							start();
+							return;
 						});
 					});
 				});
@@ -100,11 +105,6 @@ asyncTest("Create, Get, Delete Bucket", 16, function() {
 				equal(resp, "");
 
 				deletePrivateKey();
-			},
-			error: function() {
-				// test failed
-				start();
-				return;
 			}
 		});
 	}

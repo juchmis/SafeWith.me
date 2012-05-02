@@ -21,8 +21,8 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var MENUVIEW = (function ($, menu, server) {
-	var self = {};
+var MenuView = function($, menu, server) {
+	var self = this;
 
 	/**
 	 * init UI
@@ -81,5 +81,4 @@ var MENUVIEW = (function ($, menu, server) {
 		}
 	};
 	
-	return self;
-}($, MENU, SERVER));
+};

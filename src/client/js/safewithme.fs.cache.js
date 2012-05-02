@@ -153,7 +153,11 @@ var BucketCache = function(cache, server) {
 		
 		// get bucket with the same ID from server
 		fs.getBucket(bucketId, function(serverBucket) {
+			// server bucket successfully fetched
 			compareBuckets(cachedBucket, serverBucket);
+		}, function(err) {
+			console.log('Could not fetch bucket from server for sync... using cached!');
+			callback(cachedBucket);
 		});
 		
 		function compareBuckets(cachedBucket, serverBucket) {

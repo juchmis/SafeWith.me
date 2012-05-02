@@ -18,8 +18,8 @@
 
 'use strict';
 
-var MENU = (function (server, cache) {
-	var self = {};
+var Menu = function(server, cache) {
+	var self = this;
 	
 	/**
 	 * Get login status and information from the server
@@ -50,5 +50,4 @@ var MENU = (function (server, cache) {
 		});
 	};
 	
-	return self;
-}(SERVER, CACHE));
+};

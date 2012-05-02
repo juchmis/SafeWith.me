@@ -3,14 +3,14 @@
 /**
  * This class acts as a server mock for tests
  */
-var ServerDummy = function(server, respMock) {
+var ServerDummy = function(respMock) {
 	var self = this;
 	
 	//
 	// Generic REST service requests
 	//
 	
-	server.xhr = function(args) {
+	self.xhr = function(args) {
 		args.success(respMock);
 	};
 
@@ -37,6 +37,8 @@ var ServerDummy = function(server, respMock) {
 	/**
 	 * Deletes a blob from the blobstore
 	 */
-	self.deleteBlob = server.deleteBlob;
+	self.deleteBlob = function(blobKey, callback) {
+		callback("");
+	};
 	
 };

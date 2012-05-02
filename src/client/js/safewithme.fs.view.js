@@ -21,8 +21,8 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var FSVIEW = (function (window, document, $, fs) {
-	var self = {};
+var FSView = function(window, document, $, fs) {
+	var self = this;
 	
 	/**
 	 * init UI
@@ -246,5 +246,4 @@ var FSVIEW = (function (window, document, $, fs) {
 		});
 	};
 	
-	return self;
-}(window, document, $, FS));
+};

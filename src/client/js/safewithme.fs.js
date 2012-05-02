@@ -100,7 +100,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 			expected: 201,
 			success: function(updatedBucket) {
 				console.log('Bucket successfully created on server.');
-				callback(updatedBucket);
+				callback(bucket);
 			},
 			error: function(err) {
 				console.log('No connection to server... bucket not created on server!');
@@ -123,13 +123,17 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 	/**
 	 * Get a bucket by its ID from the server
 	 */
-	self.getBucket = function(bucketId, callback) {
+	self.getBucket = function(bucketId, callback, errCallback) {
 		server.xhr({
 			type: 'GET',
 			uri: '/ws/buckets?id=' + bucketId,
 			expected: 200,
 			success: function(bucket) {
 				callback(bucket);
+			},
+			error: function(err) {
+				console.log('No connection to server... bucket was not fetched!');
+				errCallback(err);
 			}
 		});
 	};
@@ -137,7 +141,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 	/**
 	 * Delete a bucket from the server.
 	 */
-	self.removeBucket = function(bucket, callback) {
+	self.removeBucket = function(bucket, callback, errCallback) {
 		// TODO: delete any containing file blobs
 		
 		// remove from local storage cache
@@ -149,6 +153,9 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 			expected: 200,
 			success: function(resp) {
 				callback(resp);
+			},
+			error: function(e) {
+				errCallback(e);
 			}
 		});
 	};
@@ -194,7 +201,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 			expected: 200,
 			success: function(updatedBucket) {
 				console.log('Bucket successfully updated on server.');
-				callback(updatedBucket);
+				callback(bucket);
 			},
 			error: function(err) {
 				console.log('No connection to server... bucket not updated on server!');

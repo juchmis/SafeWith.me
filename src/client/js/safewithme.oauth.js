@@ -18,8 +18,8 @@
 
 'use strict';
 
-var OAUTH = (function ($, server) {
-	var self = {};
+var OAuth = function($, server) {
+	var self = this;
 	
 	self.init = function() {
 		if (location.hash.substring(1)) {
@@ -62,5 +62,4 @@ var OAUTH = (function ($, server) {
 		return params;
 	};
 	
-	return self;
-}($, SERVER));
+};

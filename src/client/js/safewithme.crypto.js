@@ -200,7 +200,7 @@ var Crypto = function(window, openpgp, util, server) {
 	/**
 	 * Get the keypair from the server and import them into localstorage
 	 */
-	self.fetchKeys = function(email, keyId, callback) {
+	self.fetchKeys = function(email, keyId, callback, errCallback) {
 		var base64Key = window.btoa(keyId);
 		var encodedKeyId = encodeURIComponent(base64Key);
 		
@@ -215,7 +215,7 @@ var Crypto = function(window, openpgp, util, server) {
 			error: function(e) {
 				// if server is not available, just continue
 				console.log('Server unavailable: keys could not be fetched from server!');
-				callback();
+				errCallback(e);
 			}
 		});
 		

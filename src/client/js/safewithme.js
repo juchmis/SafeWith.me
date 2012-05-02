@@ -33,7 +33,13 @@ var SAFEWITHME = (function (window, menuView, cryptoView, fsView) {
 	 * Single point of entry for the application
 	 */
 	self.init = function() {
+		// init presenters
 		var util = new Util(window, uuid);
+		var cache = new Cache(window);	
+		var server = new Server(util);
+		var bucketCache = new BucketCache(cache, server);
+		var crypto = new Crypto(window, openpgp, util, server);
+		var fs = new FS(crypto, server, util, cache,  bucketCache);
 		
 		// check if the browser supports all necessary HTML5 Apis
 		if (!util.checkRuntime()) { return; }

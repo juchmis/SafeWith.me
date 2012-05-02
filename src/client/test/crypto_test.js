@@ -2,7 +2,7 @@ module("Convergent/Symmetric Crypto");
 
 function initCrypto() {
 	var util = new Util(window);
-	var server = new ServerDummy(new Server(util), "");
+	var server = new ServerDummy("");
 	var crypto = new Crypto(window, openpgp, util, server);
 	crypto.setPassphrase('asdf');
 	

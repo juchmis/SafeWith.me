@@ -21,8 +21,8 @@
 /**
  * This class contains all logic that makes changes to the DOM
  */
-var CRYPTOVIEW = (function (window, $, crypto, cache) {
-	var self = {};
+var CryptoView = function(window, $, crypto, cache) {
+	var self = this;
 
 	/**
 	 * init UI
@@ -107,8 +107,16 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 
 				// show loading msg while fetching keys
 				$.mobile.showPageLoadingMsg('a', 'importing keys...');
+				
 				crypto.fetchKeys(loginInfo.email, keyId, function() {
-
+					// keys were successfully fetched from the server
+					tryReadKeysAgain();
+				}, function(err) {
+					// server could not be reached... check keystore anyway
+					tryReadKeysAgain();
+				});
+				
+				function tryReadKeysAgain() {
 					// try to read keys from local storage again
 					if (crypto.readKeys(keyId)) {
 						// go back to app
@@ -117,10 +125,11 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 					} else {
 						window.alert('Key import failed... please check your passphrase!');
 					}
-
+					
 					// hide loading msg
 					$.mobile.hidePageLoadingMsg();
-				});
+				}
+				
 			});
 
 		});
@@ -128,5 +137,4 @@ var CRYPTOVIEW = (function (window, $, crypto, cache) {
 		$.mobile.changePage('importkeys.html', {transition:'slide'});
 	};
 	
-	return self;
-}(window, $, CRYPTO, CACHE));
+};
