@@ -2,6 +2,7 @@ default: help
 
 help:
 	@echo "update         - get latest sources"
+	@echo "ubuntu-install - install the daemon on ubuntu"
 	@echo "minify         - makes JavaScript download and run faster"
 	@echo "server         - starts a fresh server with empty db and blob-store"
 	@echo "clean-chrome   - wipes Chrome's locally cached data"
