@@ -22,9 +22,16 @@ sudo cp -r src /var/www/safewithme
 sudo mkdir /var/www/safewithme/res
 sudo cp res/run_server.sh /var/www/safewithme/res
 
+# copy ssl files (only required the first time)
+sudo cp -r ssl /var/www/safewithme
+
 #create log file
 sudo touch /var/log/safewithme.sys.log
+
+# channge permission
 sudo chown www-data:www-data /var/log/safewithme.sys.log
+sudo chown -R www-data:www-data /var/www/safewithme
+sudo chmod -R 400 /var/www/safewithme/ssl
 
 
 
