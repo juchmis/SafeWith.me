@@ -33,7 +33,7 @@ sudo touch /var/log/safewithme.sys.log
 # channge permission
 sudo chown www-data:www-data /var/log/safewithme.sys.log
 sudo chown -R www-data:www-data /var/www/safewithme
-sudo chmod -R 700 /var/www/safewithme/ssl
+sudo chmod -R 500 /var/www/safewithme/ssl
 
 
 

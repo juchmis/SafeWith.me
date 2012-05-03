@@ -24,7 +24,7 @@ server:
 	@./res/run_server.sh
 
 ubuntu-install:
-	@echo Installing Daemon
+	@echo Installing Daemon...
 	@./res/ubuntu_install.sh
 
 clean-chrome:
