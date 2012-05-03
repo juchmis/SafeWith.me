@@ -23,6 +23,10 @@ server:
 	@echo Starting server...
 	@./res/run_server.sh
 
+ubuntu-install:
+	@echo Installing Daemon
+	@./res/ubuntu_install.sh
+
 clean-chrome:
 	@echo Deleting Chrome LocalStorage, AppCache and FileSystem data
 	@./res/clean_chrome.sh
