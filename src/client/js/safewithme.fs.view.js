@@ -150,18 +150,18 @@ var FSView = function(window, document, $, fs) {
 		// 		   '</div></li>';
 		
 		var anchor = $('<a></a>').attr({
-				id: 'showItem',
-				href: '#',
-				md5: file.md5
-			}).append(file.name);
+			id: 'showItem',
+			href: '#',
+			md5: file.md5
+		}).append(file.name);
 			
 		var deleteBtn = $('<a></a>').attr({
-				id: 'deleteItem',
-				href: '#',
-				md5: file.md5,
-				'data-icon': 'delete',
-				'data-theme': 'c'
-			}).append('Delete');
+			id: 'deleteItem',
+			href: '#',
+			md5: file.md5,
+			'data-icon': 'delete',
+			'data-theme': 'c'
+		}).append('Delete');
 			
 		var item = $('<li></li>').append(anchor).append(deleteBtn);
 		$('#itemList').append(item);
@@ -226,17 +226,38 @@ var FSView = function(window, document, $, fs) {
 			$.mobile.showPageLoadingMsg('a', 'decrypting...');
 			
 		}, function(decryptedUrl) {
-			// hide progress bar
+			// finished decryption hide progress bar
 			$.mobile.hidePageLoadingMsg();
 			
-			// if (file.mimeType === 'application/pdf') {
-			// 	window.location.href = 'pdfjs/viewer.html?file=' + decrypted;
-			// 	return;
-			// }
+			// try displaying the document
+			if (file.mimeType === 'application/pdf') {
+				// diplay pdf
+				displayVeiwer($('<embed></embed>').attr({
+					src: decryptedUrl,
+					width: '100%',
+					height: '90%'
+				}));
+				
+			} else if (file.mimeType.indexOf('image/') === 0) {
+				// display image
+				displayVeiwer($('<img></img>').attr({
+					src: decryptedUrl,
+					width: '100%'
+				}));
+				
+			} else {
+				// just download the file
+				window.location.href = decryptedUrl;
+			}
 			
-			// display the document
-			window.location.href = decryptedUrl;
 		});
+		
+		function displayVeiwer(viewTag) {
+			$('#viewerPage').live('pageinit', function(event) {
+				$('#itemView').html(viewTag);
+			});
+			$.mobile.changePage('viewer.html', {transition:'slide'});
+		}
 	};
 	
 	self.deleteDocItem = function(file) {

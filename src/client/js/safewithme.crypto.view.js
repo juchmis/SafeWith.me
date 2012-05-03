@@ -78,7 +78,7 @@ var CryptoView = function(window, $, crypto, cache) {
 
 			// hide loading msg
 			$.mobile.hidePageLoadingMsg();
-			$.mobile.changePage('keygen.html', {transition:'slide'});
+			$.mobile.changePage('keygen.html', {transition:'slideup'});
 		}
 
 		function keyGenFinished(keyId) {
@@ -134,7 +134,7 @@ var CryptoView = function(window, $, crypto, cache) {
 
 		});
 		
-		$.mobile.changePage('importkeys.html', {transition:'slide'});
+		$.mobile.changePage('importkeys.html', {transition:'slidedown'});
 	};
 	
 };

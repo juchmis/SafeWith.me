@@ -119,6 +119,28 @@ var Util = function(window, uuid) {
 	 * @return [String] either a data url or a filesystem url
 	 */
 	self.createUrl = function(fileName, blob, callback) {
+		
+		// check which url options are available
+		if (window.requestFileSystem && fileName) {
+			// try using HTML5 filesystem api
+			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
+
+		} else if (window.URL) {
+			// use blob URL api
+			var url = window.URL.createObjectURL(blob);
+			// TODO: delete URL
+			callback(url);
+
+		} else {
+			// open file as data url
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				var url = event.target.result;
+				callback(url);
+			};
+			reader.readAsDataURL(blob);
+		}
+		
 		// open file with filesystem apis
 		function onInitFs(fs) {
 			fs.root.getFile(fileName, {create: true}, function(fileEntry) {
@@ -134,8 +156,8 @@ var Util = function(window, uuid) {
 						setTimeout(function() {
 							fileEntry.remove(function() {
 								console.log('Decrypted file removed from temp fs.');
-						    }, errorHandler);
-						}, 500);
+							});
+						}, 1000);
 					};
 					fileWriter.onerror = function(e) {
 					  console.log('Write failed: ' + e.toString());
@@ -143,25 +165,6 @@ var Util = function(window, uuid) {
 					fileWriter.write(blob);
 				});
 			});
-		}
-		
-		if (!window.requestFileSystem && fileName) {
-			// try using HTML5 filesystem api
-			window.requestFileSystem(window.TEMPORARY, blob.size, onInitFs);
-			
-		} else if (!window.URL) {
-			// use blob URL api
-			var url = window.URL.createObjectURL(blob);
-			callback(url);
-			
-		} else {
-			// open file as data url
-			var reader = new FileReader();
-			reader.onload = function(event) {
-				var url = event.target.result;
-				callback(url);
-			};
-			reader.readAsDataURL(blob);
 		}
 	};
 	

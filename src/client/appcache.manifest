@@ -1,6 +1,6 @@
 CACHE MANIFEST
 # SafeWith.me v0.8.1
-# Updated 2012-05-02 12:09
+# Updated 2012-05-02 12:32
 
 CACHE:
 favicon.ico
@@ -9,6 +9,7 @@ menu.html
 about.html
 keygen.html
 importkeys.html
+viewer.html
 css/jquery.mobile-1.1.0.min.css
 css/app.css
 css/images/ajax-loader.gif
