@@ -9,5 +9,4 @@ if [ "$1" = "--wipe" ]; then
 	echo "TODO: --wipe"
 fi
 
-npm install
 node server.js 8888
