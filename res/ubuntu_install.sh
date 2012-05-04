@@ -16,7 +16,7 @@ npm install
 
 # install upstart and monit configurations for server daemon
 cd ../res
-sudo cp safewithme_upstart.conf /etc/init/
+sudo cp safewithme.conf /etc/init/
 sudo cp safewithme_monit.conf /etc/monit/conf.d/
 
 # install webservice to /var/www/
