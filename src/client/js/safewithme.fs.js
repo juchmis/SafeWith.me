@@ -43,22 +43,30 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 		this.root = [];	// format the fs :)
 	};
 	
+	/*
 	self.Directory = function(name) {
+		this.id = util.UUID();		// generate new UUID
 		this.type = "dir";
 		this.name = name;
 		this.created = new Date().toISOString();
 		this.children = [];
 	};
+	*/
 	
-	self.File = function(name, size, mimeType, blobKey, cryptoKey, md5) {
+	self.File = function(name, size, mimeType) {
+		this.id = util.UUID();		// generate new UUID
 		this.type = "file";
 		this.name = name;
 		this.size = size;			// note: this is the unencrypted file size!
 		this.created = new Date().toISOString();
 		this.mimeType = mimeType;
-		this.blobKey = blobKey;		// pointer to the encrypted blob
-		this.cryptoKey = cryptoKey;	// secret key required to decrypt the file
-		this.md5 = md5;				// md5 hash of the encrypted file blob
+		this.keyMap = [];			// an array of objects for the ecnrypted file chunks.
+	};
+	
+	self.KeyMapItem = function(cryptoKey, hash, blobKey) {
+		this.cryptoKey = cryptoKey;	// secret key required to decrypt the file chunk
+		this.hash = hash;			// hash sum of the encrypted file chunk
+		this.blobKey = blobKey;		// pointer to the encrypted server blob (optional)
 	};
 	
 	//
@@ -242,11 +250,11 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 	/**
 	 * Delete a file from the currentyl selected bucket fs
 	 */
-	self.deleteFileFromBucketFS = function(fileBlobKey, bucketFS, bucket, callback) {
+	self.deleteFileFromBucketFS = function(file, bucketFS, bucket, callback) {
 		// rm file from root
 		for (var i = 0; i < bucketFS.root.length; i++) {
 			var current = bucketFS.root[i];
-			if (current.type === 'file' && current.blobKey === fileBlobKey) {
+			if (current.type === 'file' && current.id === file.id) {
 				bucketFS.root.splice(i, 1);
 				break;
 			}
@@ -309,7 +317,10 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 		
 		function createFSFile(file, ctMd5, encryptionkey, blobKey) {
 			// add file to bucket fs
-			var fsFile = new self.File(file.name, file.size, file.type, blobKey, encryptionkey, ctMd5);
+			var fsFile = new self.File(file.name, file.size, file.type);
+			var keyMapItem = new self.KeyMapItem(encryptionkey, ctMd5, blobKey);
+			fsFile.keyMap.push(keyMapItem);
+			
 			var current = bucketCache.current();
 			self.addFileToBucketFS(fsFile, current.bucketFS, current.bucket, function(updatedBucket) {
 				// add link to the file list
@@ -323,15 +334,15 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 	 */
 	self.getFile = function(file, gottenCallback, callback) {
 		// try to fetch blob from the local cache
-		cache.readBlob(file.md5, function(blob) {
+		cache.readBlob(file.keyMap[0].hash, function(blob) {
 			if (blob) {
 				console.log(file.name + ' read from cache.');
 				handleBlob(blob);
 			} else {
 				// get encrypted ArrayBuffer from server
-				server.downloadBlob(file.blobKey, function(blob) {
+				server.downloadBlob(file.keyMap[0].blobKey, function(blob) {
 					// cache the downloaded blob
-					cache.storeBlob(file.md5, blob, function(success) {
+					cache.storeBlob(file.keyMap[0].hash, blob, function(success) {
 						if (success) {
 							handleBlob(blob);
 						} else {
@@ -350,7 +361,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 			util.blob2BinStr(blob, function(encrStr) {
 				
 				// symmetrically decrypt the string
-				crypto.symmetricDecrypt(file.cryptoKey, encrStr, function(pt) {
+				crypto.symmetricDecrypt(file.keyMap[0].cryptoKey, encrStr, function(pt) {
 					
 					// build plaintext blob
 					var blob2 = util.arrBuf2Blob(util.binStr2ArrBuf(pt), file.mimeType);
@@ -368,9 +379,9 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 	 */
 	self.deleteFile = function(file, callback) {
 		// delete from chache
-		cache.removeBlob(file.md5, function(success) {
+		cache.removeBlob(file.keyMap[0].hash, function(success) {
 			// delete from server
-			server.deleteBlob(file.blobKey, function(resp) {
+			server.deleteBlob(file.keyMap[0].blobKey, function(resp) {
 				afterDelete();
 				
 			}, function(e) /* errCallback */ {
@@ -381,7 +392,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 		function afterDelete() {
 			// update bucketFS
 			var current = bucketCache.current();
-			self.deleteFileFromBucketFS(file.blobKey, current.bucketFS, current.bucket, function() {
+			self.deleteFileFromBucketFS(file, current.bucketFS, current.bucket, function() {
 				callback();
 			});
 		}

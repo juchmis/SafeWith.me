@@ -35,7 +35,10 @@ asyncTest("Single bucket: Cache <-> Server", 8, function() {
 			createdBucketId = bucket.id;
 
 			// create file without blob-key to emulate local import without upload
-			var file = new fs.File('Test file1', '4', 'text/plain', undefined, 'cryptoKey', 'md5');
+			var file = new fs.File('Test file1', '4', 'text/plain', undefined);
+			var keyMapItem = new fs.KeyMapItem('cryptoKey', 'md5', 'blobKey');
+			file.keyMap.push(keyMapItem);
+			
 			// add file to fs		
 			bucketFS.root.push(file);
 			var jsonFS = JSON.stringify(bucketFS);

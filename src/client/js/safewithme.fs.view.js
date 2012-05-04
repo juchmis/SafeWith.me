@@ -143,72 +143,66 @@ var FSView = function(window, document, $, fs) {
 	self.addLinkToList = function(file) {
 		$('#helpMsg').remove();
 		
-		// var item = '<li><div>' +
-		// 		   '<a id="deleteItem" href="' + blobKey + '"><i class="icon-remove icon-black"></i></a>' +
-		// 		   '<a id="showItem" href="' + blobKey + '">' + file.name + '</a>' +
-		// 		   '<a id="shareItem" href="' + blobKey + '"><i class="icon-share-alt icon-black"></i></a>' +
-		// 		   '</div></li>';
-		
+		// show document button
 		var anchor = $('<a></a>').attr({
 			id: 'showItem',
 			href: '#',
-			md5: file.md5
+			fileId: file.id
 		}).append(file.name);
-			
-		var deleteBtn = $('<a></a>').attr({
-			id: 'deleteItem',
-			href: '#',
-			md5: file.md5,
-			'data-icon': 'delete',
-			'data-theme': 'c'
-		}).append('Delete');
-			
-		var item = $('<li></li>').append(anchor).append(deleteBtn);
-		$('#itemList').append(item);
-		
-		// show document
-		$('#showItem[md5="' + file.md5 + '"]').click(function(e) {
+
+		anchor.click(function(e) {
 			e.preventDefault();
 			self.showDocItem(file);
 			return false;
 		});
 		
-		// delete document
-		$('#deleteItem[md5="' + file.md5 + '"]').click(function(e) {
+		// delete document button
+		var deleteBtn = $('<a></a>').attr({
+			id: 'deleteItem',
+			href: '#',
+			fileId: file.id,
+			'data-icon': 'delete',
+			'data-theme': 'c'
+		}).append('Delete');
+		
+		deleteBtn.click(function(e) {
 			e.preventDefault();
 			if(confirm('Delete ' + file.name + '?')) {
 				self.deleteDocItem(file);
 			}
 			return false;
 		});
+			
+		var item = $('<li></li>').append(anchor).append(deleteBtn);
+		$('#itemList').append(item);
 		
-		// share document
-		$('#shareItem[md5="' + file.md5 + '"]').click(function(e) {
-			e.preventDefault();
-			$('#shareModal').modal('show');
-			return false;
-		});	
-			
-		$('#shareForm').submit(function(e) {
-			e.preventDefault();
-			
-			var senderEmail = $('#login a').html();
-			var shareEmail = $('#shareEmail').val();
-			
-			if (!shareEmail || shareEmail === '') {
-				alert('You must specify the recipient\'s email!');
-				return false;
-			}
-			
-			fs.shareFile(file, 'shared by ' + senderEmail , shareEmail, function(sharedBucket) {
-				$('#encryptModal').modal('hide');
-			}, function() {
-				$('#shareModal').modal('hide');
-				$('#encryptModal').modal('show');
-			});
-
-			return false;
-		});
+		// // share document
+		// $('#shareItem[fileId="' + file.id + '"]').click(function(e) {
+		// 	e.preventDefault();
+		// 	$('#shareModal').modal('show');
+		// 	return false;
+		// });	
+		// 	
+		// $('#shareForm').submit(function(e) {
+		// 	e.preventDefault();
+		// 	
+		// 	var senderEmail = $('#login a').html();
+		// 	var shareEmail = $('#shareEmail').val();
+		// 	
+		// 	if (!shareEmail || shareEmail === '') {
+		// 		alert('You must specify the recipient\'s email!');
+		// 		return false;
+		// 	}
+		// 	
+		// 	fs.shareFile(file, 'shared by ' + senderEmail , shareEmail, function(sharedBucket) {
+		// 		$('#encryptModal').modal('hide');
+		// 	}, function() {
+		// 		$('#shareModal').modal('hide');
+		// 		$('#encryptModal').modal('show');
+		// 	});
+		// 
+		// 	return false;
+		// });
 
 	};
 
@@ -262,7 +256,7 @@ var FSView = function(window, document, $, fs) {
 	
 	self.deleteDocItem = function(file) {
 		fs.deleteFile(file, function() {
-			$('[md5="' + file.md5 + '"]').remove();
+			$('[fileId="' + file.id + '"]').remove();
 			$('#itemList').listview("refresh");
 		});
 	};
