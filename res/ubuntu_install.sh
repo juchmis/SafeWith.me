@@ -38,3 +38,7 @@ sudo touch $LOG_FILE
 sudo chown www-data:www-data $LOG_FILE
 sudo chown -R www-data:www-data $INSTALL_DIR
 sudo chmod -R 500 $INSTALL_DIR/ssl
+
+# start service
+echo starting server...
+sudo start safewithme
