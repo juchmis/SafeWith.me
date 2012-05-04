@@ -4,7 +4,7 @@
 * FAQ: https://github.com/tanx/SafeWith.me/wiki/FAQ
 * Powered by: http://openpgpjs.org
 
-## Development quick start:
+## Development quick start
 
 Install dependencies (e.g. with Macports):
 
