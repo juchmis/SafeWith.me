@@ -348,8 +348,17 @@ var Crypto = function(window, openpgp, util, server) {
 			callback(e.data);
 		}, false);
 
+		// generate 256bit key and 16 octet prefix
+		var keyBuf = new Uint8Array(32);
+		window.crypto.getRandomValues(keyBuf);
+		var key = util.arrBuf2BinStr(keyBuf);
+		
+		var prefixBuf = new Uint8Array(16);
+		window.crypto.getRandomValues(prefixBuf);
+		var prefix = util.arrBuf2BinStr(prefixBuf);
+		
 		// send plaintext data to the worker
-		worker.postMessage({type: 'encrypt', plaintext: plaintext});
+		worker.postMessage({type: 'encrypt', plaintext: plaintext, key: key, randomPrefix: prefix});
 	};
 
 	/**

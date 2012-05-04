@@ -41,4 +41,4 @@ sudo chmod -R 500 $INSTALL_DIR/ssl
 
 # start service
 echo starting server...
-sudo start safewithme
+sudo restart safewithme

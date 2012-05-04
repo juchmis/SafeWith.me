@@ -38,9 +38,10 @@ var CRYPTOWORKER = (function (symEncrypt, symDecrypt, sha1, sha256) {
 		var args = e.data,
 			output = null;
 			
-		if (args.type === 'encrypt' && args.plaintext) {
+		if (args.type === 'encrypt' && args.plaintext &&
+			args.key && args.key.length === 32 && args.randomPrefix && args.randomPrefix.length === 16) {
 			// start encryption
-			output = self.symmetricEncrypt(args.plaintext);
+			output = self.symmetricEncrypt(args.plaintext, args.key, args.randomPrefix);
 			
 		} else if (args.type === 'decrypt' && args.key && args.ciphertext) {
 			// start decryption
@@ -61,16 +62,10 @@ var CRYPTOWORKER = (function (symEncrypt, symDecrypt, sha1, sha256) {
 	/**
 	 * Deterministic convergent encryption using SHA-1, SHA-256, and 256 bit AES CFB mode
 	 */
-	self.symmetricEncrypt = function(data) {
-		// get sha1 of data
-		var h = sha1(data);
-		// generate 256 bit encryption key
-		var key = sha256(h);
-		// get "random" 16 octet prefix
-		var prefixrandom = sha1(h).substr(0, 16);
+	self.symmetricEncrypt = function(data, key, randomPrefix) {
 		// encrypt using 256 bit AES (9)
-		var ct = symEncrypt(prefixrandom, 9, key, data, 0);
-
+		var ct = symEncrypt(randomPrefix, 9, key, data, 0);
+		
 		return { key: key, ct: ct };
 	};
 
@@ -79,8 +74,7 @@ var CRYPTOWORKER = (function (symEncrypt, symDecrypt, sha1, sha256) {
 	 */
 	self.symmetricDecrypt = function(key, ciphertext) {
 		// decrypt using 256 bit AES (9)
-		var pt = symDecrypt(9, key, ciphertext, 0);
-		return pt;
+		return symDecrypt(9, key, ciphertext, 0);
 	};
 	
 }(openpgp_crypto_symmetricEncrypt, openpgp_crypto_symmetricDecrypt, str_sha1, str_sha256));
