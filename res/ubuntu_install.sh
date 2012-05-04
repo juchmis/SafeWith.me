@@ -14,9 +14,10 @@ cd `dirname $0`
 cd ../src
 npm install
 
-# install upstart script for server daemon
+# install upstart and monit configurations for server daemon
 cd ../res
-sudo cp safewithme.conf /etc/init/
+sudo cp safewithme_upstart.conf /etc/init/
+sudo cp safewithme_monit.conf /etc/monit/conf.d/
 
 # install webservice to /var/www/
 echo installing to $INSTALL_DIR
