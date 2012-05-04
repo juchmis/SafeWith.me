@@ -56,11 +56,11 @@ var CRYPTOWORKER = (function (symEncrypt, symDecrypt, sha1, sha256) {
 	}, false);
 	
 	//
-	// Symmetric/Convergent crypto
+	// Symmetric crypto
 	//
 	
 	/**
-	 * Deterministic convergent encryption using SHA-1, SHA-256, and 256 bit AES CFB mode
+	 * Encryption using symmetric 256 bit AES CFB mode
 	 */
 	self.symmetricEncrypt = function(data, key, randomPrefix) {
 		// encrypt using 256 bit AES (9)

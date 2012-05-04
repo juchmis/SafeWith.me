@@ -333,11 +333,11 @@ var Crypto = function(window, openpgp, util, server) {
 	};
 	
 	//
-	// Symmetric/Convergent crypto
+	// Symmetric crypto
 	//
 	
 	/**
-	 * Deterministic convergent encryption in a web worker thread
+	 * Symmetric encryption in a web worker thread
 	 */
 	self.symmetricEncrypt = function(plaintext, callback) {
 		// init webworker thread
