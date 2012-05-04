@@ -18,14 +18,14 @@ Start the server:
 
 ## Installation on Ubuntu Server (tested on 12.04 LTS AMD64)
 
-Add your ssl certificate files
+Add your ssl certificate files:
 
     cd SafeWith.me  #git repo root
     mkdir ssl
     cp ssl.crt ssl.key sub.class1.server.ca.pem cp.pem ssl/
 
-Install the server daemon (including upstart and monit scripts)
+Install the server daemon (including upstart and monit scripts):
 
     make ubuntu-install
 
-The service should now be available on https://localhost:8888
+The service should now be available at https://localhost:8888 and start automatically on reboot.
