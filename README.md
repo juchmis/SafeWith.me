@@ -26,7 +26,6 @@ Add your ssl certificate files:
 
 Install dependencies
 
-    sudo apt-get update
     sudo apt-get install nodejs npm
 
 Install the server daemon (including upstart and monit scripts):
