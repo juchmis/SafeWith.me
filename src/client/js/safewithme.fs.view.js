@@ -219,39 +219,53 @@ var FSView = function(window, document, $, fs) {
 			$.mobile.hidePageLoadingMsg();
 			$.mobile.showPageLoadingMsg('a', 'decrypting...');
 			
-		}, function(decryptedUrl) {
+		}, function(decryptedUrl, cleanupCallback) {
 			// finished decryption hide progress bar
 			$.mobile.hidePageLoadingMsg();
 			
 			// try displaying the document
+			var viewTag = undefined;
 			if (file.mimeType === 'application/pdf') {
-				// diplay pdf
-				displayVeiwer($('<embed></embed>').attr({
+				viewTag = $('<embed></embed>').attr({
 					src: decryptedUrl,
 					width: '100%',
-					height: '90%'
-				}));
+					height: '84%'
+				});
 				
 			} else if (file.mimeType.indexOf('image/') === 0) {
 				// display image
-				displayVeiwer($('<img></img>').attr({
+				viewTag = $('<img></img>').attr({
 					src: decryptedUrl,
 					width: '100%'
-				}));
+				});
 				
 			} else {
-				// just download the file
-				window.location.href = decryptedUrl;
+				// just display download link
+				viewTag = $('<h1>Preview Unavailable</h1>').addClass('emphasize');
 			}
 			
-		});
-		
-		function displayVeiwer(viewTag) {
 			$('#viewerPage').live('pageinit', function(event) {
+				// set preview
 				$('#itemView').html(viewTag);
+				
+				// wait shortly for the event not to be triggered
+				setTimeout(function() {
+					$(document).bind('pagechange', function(event) {
+						cleanupCallback();
+						$(document).unbind('pagechange');
+					});
+				}, 1000);
+
+				// set download link
+				$('#downloadBtn').attr({
+					href: decryptedUrl,
+					download: file.name
+				});
+				
 			});
 			$.mobile.changePage('viewer.html', {transition:'slide'});
-		}
+			
+		});
 	};
 	
 	self.deleteDocItem = function(file) {

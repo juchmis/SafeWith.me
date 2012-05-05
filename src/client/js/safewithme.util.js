@@ -149,15 +149,14 @@ var Util = function(window, uuid) {
 				fileEntry.createWriter(function(fileWriter) {
 					fileWriter.onwriteend = function(e) {
 						var url = fileEntry.toURL();
-						// return decrypted file url
-						callback(url);
 						
-						// delete file again
-						setTimeout(function() {
+						// return decrypted file url
+						callback(url, function() {
+							// cleanupCallback
 							fileEntry.remove(function() {
 								console.log('Decrypted file removed from temp fs.');
 							});
-						}, 1000);
+						});
 					};
 					fileWriter.onerror = function(e) {
 					  console.log('Write failed: ' + e.toString());

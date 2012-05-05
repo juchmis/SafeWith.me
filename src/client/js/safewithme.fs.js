@@ -366,8 +366,8 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 					// build plaintext blob
 					var blob2 = util.arrBuf2Blob(util.binStr2ArrBuf(pt), file.mimeType);
 					// return either data url or filesystem url
-					util.createUrl(file.name, blob2, function(url) {
-						callback(url);
+					util.createUrl(file.name, blob2, function(url, cleanupCallback) {
+						callback(url, cleanupCallback);
 					});
 				});
 			});
