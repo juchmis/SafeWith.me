@@ -18,15 +18,15 @@ Start the server:
 
 ## Installation on Ubuntu Server (tested on 12.04 LTS AMD64)
 
+Install dependencies
+
+    sudo apt-get install nodejs npm
+
 Add your ssl certificate files:
 
     cd SafeWith.me  #git repo root
     mkdir ssl
     cp ssl.crt ssl.key sub.class1.server.ca.pem cp.pem ssl/
-
-Install dependencies
-
-    sudo apt-get install nodejs npm
 
 Install the server daemon (including upstart and monit scripts):
 
