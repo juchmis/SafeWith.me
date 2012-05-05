@@ -24,6 +24,11 @@ Add your ssl certificate files:
     mkdir ssl
     cp ssl.crt ssl.key sub.class1.server.ca.pem cp.pem ssl/
 
+Install dependencies
+
+    sudo apt-get update
+    sudo apt-get install nodejs npm
+
 Install the server daemon (including upstart and monit scripts):
 
     make ubuntu-install

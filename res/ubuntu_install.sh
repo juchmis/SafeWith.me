@@ -4,10 +4,6 @@
 INSTALL_DIR=/var/www/safewithme
 LOG_FILE=/var/log/safewithme.sys.log
 
-# install required packages
-sudo apt-get update
-sudo apt-get install nodejs npm
-
 cd `dirname $0`
 
 # install node depencies
