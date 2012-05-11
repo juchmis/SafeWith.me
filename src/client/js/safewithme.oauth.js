@@ -18,6 +18,9 @@
 
 'use strict';
 
+/**
+ * A Wrapper for OAuth 2.0 authentication
+ */
 var OAuth = function() {
 	var self = this;
 	
