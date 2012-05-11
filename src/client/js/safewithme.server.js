@@ -42,7 +42,6 @@ var Server = function(util) {
 	 *   responseType: 'arraybuffer',		(optional)
 	 *   body: '{"foo":"bar"}',				(optional)
 	 *   auth: Bearer <OAuth 2.0 token>		(optional)
-	 *   cors: true
 	 *   success: function(resp) {...},
 	 *   error: function(e) {...}
 	 * }
@@ -57,12 +56,6 @@ var Server = function(util) {
 		}
 		if (args.responseType) {
 			xhr.responseType = args.responseType;
-		}
-		
-		// check for CORS support
-		if (args.cors && xhr.withCredentials !== undefined) {
-			// send credentials
-			xhr.withCredentials = true;
 		}
 		
 		// set authentication header

@@ -30,9 +30,9 @@ var GoogleDrive = function(oauth, server) {
 		// check if the url's query string contains oauth token
 		if (location.hash.substring(1)) {
 			// parse the query string
-			var tokenParams = oauth.oauth2Callback();
-			// $('#loginStatus').html(JSON.stringify(tokenParams));
-			self.insert(null, tokenParams.access_token);
+			var oauthParams = oauth.oauth2Callback();
+			// $('#loginStatus').html(JSON.stringify(oauthParams));
+			self.insert(null, oauthParams);
 			
 		} else {
 			// set the login link
@@ -41,18 +41,18 @@ var GoogleDrive = function(oauth, server) {
 		}
 	};
 	
-	self.insert = function(blob, oauthToken, md5, callback, errCallback) {
+	self.insert = function(blob, oauthParams, md5, callback, errCallback) {
 		// first get upload url from blobstore
 		server.xhr({
 			type: 'POST',
 			uri: driveBaseUri,
 			contentType: 'application/json',
-			auth: 'Bearer ' + oauthToken,
+			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
 			body: JSON.stringify({
-				title: 'safe_file.safe',
+				title: 'safe_file',
 				mimeType: 'application/octet-stream'
 			}),
-			expected: 201,
+			expected: 200,
 			success: function(resp) {
 				postBlob();
 			},
