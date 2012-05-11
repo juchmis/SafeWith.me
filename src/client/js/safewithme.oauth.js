@@ -37,12 +37,13 @@ var OAuth = function($, server) {
 	self.getLoginLink = function() {
 		var clientId = '408091009440.apps.googleusercontent.com',
 			redirect_uri = 'http://localhost:8888/oauth2.html',
-			scope = 'https://www.googleapis.com/auth/userinfo.email',
+			scope = encodeURIComponent('https://www.googleapis.com/auth/userinfo.email')
+				+ '+' + encodeURIComponent('https://www.googleapis.com/auth/drive.file'),
 			response_type = 'token';
 
 		var path = '/o/oauth2/auth?client_id=' + encodeURIComponent(clientId)
 			+ '&redirect_uri=' + encodeURIComponent(redirect_uri)
-			+ '&scope=' + encodeURIComponent(scope)
+			+ '&scope=' + scope
 			+ '&response_type=' + encodeURIComponent(response_type);
 		
 		return 'https://accounts.google.com' + path;
