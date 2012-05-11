@@ -10,7 +10,8 @@
     <script type="text/javascript" src="../js/safewithme.oauth.js"></script>
     <script>
       $(function() {
-        OAUTH.init();
+        var oauth = new OAuth($);
+        oauth.init();
       });
     </script>
   </head>
