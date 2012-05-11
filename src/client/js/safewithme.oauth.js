@@ -18,21 +18,8 @@
 
 'use strict';
 
-var OAuth = function($, server) {
+var OAuth = function() {
 	var self = this;
-	
-	self.init = function() {
-		if (location.hash.substring(1)) {
-			// parse the query string
-			var loginParams = self.oauth2Callback();
-			$('#loginStatus').html(JSON.stringify(loginParams));
-			
-		} else {
-			// set the login link
-			var loginUri = self.getLoginLink();
-			$('#loginStatus').attr({ href: loginUri }).html('Login');
-		}
-	};
 	
 	self.getLoginLink = function() {
 		var clientId = '408091009440.apps.googleusercontent.com',

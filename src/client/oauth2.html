@@ -8,10 +8,14 @@
   	<script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../js/safewithme.server.js"></script>
     <script type="text/javascript" src="../js/safewithme.oauth.js"></script>
+    <script type="text/javascript" src="../js/safewithme.gdrive.js"></script>
     <script>
       $(function() {
-        var oauth = new OAuth($);
-        oauth.init();
+        var util = new Util();
+        var server = new Server(util);
+        var oauth = new OAuth();
+        var gdrive = new GoogleDrive(oauth, server);
+        gdrive.init();
       });
     </script>
   </head>
