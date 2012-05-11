@@ -30,8 +30,9 @@ var GoogleDrive = function(oauth, server) {
 		// check if the url's query string contains oauth token
 		if (location.hash.substring(1)) {
 			// parse the query string
-			var loginParams = oauth.oauth2Callback();
-			$('#loginStatus').html(JSON.stringify(loginParams));
+			var tokenParams = oauth.oauth2Callback();
+			// $('#loginStatus').html(JSON.stringify(tokenParams));
+			self.insert(null, tokenParams.access_token);
 			
 		} else {
 			// set the login link
@@ -40,15 +41,20 @@ var GoogleDrive = function(oauth, server) {
 		}
 	};
 	
-	self.insert = function(blob, md5, callback, errCallback) {
+	self.insert = function(blob, oauthToken, md5, callback, errCallback) {
 		// first get upload url from blobstore
 		server.xhr({
 			type: 'POST',
 			uri: driveBaseUri,
 			contentType: 'application/json',
+			auth: 'Bearer ' + oauthToken,
+			body: JSON.stringify({
+				title: 'safe_file.safe',
+				mimeType: 'application/octet-stream'
+			}),
 			expected: 201,
 			success: function(resp) {
-				postBlob(fileId);
+				postBlob();
 			},
 			error: function(e) {
 				errCallback(e);
@@ -61,18 +67,18 @@ var GoogleDrive = function(oauth, server) {
 			formData.append('file', blob);
 			formData.append('md5', md5);
 
-			server.xhr({
-				type: 'POST',
-				uri: postUrl,
-				body: formData,
-				expected: 201,
-				success: function(resp) {
-					callback(resp.blobKey);
-				},
-				error: function(e) {
-					errCallback(e);
-				}
-			});
+			// server.xhr({
+			// 	type: 'POST',
+			// 	uri: postUrl,
+			// 	body: formData,
+			// 	expected: 201,
+			// 	success: function(resp) {
+			// 		callback(resp.blobKey);
+			// 	},
+			// 	error: function(e) {
+			// 		errCallback(e);
+			// 	}
+			// });
 		}
 	};
 	

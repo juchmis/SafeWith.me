@@ -41,6 +41,7 @@ var Server = function(util) {
 	 *   contentType: 'application/json',	(optional)
 	 *   responseType: 'arraybuffer',		(optional)
 	 *   body: '{"foo":"bar"}',				(optional)
+	 *   auth: Bearer <OAuth 2.0 token>		(optional)
 	 *   cors: true
 	 *   success: function(resp) {...},
 	 *   error: function(e) {...}
@@ -62,6 +63,11 @@ var Server = function(util) {
 		if (args.cors && xhr.withCredentials !== undefined) {
 			// send credentials
 			xhr.withCredentials = true;
+		}
+		
+		// set authentication header
+		if (args.auth) {
+			xhr.setRequestHeader('Authorization', args.auth);
 		}
 		
 		// response handler
