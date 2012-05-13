@@ -46,7 +46,7 @@ var Cache = function(window) {
 	};
 	
 	/**
-	 * Removes an object liter from local storage by its key (delete)
+	 * Removes an object literal from local storage by its key (delete)
 	 */
 	self.removeObject = function(key) {
 		window.localStorage.removeItem(key);
