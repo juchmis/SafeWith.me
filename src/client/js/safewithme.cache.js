@@ -129,7 +129,7 @@ var Cache = function(window) {
 				callback(fileEntry);
 			}, errCallback);
 		}
-		// request persisten storage quota
+		// request persistent storage quota
 		window.storageInfo.requestQuota(window.PERSISTENT, 1024*1024*1024 /* 1GB */, function(grantedBytes) {
 			window.requestFileSystem(window.PERSISTENT, grantedBytes, onInitFs, errorHandler);
 		}, errorHandler);
