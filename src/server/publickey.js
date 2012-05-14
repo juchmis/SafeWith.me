@@ -41,3 +41,21 @@ PublicKeyDao.prototype.persist = function(publicKey) {
 	
 	self.emit('persisted', publicKey);
 };
+
+/**
+ * Get the public key by its keyId
+ */
+PublicKeyDao.prototype.readById = function(keyId) {
+	var self = this;
+	
+	self.emit('readId', {keyId:keyId});
+};
+
+/**
+ * Get the public key by its owner email
+ */
+PublicKeyDao.prototype.readByEmail = function(email) {
+	var self = this;
+	
+	self.emit('readEmail', {ownerEmail:email});
+};

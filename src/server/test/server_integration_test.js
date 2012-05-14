@@ -4,74 +4,72 @@ var assert = require('assert'),
 // read port and start testing
 var port = process.argv[2];
 
-initTests(port);
+initTests();
 
 /**
  * Init testcases
  */
-function initTests(port) {
-	testGetLogin(port);
+function initTests() {
+	testGetLogin();
 }
 
-function testGetLogin(port) {
-	console.log('\n--> GET login test started...');
+function testGetLogin() {
+	restTest('GET', '/login', {},
+	function(res, loginStatus, success) {
+		// check response
+		assert.ok(!loginStatus.loggedIn);
+		assert.equal(res.statusCode, 200);
+		success();
 
-	var options = {
-		method: 'GET',
-		host: '127.0.0.1',
-		port: port,
-		path: '/login'
-	};
-
-	// handle response
-	var req = http.request(options, function(res) {
-		resJson(res, function(loginStatus) {
-			// check response
-			assert.ok(!loginStatus.loggedIn);
-			assert.equal(res.statusCode, 200);
-
-			// proceed
-			console.log('--> GET Login test successful!');
-			testPutPublicKey(port);
-		});
+		// proceed
+		testPutPublicKey();
 	});
-
-	reqJson(req, {});
 }
 
-function testPutPublicKey(port) {
-	console.log('\n--> PUT public key test started...');
-
-	var options = {
-		method: 'PUT',
-		host: '127.0.0.1',
-		port: port,
-		path: '/ws/publicKeys'
-	};
-
-	// handle response
-	var req = http.request(options, function(res) {
-		resJson(res, function(publicKey) {
-			// check response
-			assert.equal(publicKey.keyId, '12345');
-			assert.equal(res.statusCode, 200);
-
-			// proceed
-			console.log('--> PUT public key test successful!');
-			endTestProcess();
-		});
-	});
-	
-	reqJson(req, {
+function testPutPublicKey() {
+	restTest('PUT', '/ws/publicKeys', {
 		keyId: '12345',
 		ownerEmail: 'test@asdf.com',
 		asciiArmored: 'ASCII_KEY'
+	},
+	function(res, publicKey, success) {
+		// check response
+		assert.equal(publicKey.keyId, '12345');
+		assert.equal(res.statusCode, 200);
+		success();
+
+		// proceed
+		endTestProcess();
 	});
 }
 
 //
 // Helper methods
 //
+
+function restTest(method, uri, bodyObject, callback) {
+	console.log('\n--> ' + method + ' on ' + uri + ' test started...');
+
+	var options = {
+		method: method,
+		host: '127.0.0.1',
+		port: port,
+		path: uri
+	};
+
+	// handle response
+	var req = http.request(options, function(res) {
+		resJson(res, function(resBody) {
+			// check response
+			callback(res, resBody, function() {
+				// success
+				console.log('--> ' + method + ' on ' + uri + ' test successful!');
+			});
+		});
+	});
+	
+	reqJson(req, bodyObject);
+}
 
 function reqJson(req, object) {
 	// create json request
