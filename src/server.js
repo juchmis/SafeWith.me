@@ -66,7 +66,7 @@ app.get('/login', function(req, res) {
 
 		} else {
 			// no OAuth token... user not logged in
-			sendLoginStatus({ loggedIn: false });
+			resJson(res, 200, { loggedIn: false });
 		}
 	});
 	
@@ -75,19 +75,14 @@ app.get('/login', function(req, res) {
 
 		oauthClient.on('data', function(resBody) {
 			// token is valid... user login verified
-			sendLoginStatus({ loggedIn: true });
+			resJson(res, 200, { loggedIn: true });
 		});
 		oauthClient.on('error', function(code, msg) {
 			console.log(code, msg);
-			respError(res, code, msg);
+			resError(res, code, msg);
 		});
 
 		oauthClient.verifyToken(oauthParams.access_token);
-	}
-	
-	function sendLoginStatus(status) {
-		res.writeHead(200, {'content-type': 'application/json'});
-		res.end(JSON.stringify(status));
 	}
 });
 
@@ -96,9 +91,8 @@ app.get('/login', function(req, res) {
  */
 app.put('/ws/publicKeys', function(req, res) {
 	// parse request
-	reqJson(req, function(publicKey) {	
-		res.writeHead(200, {'content-type': 'application/json'});
-		res.end(JSON.stringify(publicKey));
+	reqJson(req, function(publicKey) {
+		resJson(res, 200, publicKey);
 	});
 });
 
@@ -107,7 +101,7 @@ app.put('/ws/publicKeys', function(req, res) {
 //
 
 /**
- * Parse request JSON
+ * Parse JSON request body
  */
 function reqJson(req, callback) {
 	req.setEncoding('utf8');
@@ -126,12 +120,18 @@ function reqJson(req, callback) {
 }
 
 /**
+ * Create JSON response body
+ */
+function resJson(res, code, object) {
+	res.writeHead(code, {'content-type': 'application/json'});
+	res.end(JSON.stringify(object));
+}
+
+/**
  * Handle error
  */
-function respError(res, code, msg) {
-	var error = { errMsg : msg };
-	res.writeHead(code, {'content-type': 'application/json'});
-	res.end(JSON.stringify(error));
+function resError(res, code, msg) {
+	resJson(res, code, { errMsg: msg });
 }
 
 //
