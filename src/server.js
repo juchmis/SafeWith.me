@@ -120,7 +120,7 @@ function respError(res, code, msg) {
 }
 
 //
-// init server
+// start server
 //
 
 app.listen(port);
