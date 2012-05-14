@@ -17,7 +17,8 @@
  */
 
 var express = require('express'),
-	oauth = require('./server/oauth'),
+	oauthClient = require('./server/oauth').createClient('https://www.googleapis.com', 443),
+	publickeyDao = require('./server/publickey').createDAO(),
 	fs = require('fs'),
 	prot, port, app;
 	
@@ -71,8 +72,6 @@ app.get('/login', function(req, res) {
 	});
 	
 	function verifyOAuthToken(oauthParams) {
-		var oauthClient = oauth.createClient('https://www.googleapis.com', 443);
-
 		oauthClient.on('data', function(resBody) {
 			// token is valid... user login verified
 			resJson(res, 200, { loggedIn: true });
@@ -92,7 +91,12 @@ app.get('/login', function(req, res) {
 app.put('/ws/publicKeys', function(req, res) {
 	// parse request
 	reqJson(req, function(publicKey) {
-		resJson(res, 200, publicKey);
+		// persist
+		publickeyDao.on('persisted', function(persisted) {
+			resJson(res, 200, persisted);
+		});
+		
+		publickeyDao.persist(publicKey);
 	});
 });
 

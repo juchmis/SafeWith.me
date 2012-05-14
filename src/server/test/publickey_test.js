@@ -7,8 +7,8 @@ module("Public Key DAO");
 asyncTest("CRUD", 1, function() {
 	var asciiKey = 'QWFASDFWERASDFASDF';
 	
-	pubkeyDao.on('persisted', function(peristed) {
-		equal(peristed.asciiArmored, asciiKey, 'Persisted public key');
+	pubkeyDao.on('persisted', function(persisted) {
+		equal(persisted.asciiArmored, asciiKey, 'Persisted public key');
 		start();
 	});
 	
