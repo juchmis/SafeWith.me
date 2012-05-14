@@ -92,6 +92,21 @@ app.get('/login', function(req, res) {
 });
 
 /**
+ * PUT: Create/Update public key
+ */
+app.put('/ws/publicKeys', function(req, res) {
+	// parse request
+	reqJson(req, function(publicKey) {	
+		res.writeHead(200, {'content-type': 'application/json'});
+		res.end(JSON.stringify(publicKey));
+	});
+});
+
+//
+// Helper methods
+//
+
+/**
  * Parse request JSON
  */
 function reqJson(req, callback) {
