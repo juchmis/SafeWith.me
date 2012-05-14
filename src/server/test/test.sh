@@ -25,7 +25,7 @@ PID=$!
 sleep 0.5
 
 # run integration tests
-node ./server/test/server_test.js $PORT
+node ./server/test/server_integration_test.js $PORT
 
 # wait for request to terminate
 sleep 0.5
