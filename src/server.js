@@ -55,7 +55,7 @@ app.configure(function(){
 //
 
 /**
- * Verify OAuth token and return respective login status
+ * GET: Login status by verifying user's OAuth token
  */
 app.get('/login', function(req, res) {
 	// parse request
