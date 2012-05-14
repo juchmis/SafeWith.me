@@ -1,6 +1,6 @@
 module = QUnit.module;
 
-var pubkeyDao = require('../publickey').createDao();
+var pubkeyDao = require('../publickey').createDAO();
 
 module("Public Key DAO");
 

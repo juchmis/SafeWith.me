@@ -22,21 +22,21 @@ var util = require('util'),
 /**
  * Factory function for creating the module instance
  */
-exports.createDao = function() {
-	var dao = new PublicKeyDao();
+exports.createDAO = function() {
+	var dao = new PublicKeyDAO();
 	return dao;
 };
 
-function PublicKeyDao() {
+function PublicKeyDAO() {
 	EventEmitter.call(this);
 }
-util.inherits(PublicKeyDao, EventEmitter);
+util.inherits(PublicKeyDAO, EventEmitter);
 
 /**
  * If the user has no public key yet, persist a new one,
  * otherwise update the old key 
  */
-PublicKeyDao.prototype.persist = function(publicKey) {
+PublicKeyDAO.prototype.persist = function(publicKey) {
 	var self = this;
 	
 	self.emit('persisted', publicKey);
@@ -45,7 +45,7 @@ PublicKeyDao.prototype.persist = function(publicKey) {
 /**
  * Get the public key by its keyId
  */
-PublicKeyDao.prototype.readById = function(keyId) {
+PublicKeyDAO.prototype.readById = function(keyId) {
 	var self = this;
 	
 	self.emit('readId', {keyId:keyId});
@@ -54,7 +54,7 @@ PublicKeyDao.prototype.readById = function(keyId) {
 /**
  * Get the public key by its owner email
  */
-PublicKeyDao.prototype.readByEmail = function(email) {
+PublicKeyDAO.prototype.readByEmail = function(email) {
 	var self = this;
 	
 	self.emit('readEmail', {ownerEmail:email});
