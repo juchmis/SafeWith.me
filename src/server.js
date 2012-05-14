@@ -97,13 +97,13 @@ app.get('/login', function(req, res) {
 function reqJson(req, callback) {
 	req.setEncoding('utf8');
 
-	var reqBody = '';
-	req.on('data', function (chunk) {
-		reqBody += chunk;
+	var body = '';
+	req.on('data', function(chunk) {
+		body += chunk;
 	});
-	req.on('end', function () {
+	req.on('end', function() {
 		try {
-			callback(JSON.parse(reqBody));
+			callback(JSON.parse(body));
 		} catch (e) {
 			callback(null);
 		}

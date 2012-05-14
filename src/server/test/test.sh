@@ -6,28 +6,28 @@ cd ../..
 
 QUNIT=./node_modules/qunit/bin/cli.js
 
-PORT=8080
+PORT=8889
 
 echo "\n--> run unit tests..."
 
 # run unit tests
-$QUNIT --code ./server/oauth.js --tests  ./server/test/oauth_test.js
+$QUNIT --code ./server/oauth.js --tests ./server/test/oauth_test.js
 $QUNIT --code ./server/publickey.js --tests ./server/test/publickey_test.js
 
-#echo "\n--> run integration tests...\n"
+echo "\n--> run integration tests...\n"
 
 # start server for integration tests
-#node server.js $PORT &
+node server.js $PORT --nossl &
 
 # get process id
-#PID=$!
+PID=$!
 # wait the service to init
-#sleep 0.5
+sleep 0.5
 
 # run integration tests
-#node ./server/test/server_test.js $PORT
+node ./server/test/server_test.js $PORT
 
 # wait for request to terminate
-#sleep 0.5
+sleep 0.5
 # kill server process
-#kill $PID
+kill $PID
