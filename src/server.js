@@ -20,6 +20,10 @@ var express = require('express'),
 	oauth = require('./server/oauth'),
 	fs = require('fs'),
 	prot, port, app;
+	
+//
+// Server setup
+//
 
 // set port
 if (process.argv[2]) {
@@ -50,31 +54,64 @@ app.configure(function(){
 // REST service mapping
 //
 
+/**
+ * Verify OAuth token and return respective login status
+ */
 app.get('/login', function(req, res) {
-	res.writeHead(200, {'content-type': 'application/json'});
-	res.end(JSON.stringify({loggedIn:false}));
-});
-
-app.get('/oauth2callback', function(req, res) {
-	var oauthClient = oauth.createClient('https://www.googleapis.com', 443);
-	
-	// handle repsonse
-	oauthClient.on('data', function(resBody) {
-		res.writeHead(200, {'content-type': 'application/json'});
-		res.end('{"ok":"true"}');
-	});
-	oauthClient.on('error', function(code, msg) {
-		console.log(code, msg);
-		respError(res, code, msg);
-	});
-	
 	// parse request
-	var access_token = req.query['access_token'];
-	oauthClient.verifyToken(access_token);
+	reqJson(req, function(oauthParams) {
+		if (oauthParams && oauthParams.access_token) {
+			// verify the OAuth token
+			verifyOAuthToken(oauthParams);
+
+		} else {
+			// no OAuth token... user not logged in
+			sendLoginStatus({ loggedIn: false });
+		}
+	});
+	
+	function verifyOAuthToken(oauthParams) {
+		var oauthClient = oauth.createClient('https://www.googleapis.com', 443);
+
+		oauthClient.on('data', function(resBody) {
+			// token is valid... user login verified
+			sendLoginStatus({ loggedIn: true });
+		});
+		oauthClient.on('error', function(code, msg) {
+			console.log(code, msg);
+			respError(res, code, msg);
+		});
+
+		oauthClient.verifyToken(oauthParams.access_token);
+	}
+	
+	function sendLoginStatus(status) {
+		res.writeHead(200, {'content-type': 'application/json'});
+		res.end(JSON.stringify(status));
+	}
 });
 
 /**
- * Global error handling
+ * Parse request JSON
+ */
+function reqJson(req, callback) {
+	req.setEncoding('utf8');
+
+	var reqBody = '';
+	req.on('data', function (chunk) {
+		reqBody += chunk;
+	});
+	req.on('end', function () {
+		try {
+			callback(JSON.parse(reqBody));
+		} catch (e) {
+			callback(null);
+		}
+	});
+}
+
+/**
+ * Handle error
  */
 function respError(res, code, msg) {
 	var error = { errMsg : msg };

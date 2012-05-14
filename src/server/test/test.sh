@@ -11,7 +11,8 @@ PORT=8080
 echo "\n--> run unit tests..."
 
 # run unit tests
-$QUNIT --code ./server/oauth.js --tests ./server/test/oauth_test.js
+$QUNIT --code ./server/oauth.js --tests  ./server/test/oauth_test.js
+$QUNIT --code ./server/publickey.js --tests ./server/test/publickey_test.js
 
 #echo "\n--> run integration tests...\n"
 

@@ -4,7 +4,7 @@ var oauthClient = require('../oauth').createClient('https://www.googleapis.com',
 
 module("OAuth");
 
-asyncTest("verify access_token", 1, function() {
+asyncTest("Verify access_token", 1, function() {
 	oauthClient.on('data', function(resBody) {
 		ok(resBody, 'OAuth verify token response');
 		start();
