@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <title>SafeWith.me Tests</title>
     <link rel="stylesheet" href="qunit-git.css" type="text/css" media="screen" />
+    
+    <!-- include dependencies -->
     <script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="qunit-git.js"></script>
     <script type="text/javascript" src="../js/lib/openpgp.min.js"></script>
@@ -17,12 +19,30 @@
     <script type="text/javascript" src="../js/safewithme.crypto.js"></script>
     <script type="text/javascript" src="../js/safewithme.fs.cache.js"></script>
     <script type="text/javascript" src="../js/safewithme.fs.js"></script>
+    <script type="text/javascript" src="../js/safewithme.oauth.js"></script>
+    <script type="text/javascript" src="../js/safewithme.gdrive.js"></script>
 
     <script type="text/javascript" src="test_data.js"></script>
     
+    <!-- setup -->
     <script>
       // set vendor prefixes for tests
       new Util(window).checkRuntime();
+      
+      $(function() {
+        // check if the url's query string contains oauth token
+      	var oauth = new OAuth(window);
+      	var oauthParams = oauth.oauth2Callback()
+      	if (oauthParams) {
+      	  // show the oauth token on the page
+      		$('#loginStatus').html('OAuth params: ' + JSON.stringify(oauthParams));
+
+      	} else {
+      		// set the login link
+      		var loginUri = oauth.getLoginLink();
+      		$('#loginStatus').attr({ href: loginUri }).html('Login');
+      	}
+      });
     </script>
     
     <!-- dummy objects -->
@@ -40,9 +60,11 @@
     <script type="text/javascript" src="crypto_integration_test.js"></script>
     <script type="text/javascript" src="fs_cache_integration_test.js"></script>
     <script type="text/javascript" src="fs_integration_test.js"></script>
+    <script type="text/javascript" src="gdrive_integration_test.js"></script>
   </head>
   <body>
     <h1 id="qunit-header">SafeWith.me Client Unit &amp; Integration Tests</h1>
+    <a id="loginStatus">OAuth init...</a>
     <h2 id="qunit-banner"></h2>
     <div id="qunit-testrunner-toolbar"></div>
     <h2 id="qunit-userAgent"></h2>

@@ -21,12 +21,12 @@
 /**
  * A Wrapper for OAuth 2.0 authentication
  */
-var OAuth = function() {
+var OAuth = function(window) {
 	var self = this;
 	
 	self.getLoginLink = function() {
 		var clientId = '408091009440.apps.googleusercontent.com',
-			redirect_uri = 'http://localhost:8888/oauth2.html',
+			redirect_uri = window.location.href,
 			scope = encodeURIComponent('https://www.googleapis.com/auth/userinfo.email')
 				+ '+' + encodeURIComponent('https://www.googleapis.com/auth/drive.file'),
 			response_type = 'token';
@@ -44,13 +44,20 @@ var OAuth = function() {
 			queryString = location.hash.substring(1),
 			regex = /([^&=]+)=([^&]*)/g, m;
 		
-		m = regex.exec(queryString);
-		while (m) {
-			params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+		if (queryString) {
+			// parse oauth token from query string
 			m = regex.exec(queryString);
+			while (m) {
+				params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+				m = regex.exec(queryString);
+			}
+			return params;
+			
+		} else {
+			// no query string to parse
+			return null;
 		}
 		
-		return params;
 	};
 	
 };

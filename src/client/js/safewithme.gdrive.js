@@ -21,30 +21,10 @@
 /**
  * A wrapper for Google Drive communication
  */
-var GoogleDrive = function(oauth, util, server) {
+var GoogleDrive = function(util, server) {
 	var self = this;
 	
 	var driveBaseUri = 'https://www.googleapis.com/drive/v1/files';
-	
-	self.init = function() {
-		// check if the url's query string contains oauth token
-		if (location.hash.substring(1)) {
-			// parse the query string
-			var oauthParams = oauth.oauth2Callback();
-			// $('#loginStatus').html(JSON.stringify(oauthParams));
-			
-			// test upload new blob
-			var contents = 'Hello, World!';
-			var buf = util.binStr2ArrBuf(contents);
-			var blob = util.arrBuf2Blob(buf, 'text/plain');
-			self.uploadBlob(blob, oauthParams, md5(contents));
-			
-		} else {
-			// set the login link
-			var loginUri = oauth.getLoginLink();
-			$('#loginStatus').attr({ href: loginUri }).html('Login');
-		}
-	};
 	
 	/**
 	 * Upload a new file blob to Google Drive by first allocating a
@@ -78,6 +58,7 @@ var GoogleDrive = function(oauth, util, server) {
 			server.xhr({
 				type: 'PUT',
 				uri: driveBaseUri + '/' + fileId,
+				auth: oauthParams.token_type + ' ' + oauthParams.access_token,
 				body: formData,
 				expected: 200,
 				success: function(resp) {
@@ -93,10 +74,11 @@ var GoogleDrive = function(oauth, util, server) {
 	/**
 	 * Download a blob from Google Drive
 	 */
-	self.downloadBlob = function(fileId, callback, errCallback) {
+	self.downloadBlob = function(fileId, oauthParams, callback, errCallback) {
 		server.xhr({
 			type: 'GET',
 			uri: driveBaseUri + '/' + fileId,
+			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
 			responseType: 'arraybuffer',
 			expected: 200,
 			success: function(resp) {
@@ -112,10 +94,11 @@ var GoogleDrive = function(oauth, util, server) {
 	/**
 	 * Deletes a blob from Google Drive
 	 */
-	self.deleteBlob = function(fileId, callback, errCallback) {
+	self.deleteBlob = function(fileId, oauthParams, callback, errCallback) {
 		server.xhr({
 			type: 'DELETE',
 			uri: driveBaseUri + '/' + fileId,
+			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
 			expected: 200,
 			success: function(resp) {
 				callback(resp);
