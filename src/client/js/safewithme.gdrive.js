@@ -25,25 +25,40 @@ var GoogleDrive = function(util, server) {
 	var self = this;
 	
 	var driveBaseUri = 'https://www.googleapis.com/drive/v1/files';
+	var driveUploadUri = 'https://www.googleapis.com/upload/drive/v1/files';
 	
 	/**
 	 * Upload a new file blob to Google Drive by first allocating a
 	 * new file resource (POST) and then uploading the file contents (PUT)
 	 */
 	self.uploadBlob = function(blob, oauthParams, md5, callback, errCallback) {
+		
+		var metaData = JSON.stringify({
+			title: 'encrypted_blob_' + md5,
+			mimeType: 'text/plain'
+		});
+		
+		var fileData = 'HelloWorld';
+			
+		var boundary = "287032381131322";
+		var reqBody = '--' + boundary + '\r\n'
+				 // 	             + 'Content-type: application/json\r\n\r\n'
+				 // 	             + metaData + '\r\n'
+				 // + '--' + boundary + '\r\n'
+	             + 'Content-type: text/plain\r\n\r\n'
+	             + fileData + '\r\n'
+				 + '--' + boundary + '--' + '\r\n' ;
+		
 		// first POST new drive file to allocate resource
 		server.xhr({
 			type: 'POST',
 			uri: driveBaseUri,
 			contentType: 'application/json',
 			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
-			body: JSON.stringify({
-				title: 'encrypted_blob_' + md5,
-				mimeType: blob.type
-			}),
+			body: metaData,
 			expected: 200,
 			success: function(created) {
-				uploadBlob(created.id);
+				uploadBlob(created);
 			},
 			error: function(e) {
 				errCallback(e);
@@ -51,18 +66,20 @@ var GoogleDrive = function(util, server) {
 		});
 
 		// then PUT the file contents
-		function uploadBlob(fileId) {
+		function uploadBlob(created) {
+			
 			var formData = new FormData();	// multipart/form-data
-			formData.append('file', blob);
+			formData.append(created.id, blob);
 
 			server.xhr({
 				type: 'PUT',
-				uri: driveBaseUri + '/' + fileId,
+				uri: driveUploadUri + '/' + created.id,
 				auth: oauthParams.token_type + ' ' + oauthParams.access_token,
-				body: formData,
+				contentType: "multipart/form-data; boundary="+boundary,
+				body: reqBody,
 				expected: 200,
 				success: function(resp) {
-					callback(fileId);
+					callback(created.id);
 				},
 				error: function(e) {
 					errCallback(e);

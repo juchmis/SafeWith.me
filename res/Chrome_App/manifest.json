@@ -1,7 +1,7 @@
 {
-  "name": "SafeWith.me (beta)",
-  "description": "SafeWith.me is your portable safe. It lets you store and share files with End-to-End encryption on any device via HTML5.",
-  "version": "0.8.1.1",
+  "name": "SafeWith.me (testing)",
+  "description": "SafeWith.me is your portable safe. It lets you store and share files with End-to-End encryption on Google Drive via HTML5.",
+  "version": "0.8.2.1",
   "container" : "GOOGLE_DRIVE",
   "api_console_project_id" : "408091009440",
   "icons": { "128": "safe-icon-128.png" },

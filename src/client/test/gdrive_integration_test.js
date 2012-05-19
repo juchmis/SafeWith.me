@@ -19,9 +19,9 @@ asyncTest("Upload, Download, Delete blob", 4, function() {
 	
 	function testUpload() {
 		// create test blob
-		var contents = 'Hello, World!';
+		var contents = 'Hello World';
 		var buf = util.binStr2ArrBuf(contents);
-		var blob = util.arrBuf2Blob(buf, 'text/plain');
+		var blob = util.arrBuf2Blob(buf, 'application/octet-stream');
 		
 		// upload to google drive
 		gdrive.uploadBlob(blob, oauthParams, md5(contents), function(fileId) {
