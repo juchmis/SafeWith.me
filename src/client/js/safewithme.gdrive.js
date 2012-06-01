@@ -82,7 +82,7 @@ var GoogleDrive = function(util, server) {
 		});
 		
 		server.xhr({
-			type: 'POST',
+			type: 'PUT',
 			uri: '/driveFile',
 			contentType: 'application/json',
 			responseType: 'arraybuffer',

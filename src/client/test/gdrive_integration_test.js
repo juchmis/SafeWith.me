@@ -25,10 +25,14 @@ asyncTest("Upload, Download, Delete blob", 2, function() {
 		
 		// upload to google drive
 		gdrive.uploadBlob(blob, oauthParams, md5(contents), function(created) {
-			ok(created.id, 'Google Drive created ID');
+			ok(created.id, 'Created ID ' + created.id);
 			
-			gdrive.downloadBlob(created.downloadUrl, oauthParams, function(blob) {
-				start();
+			gdrive.downloadBlob(created.downloadUrl, oauthParams, function(downloaded) {
+				util.blob2BinStr(downloaded, function(binStr) {
+					equal(binStr, contents, 'Downloaded blob');
+					
+					start();
+				});
 			}, function(err) {				
 				// test failed
 				start();

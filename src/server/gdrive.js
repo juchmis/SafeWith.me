@@ -33,7 +33,7 @@ function GDriveClient(host, port) {
 }
 util.inherits(GDriveClient, EventEmitter);
 
-GDriveClient.prototype.downloadBlob = function(driveFile) {
+GDriveClient.prototype.downloadBlob = function(driveFile, callback, errCallback) {
 	var self = this;
 	
 	var options = {
@@ -41,7 +41,9 @@ GDriveClient.prototype.downloadBlob = function(driveFile) {
 		port: 443,
 		path: driveFile.downloadUrl.split('.com')[1],
 		method: 'GET',
-		auth: driveFile.oauthParams.token_type + ' ' + driveFile.oauthParams.access_token 
+		headers: {
+			'Authorization' : driveFile.oauthParams.token_type + ' ' + driveFile.oauthParams.access_token
+		}
 	};
 	
 	var req = https.request(options);
@@ -50,7 +52,8 @@ GDriveClient.prototype.downloadBlob = function(driveFile) {
 	req.on('response', function(res) {
 		if (res.statusCode !== 200) {
 			// handle error
-			self.emit('error', res.statusCode, 'Invalid response from OAuth server!');
+			errCallback(res.statusCode, 'Invalid response from Google Drive Api!');
+			// self.emit('error', res.statusCode, 'Invalid response from Google Drive Api!');
 		
 		} else {
 			// handle ok
@@ -62,14 +65,16 @@ GDriveClient.prototype.downloadBlob = function(driveFile) {
 			});
 			res.on('end', function () {
 				// continue
-				self.emit('data', resBody);
+				callback(resBody);
+				//self.emit('data', resBody);
 			});
 		}
 	});
 
 	// handle errors
 	req.on('error', function(err) {
-		self.emit('error', 500, 'Error while sending verifying OAuth token!');
+		errCallback(500, 'Error while sending request to Google Drive Api!');
+		// self.emit('error', 500, 'Error while sending request to Google Drive Api!');
 	});
 	
 	req.end();

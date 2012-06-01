@@ -88,31 +88,30 @@ app.get('/login', function(req, res) {
 });
 
 /**
- * GET: Proxies Google Drive File requests through server since CORS requests are denied by Google 
+ * PUT: Proxy Google Drive download requests since CORS requests are denied by Google 
  */
-app.post('/driveFile', function(req, res) {
+app.put('/driveFile', function(req, res) {	
 	// parse request
 	var driveFile = req.body;
 	if (driveFile && driveFile.downloadUrl && driveFile.oauthParams) {
 		// verify the OAuth token
-		downloadBlob(driveFile);
+		downloadBlob();
 
 	} else {
 		// invalid request
 		res.send({ errMsg: 'Invalid request' }, 400);
 	}
 	
-	function downloadBlob(driveFile) {
-		gdriveClient.on('data', function(resBody) {
+	function downloadBlob() {		
+		gdriveClient.downloadBlob(driveFile, function(resBody) {
 			// downloading blob successful
-			res.send(resBody, { 'Content-Type': 'application/octet-stream' }, 200);
-		});
-		gdriveClient.on('error', function(code, msg) {
+			res.send(resBody, {'Content-Type': 'application/octet-stream'}, 200);
+			
+		}, function(code, errMsg) {
+			// error
 			console.log(code, msg);
 			res.send({ errMsg: msg }, 500);
 		});
-		
-		gdriveClient.downloadBlob(driveFile);
 	}
 });
 
