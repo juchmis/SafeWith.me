@@ -64,8 +64,16 @@ var GoogleDrive = function(util, server) {
 					'Authorization': oauthParams.token_type + ' ' + oauthParams.access_token,
 					'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
 			    },
-			    'body': multipartRequestBody});
-			request.execute(callback);
+			    'body': multipartRequestBody
+			});
+			
+			request.execute(function(resp) {
+				if (resp.error) {
+					errCallback(resp.error);
+				} else {
+					callback(resp);
+				}
+			});
 		};
 		
 		reader.readAsBinaryString(blob);
