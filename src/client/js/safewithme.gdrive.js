@@ -25,7 +25,6 @@ var GoogleDrive = function(util, server) {
 	var self = this;
 	
 	var driveBaseUri = 'https://www.googleapis.com/drive/v1/files';
-	var driveUploadUri = 'https://www.googleapis.com/upload/drive/v1/files';
 	
 	/**
 	 * Upload a new file blob to Google Drive by first allocating a
@@ -40,7 +39,7 @@ var GoogleDrive = function(util, server) {
 		reader.onload = function(e) {
 			var contentType = blob.type || 'application/octect-stream';
 			var metadata = {
-			  'title': 'encrypted_blob.safe',
+			  'title': 'encrypted.safe',
 			  'mimeType': contentType
 			};
 
@@ -102,9 +101,17 @@ var GoogleDrive = function(util, server) {
 	 * Deletes a blob from Google Drive
 	 */
 	self.deleteBlob = function(fileId, oauthParams, callback, errCallback) {
+		var reqBody = JSON.stringify({
+			labels: {
+				trashed: true
+			}
+		});
+		
 		server.xhr({
-			type: 'DELETE',
+			type: 'PUT',
 			uri: driveBaseUri + '/' + fileId,
+			contentType: 'application/json',
+			body: reqBody,
 			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
 			expected: 200,
 			success: function(resp) {
