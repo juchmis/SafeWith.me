@@ -1,54 +1,71 @@
-module("Integration - Crypto");
+module("Integration - Crypto, Google Drive");
 
-asyncTest("Upload, Download, Delete encrypted blob", 4, function() {
+asyncTest("Upload, Download, Delete encrypted blob", 3, function() {
 	var util = new Util(window);
 	var server = new Server(util);
 	var crypto = new Crypto(window, openpgp, util);
+	var oauth = new OAuth(window);
+	var gdrive = new GoogleDrive(util, server);
 	
-	// build test message
-	var message = 'Hello, World!';
-	
-	// symmetrically encrypt the string
-	crypto.symmetricEncrypt(message, function(ct) {
+	var oauthParams = oauth.oauth2Callback();
+	if (oauthParams) {
+		// if oauth params are present, do test
+		testUpload();
 		
-		// convert binary string to ArrayBuffer
-		var ctAB = util.binStr2ArrBuf(ct.ct);
-		// create blob for uploading
-		var blob = util.arrBuf2Blob(ctAB, 'application/octet-stream');
+	} else {
+		// test failed
+		start();
+		return;
+	}
+	
+	function testUpload() {
+		// build test message
+		var message = 'Hello, World!';
 
-		var ctMd5 = md5(ct.ct);
-		// upload the encrypted blob to the server
-		server.uploadBlob(blob, ctMd5, function(blobKey) {
-			ok(blobKey);
+		// symmetrically encrypt the string
+		crypto.symmetricEncrypt(message, function(ct) {
 
-			// download blob
-			server.downloadBlob(blobKey, function(blob) {
-				ok(blob);
+			// convert binary string to ArrayBuffer
+			var ctAB = util.binStr2ArrBuf(ct.ct);
+			// create blob for uploading
+			var blob = util.arrBuf2Blob(ctAB, 'application/octect-stream');
+			var ctMd5 = md5(ct.ct);
 
-				// read blob as binary string
-				util.blob2BinStr(blob, function(encrStr) {
+			// upload to google drive
+			gdrive.uploadBlob(blob, oauthParams, ctMd5, function(created) {
+				ok(created.id, 'Created ID ' + created.id);
 
-					// symmetrically decrypt the string
-					crypto.symmetricDecrypt(ct.key, encrStr, function(pt) {
-						equal(pt, message);
+				// download
+				gdrive.downloadBlob(created.downloadUrl, oauthParams, function(downloaded) {
+					util.blob2BinStr(downloaded, function(encrStr) {				
 
-						// delete blob again
-						server.deleteBlob(blobKey, function(resp) {
-							equal(resp, "");
+						// symmetrically decrypt the string
+						crypto.symmetricDecrypt(ct.key, encrStr, function(pt) {
+							equal(pt, message);
 
-							start();
+							// delete
+							gdrive.deleteBlob(created.id, oauthParams, function(resp) {
+								ok(resp.labels.trashed, 'Deleted blob');
+
+								start();
+							});
 						});
+
 					});
 				});
+
+			}, function(err) {
+				// test failed
+				start();
+				return;
 			});
-		}, function() {
-			// test failed
-			start();
-			return;
+
 		});
-	});
+	}
 	
 });
+
+module("Integration - Crypto, PKI");
 
 asyncTest("CRUD PGP KeyPair to Server", 8, function() {
 	var util = new Util(window);

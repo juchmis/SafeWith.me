@@ -57,15 +57,13 @@ GDriveClient.prototype.downloadBlob = function(driveFile, callback, errCallback)
 		
 		} else {
 			// handle ok
-			res.setEncoding('utf8');
-
-			var resBody = '';
+			var resChunks = [];
 			res.on('data', function (chunk) {
-				resBody += chunk;
+				resChunks.push(chunk);
 			});
 			res.on('end', function () {
 				// continue
-				callback(resBody);
+				callback(resChunks);
 				//self.emit('data', resBody);
 			});
 		}

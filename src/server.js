@@ -104,9 +104,14 @@ app.put('/driveFile', function(req, res) {
 	}
 	
 	function downloadBlob() {		
-		gdriveClient.downloadBlob(driveFile, function(resBody) {
+		gdriveClient.downloadBlob(driveFile, function(resChunks) {
 			// downloading blob successful
-			res.send(resBody, {'Content-Type': 'application/octet-stream'}, 200);
+			res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
+			// write chunked buffers
+			for (var i in resChunks) {
+				res.write(resChunks[i]);
+			}
+			res.end();
 			
 		}, function(err) {
 			// error
