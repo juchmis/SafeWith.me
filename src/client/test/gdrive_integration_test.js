@@ -1,6 +1,6 @@
 module("Integration - Google Drive");
 
-asyncTest("Upload, Download, Delete blob", 4, function() {
+asyncTest("Upload, Download, Delete blob", 1, function() {
 	var util = new Util(window, uuid);
 	var server = new Server(util);
 	var oauth = new OAuth(window);
@@ -21,11 +21,12 @@ asyncTest("Upload, Download, Delete blob", 4, function() {
 		// create test blob
 		var contents = 'Hello World';
 		var buf = util.binStr2ArrBuf(contents);
-		var blob = util.arrBuf2Blob(buf, 'application/octet-stream');
+		var blob = util.arrBuf2Blob(buf, 'text/plain');
 		
 		// upload to google drive
-		gdrive.uploadBlob(blob, oauthParams, md5(contents), function(fileId) {
-			
+		gdrive.uploadBlob(blob, oauthParams, md5(contents), function(created) {
+			ok(created.id, 'Google Drive created ID');
+			start();
 		}, function(err) {
 			// test failed
 			start();

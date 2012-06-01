@@ -32,60 +32,44 @@ var GoogleDrive = function(util, server) {
 	 * new file resource (POST) and then uploading the file contents (PUT)
 	 */
 	self.uploadBlob = function(blob, oauthParams, md5, callback, errCallback) {
-		
-		var metaData = JSON.stringify({
-			title: 'encrypted_blob_' + md5,
-			mimeType: 'text/plain'
-		});
-		
-		var fileData = 'HelloWorld';
-			
-		var boundary = "287032381131322";
-		var reqBody = '--' + boundary + '\r\n'
-				 // 	             + 'Content-type: application/json\r\n\r\n'
-				 // 	             + metaData + '\r\n'
-				 // + '--' + boundary + '\r\n'
-	             + 'Content-type: text/plain\r\n\r\n'
-	             + fileData + '\r\n'
-				 + '--' + boundary + '--' + '\r\n' ;
-		
-		// first POST new drive file to allocate resource
-		server.xhr({
-			type: 'POST',
-			uri: driveBaseUri,
-			contentType: 'application/json',
-			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
-			body: metaData,
-			expected: 200,
-			success: function(created) {
-				uploadBlob(created);
-			},
-			error: function(e) {
-				errCallback(e);
-			}
-		});
+		var boundary = '-------314159265358979323846';
+		var delimiter = "\r\n--" + boundary + "\r\n";
+		var close_delim = "\r\n--" + boundary + "--";
+	
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var contentType = blob.type || 'application/octect-stream';
+			var metadata = {
+			  'title': 'encrypted_blob.safe',
+			  'mimeType': contentType
+			};
 
-		// then PUT the file contents
-		function uploadBlob(created) {
-			
-			var formData = new FormData();	// multipart/form-data
-			formData.append(created.id, blob);
+			var base64Data = btoa(reader.result);
+			var multipartRequestBody =
+			    delimiter +
+			    'Content-Type: application/json\r\n\r\n' +
+			    JSON.stringify(metadata) +
+			    delimiter +
+			    'Content-Type: ' + contentType + '\r\n' +
+			    'Content-Transfer-Encoding: base64\r\n' +
+			    '\r\n' +
+			    base64Data +
+			    close_delim;
 
-			server.xhr({
-				type: 'PUT',
-				uri: driveUploadUri + '/' + created.id,
-				auth: oauthParams.token_type + ' ' + oauthParams.access_token,
-				contentType: "multipart/form-data; boundary="+boundary,
-				body: reqBody,
-				expected: 200,
-				success: function(resp) {
-					callback(created.id);
-				},
-				error: function(e) {
-					errCallback(e);
-				}
-			});
-		}
+			//gapi.auth.setToken(oauthParams);
+			var request = gapi.client.request({
+			    'path': '/upload/drive/v1/files',
+			    'method': 'POST',
+			    'params': {'uploadType': 'multipart'},
+			    'headers': {
+					'Authorization': oauthParams.token_type + ' ' + oauthParams.access_token,
+					'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+			    },
+			    'body': multipartRequestBody});
+			request.execute(callback);
+		};
+		
+		reader.readAsBinaryString(blob);
 	};
 	
 	/**
