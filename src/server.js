@@ -18,6 +18,7 @@
 
 var express = require('express'),
 	oauthClient = require('./server/oauth').createClient('https://www.googleapis.com', 443),
+	gdriveClient = require('./server/gdrive').createClient(),
 	publickeyDao = require('./server/publickey').createDAO(),
 	fs = require('fs'),
 	prot, port, app;
@@ -47,6 +48,7 @@ if (process.argv[3] === '--nossl') {
 }
 
 app.configure(function(){
+	app.use(express.bodyParser());
     app.use(app.router);
     app.use(express['static'](__dirname + '/client'));
 });
@@ -67,21 +69,50 @@ app.get('/login', function(req, res) {
 
 		} else {
 			// no OAuth token... user not logged in
-			resJson(res, 200, { loggedIn: false });
+			res.send({ loggedIn: false }, 200);
 		}
 	});
 	
 	function verifyOAuthToken(oauthParams) {
 		oauthClient.on('data', function(resBody) {
 			// token is valid... user login verified
-			resJson(res, 200, { loggedIn: true });
+			res.send({ loggedIn: true }, 200);
 		});
 		oauthClient.on('error', function(code, msg) {
 			console.log(code, msg);
-			resError(res, code, msg);
+			res.send({ errMsg: msg }, code);
 		});
 
 		oauthClient.verifyToken(oauthParams.access_token);
+	}
+});
+
+/**
+ * GET: Proxies Google Drive File requests through server since CORS requests are denied by Google 
+ */
+app.post('/driveFile', function(req, res) {
+	// parse request
+	var driveFile = req.body;
+	if (driveFile && driveFile.downloadUrl && driveFile.oauthParams) {
+		// verify the OAuth token
+		downloadBlob(driveFile);
+
+	} else {
+		// invalid request
+		res.send({ errMsg: 'Invalid request' }, 400);
+	}
+	
+	function downloadBlob(driveFile) {
+		gdriveClient.on('data', function(resBody) {
+			// downloading blob successful
+			res.send(resBody, { 'Content-Type': 'application/octet-stream' }, 200);
+		});
+		gdriveClient.on('error', function(code, msg) {
+			console.log(code, msg);
+			res.send({ errMsg: msg }, 500);
+		});
+		
+		gdriveClient.downloadBlob(driveFile);
 	}
 });
 
@@ -90,53 +121,15 @@ app.get('/login', function(req, res) {
  */
 app.put('/ws/publicKeys', function(req, res) {
 	// parse request
-	reqJson(req, function(publicKey) {
-		// persist
-		publickeyDao.on('persisted', function(persisted) {
-			resJson(res, 200, persisted);
-		});
-		
-		publickeyDao.persist(publicKey);
+	var publicKey = req.body;
+	
+	// persist
+	publickeyDao.on('persisted', function(persisted) {
+		res.send(persisted, 200);
 	});
+	
+	publickeyDao.persist(publicKey);
 });
-
-//
-// Helper methods
-//
-
-/**
- * Parse JSON request body
- */
-function reqJson(req, callback) {
-	req.setEncoding('utf8');
-
-	var body = '';
-	req.on('data', function(chunk) {
-		body += chunk;
-	});
-	req.on('end', function() {
-		try {
-			callback(JSON.parse(body));
-		} catch (e) {
-			callback(null);
-		}
-	});
-}
-
-/**
- * Create JSON response body
- */
-function resJson(res, code, object) {
-	res.writeHead(code, {'content-type': 'application/json'});
-	res.end(JSON.stringify(object));
-}
-
-/**
- * Handle error
- */
-function resError(res, code, msg) {
-	resJson(res, code, { errMsg: msg });
-}
 
 //
 // start server

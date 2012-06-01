@@ -75,13 +75,19 @@ var GoogleDrive = function(util, server) {
 	/**
 	 * Download a blob from Google Drive
 	 */
-	self.downloadBlob = function(fileId, oauthParams, callback, errCallback) {
+	self.downloadBlob = function(uri, oauthParams, callback, errCallback) {
+		var reqBody = JSON.stringify({
+			downloadUrl: uri,
+			oauthParams: oauthParams
+		});
+		
 		server.xhr({
-			type: 'GET',
-			uri: driveBaseUri + '/' + fileId,
-			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
+			type: 'POST',
+			uri: '/driveFile',
+			contentType: 'application/json',
 			responseType: 'arraybuffer',
 			expected: 200,
+			body: reqBody,
 			success: function(resp) {
 				var blob = util.arrBuf2Blob(resp, 'application/octet-stream');
 				callback(blob);
