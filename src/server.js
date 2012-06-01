@@ -78,9 +78,10 @@ app.get('/login', function(req, res) {
 			// token is valid... user login verified
 			res.send({ loggedIn: true }, 200);
 		});
-		oauthClient.on('error', function(code, msg) {
-			console.log(code, msg);
-			res.send({ errMsg: msg }, code);
+		oauthClient.on('error', function(err) {
+			// error
+			console.log(err.code, err.msg);
+			res.send({ errMsg: err.msg }, err.code);
 		});
 
 		oauthClient.verifyToken(oauthParams.access_token);
@@ -107,10 +108,10 @@ app.put('/driveFile', function(req, res) {
 			// downloading blob successful
 			res.send(resBody, {'Content-Type': 'application/octet-stream'}, 200);
 			
-		}, function(code, errMsg) {
+		}, function(err) {
 			// error
-			console.log(code, msg);
-			res.send({ errMsg: msg }, 500);
+			console.log(err.code, err.msg);
+			res.send({ errMsg: err.msg }, err.code);
 		});
 	}
 });

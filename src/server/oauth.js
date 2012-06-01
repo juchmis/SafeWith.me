@@ -49,7 +49,7 @@ OAuthClient.prototype.verifyToken = function(token) {
 	req.on('response', function(res) {
 		if (res.statusCode !== 200) {
 			// handle error
-			self.emit('error', res.statusCode, 'Invalid response from OAuth server!');
+			self.emit('error', { code: res.statusCode, msg: 'Invalid response from OAuth server!' });
 		
 		} else {
 			// handle ok
@@ -68,7 +68,7 @@ OAuthClient.prototype.verifyToken = function(token) {
 
 	// handle errors
 	req.on('error', function(err) {
-		self.emit('error', 500, 'Error while sending verifying OAuth token!');
+		self.emit('error', { code: 500, msg: 'Error while sending verifying OAuth token!' });
 	});
 	
 	req.end();

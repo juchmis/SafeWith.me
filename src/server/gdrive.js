@@ -52,7 +52,7 @@ GDriveClient.prototype.downloadBlob = function(driveFile, callback, errCallback)
 	req.on('response', function(res) {
 		if (res.statusCode !== 200) {
 			// handle error
-			errCallback(res.statusCode, 'Invalid response from Google Drive Api!');
+			errCallback({ code: res.statusCode, msg: 'Invalid response from Google Drive Api!' });
 			// self.emit('error', res.statusCode, 'Invalid response from Google Drive Api!');
 		
 		} else {
@@ -73,7 +73,7 @@ GDriveClient.prototype.downloadBlob = function(driveFile, callback, errCallback)
 
 	// handle errors
 	req.on('error', function(err) {
-		errCallback(500, 'Error while sending request to Google Drive Api!');
+		errCallback({ code: 500, msg: 'Error while sending request to Google Drive Api!' });
 		// self.emit('error', 500, 'Error while sending request to Google Drive Api!');
 	});
 	
