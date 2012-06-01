@@ -33,7 +33,7 @@ function GDriveClient(host, port) {
 }
 util.inherits(GDriveClient, EventEmitter);
 
-GDriveClient.prototype.downloadBlob = function(driveFile, callback, errCallback) {
+GDriveClient.prototype.downloadBlob = function(driveFile, outStream, errCallback) {
 	var self = this;
 	
 	var options = {
@@ -53,26 +53,16 @@ GDriveClient.prototype.downloadBlob = function(driveFile, callback, errCallback)
 		if (res.statusCode !== 200) {
 			// handle error
 			errCallback({ code: res.statusCode, msg: 'Invalid response from Google Drive Api!' });
-			// self.emit('error', res.statusCode, 'Invalid response from Google Drive Api!');
 		
 		} else {
-			// handle ok
-			var resChunks = [];
-			res.on('data', function (chunk) {
-				resChunks.push(chunk);
-			});
-			res.on('end', function () {
-				// continue
-				callback(resChunks);
-				//self.emit('data', resBody);
-			});
+			// pipe data stream to response stream
+			res.pipe(outStream);
 		}
 	});
 
 	// handle errors
 	req.on('error', function(err) {
 		errCallback({ code: 500, msg: 'Error while sending request to Google Drive Api!' });
-		// self.emit('error', 500, 'Error while sending request to Google Drive Api!');
 	});
 	
 	req.end();

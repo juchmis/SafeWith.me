@@ -58,20 +58,19 @@ app.configure(function(){
 //
 
 /**
- * GET: Login status by verifying user's OAuth token
+ * PUT: Login status by verifying user's OAuth token
  */
-app.get('/login', function(req, res) {
+app.put('/login', function(req, res) {
 	// parse request
-	reqJson(req, function(oauthParams) {
-		if (oauthParams && oauthParams.access_token) {
-			// verify the OAuth token
-			verifyOAuthToken(oauthParams);
+	var oauthParams = req.body;
+	if (oauthParams && oauthParams.access_token) {
+		// verify the OAuth token
+		verifyOAuthToken(oauthParams);
 
-		} else {
-			// no OAuth token... user not logged in
-			res.send({ loggedIn: false }, 200);
-		}
-	});
+	} else {
+		// no OAuth token... user not logged in
+		res.send({ loggedIn: false }, 200);
+	}
 	
 	function verifyOAuthToken(oauthParams) {
 		oauthClient.on('data', function(resBody) {
@@ -103,17 +102,10 @@ app.put('/driveFile', function(req, res) {
 		res.send({ errMsg: 'Invalid request' }, 400);
 	}
 	
-	function downloadBlob() {		
-		gdriveClient.downloadBlob(driveFile, function(resChunks) {
-			// downloading blob successful
-			res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
-			// write chunked buffers
-			for (var i in resChunks) {
-				res.write(resChunks[i]);
-			}
-			res.end();
-			
-		}, function(err) {
+	function downloadBlob() {
+		res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
+		// pipe data to response stream
+		gdriveClient.downloadBlob(driveFile, res, function(err) {
 			// error
 			console.log(err.code, err.msg);
 			res.send({ errMsg: err.msg }, err.code);

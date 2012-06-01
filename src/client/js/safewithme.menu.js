@@ -27,7 +27,7 @@ var Menu = function(server, cache) {
 	self.getLoginInfo = function(goal, callback) {
 		// init Login anchor
 		server.xhr({
-			type: 'GET',
+			type: 'PUT',
 			uri: '/login?requestUri=' + goal,
 			expected: 200,
 			success: function(loginInfo) {
