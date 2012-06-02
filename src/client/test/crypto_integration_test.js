@@ -32,11 +32,11 @@ asyncTest("Upload, Download, Delete encrypted blob", 3, function() {
 			var ctMd5 = md5(ct.ct);
 
 			// upload to google drive
-			gdrive.uploadBlob(blob, oauthParams, ctMd5, function(created) {
-				ok(created.id, 'Created ID ' + created.id);
+			gdrive.uploadBlob(blob, oauthParams, ctMd5, function(createdId) {
+				ok(createdId, 'Created ID ' + createdId);
 
 				// download
-				gdrive.downloadBlob(created.downloadUrl, oauthParams, function(downloaded) {
+				gdrive.downloadBlob(createdId, oauthParams, function(downloaded) {
 					util.blob2BinStr(downloaded, function(encrStr) {				
 
 						// symmetrically decrypt the string
@@ -44,7 +44,7 @@ asyncTest("Upload, Download, Delete encrypted blob", 3, function() {
 							equal(pt, message);
 
 							// delete
-							gdrive.deleteBlob(created.id, oauthParams, function(resp) {
+							gdrive.deleteBlob(createdId, oauthParams, function(resp) {
 								ok(resp.labels.trashed, 'Deleted blob');
 
 								start();

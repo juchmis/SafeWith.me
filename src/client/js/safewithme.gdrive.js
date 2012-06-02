@@ -71,7 +71,12 @@ var GoogleDrive = function(util, server) {
 				if (resp.error) {
 					errCallback(resp.error);
 				} else {
-					callback(resp);
+					// check md5 checksum
+					if (md5 === resp.md5Checksum) {
+						callback(resp.id);
+					} else {
+						errCallback({errMsg: 'MD5 of uploaded blob does not match!'});
+					}
 				}
 			});
 		};
@@ -82,27 +87,46 @@ var GoogleDrive = function(util, server) {
 	/**
 	 * Download a blob from Google Drive
 	 */
-	self.downloadBlob = function(uri, oauthParams, callback, errCallback) {
-		var reqBody = JSON.stringify({
-			downloadUrl: uri,
-			oauthParams: oauthParams
-		});
-		
+	self.downloadBlob = function(fileId, oauthParams, callback, errCallback) {
+		// first get file downloadUrl from google drive
 		server.xhr({
-			type: 'PUT',
-			uri: '/driveFile',
-			contentType: 'application/json',
-			responseType: 'arraybuffer',
+			type: 'GET',
+			uri: driveBaseUri + '/' + fileId,
+			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
 			expected: 200,
-			body: reqBody,
-			success: function(resp) {
-				var blob = util.arrBuf2Blob(resp, 'application/octet-stream');
-				callback(blob);
+			success: function(file) {
+				proxyDownload(file.downloadUrl);
 			},
 			error: function(e) {
 				errCallback(e);
 			}
 		});
+		
+		// proxy the download of the google drive file through the server,
+		// since google drive doesn't allow CORS requests for this
+		function proxyDownload(downloadUrl) {
+			var reqBody = JSON.stringify({
+				downloadUrl: downloadUrl,
+				oauthParams: oauthParams
+			});
+
+			server.xhr({
+				type: 'PUT',
+				uri: '/driveFile',
+				contentType: 'application/json',
+				responseType: 'arraybuffer',
+				expected: 200,
+				body: reqBody,
+				success: function(resp) {
+					var blob = util.arrBuf2Blob(resp, 'application/octet-stream');
+					callback(blob);
+				},
+				error: function(e) {
+					errCallback(e);
+				}
+			});
+		}
+		
 	};
 	
 	/**
