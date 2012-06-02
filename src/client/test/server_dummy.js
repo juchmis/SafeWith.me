@@ -22,7 +22,7 @@ var ServerDummy = function(respMock) {
 	 * Upload a file by first getting an upload url and then posting
 	 * the file data to the specified uri
 	 */
-	self.uploadBlob = function(blob, md5, callback, errCallback) {
+	self.uploadBlob = function(blob, oauthParams, md5, callback, errCallback) {
 		this._blob = blob;
 		callback('dummyBlobKey');
 	};
@@ -30,14 +30,14 @@ var ServerDummy = function(respMock) {
 	/**
 	 * Download a blob from the blobstore
 	 */
-	self.downloadBlob = function(blobKey, callback, errCallback) {
+	self.downloadBlob = function(blobKey, oauthParams, callback, errCallback) {
 		callback(this._blob);
 	};
 	
 	/**
 	 * Deletes a blob from the blobstore
 	 */
-	self.deleteBlob = function(blobKey, callback) {
+	self.deleteBlob = function(blobKey, oauthParams, callback) {
 		callback("");
 	};
 	

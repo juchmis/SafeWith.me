@@ -1,4 +1,4 @@
-module("Integration - FS");
+module("Integration - FS, Google Drive");
 
 asyncTest("Create, Get, Delete Bucket", 16, function() {
 	var util = new Util(window, uuid);
@@ -6,26 +6,41 @@ asyncTest("Create, Get, Delete Bucket", 16, function() {
 	var server = new Server(util);
 	var bucketCache = new BucketCache(cache, server);
 	var crypto = new Crypto(window, openpgp, util, server);
-	var fs = new FS(crypto, server, util, cache,  bucketCache);
+	var oauth = new OAuth(window);
+	var gdrive = new GoogleDrive(util, server);
+	var fs = new FS(crypto, server, util, cache,  bucketCache, gdrive);
 	
-	var email = "test@example.com";
-	var publicKeyId = undefined;
-	
-	// create public key
-	crypto.setPassphrase('asdf');
-	
-	var keys = crypto.generateKeys(1024);
-	var keyId = keys.privateKey.getKeyId();
-	ok(crypto.readKeys(keyId));
-	
-	// try to sync to server
-	crypto.syncKeysToServer('test@example.com', function(keyId) {
-		ok(keyId, 'keyId: ' + keyId);
+	var oauthParams = oauth.oauth2Callback();
+	if (oauthParams) {
+		// if oauth params are present, do test
+		startTests();
 		
-		publicKeyId = window.btoa(keyId);
+	} else {
+		// test failed
+		start();
+		return;
+	}
+	
+	function startTests() {
+		var email = "test@example.com";
+		var publicKeyId = undefined;
+	
+		// create public key
+		crypto.setPassphrase('asdf');
+	
+		var keys = crypto.generateKeys(1024);
+		var keyId = keys.privateKey.getKeyId();
+		ok(crypto.readKeys(keyId));
+	
+		// try to sync to server
+		crypto.syncKeysToServer('test@example.com', function(keyId) {
+			ok(keyId, 'keyId: ' + keyId);
+		
+			publicKeyId = window.btoa(keyId);
 
-		createTestData();
-	});
+			createTestData();
+		});
+	}
 	
 	function createTestData() {
 		// create bucket
@@ -90,9 +105,11 @@ asyncTest("Create, Get, Delete Bucket", 16, function() {
 							return;
 						});
 					});
-				});
-			});
-		});
+				}, oauthParams);
+				
+			}, oauthParams);
+			
+		}, oauthParams);
 	}
 	
 	// cleanup

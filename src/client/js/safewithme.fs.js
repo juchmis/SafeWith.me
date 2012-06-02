@@ -22,7 +22,7 @@
  * This class implements all logic required for filesystem and
  * I/O between the browser's HTML5 File Apis and the application.
  */
-var FS = function(crypto, server, util, cache,  bucketCache) {
+var FS = function(crypto, server, util, cache,  bucketCache, gdrive) {
 	var self = this;
 	
 	//
@@ -274,7 +274,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 	 * using the HTML5 FileReader Api, encrypts the file locally
 	 * and upload encrypted blob to server
 	 */
-	self.storeFile = function(file, encryptedCallback, callback) {
+	self.storeFile = function(file, encryptedCallback, callback, oauthParams) {
 		// convert file/blob to binary string
 		util.blob2BinStr(file, function(binStr) {
 			// symmetrically encrypt the string
@@ -303,7 +303,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 		
 		function persistOnServer(blob, file, ctMd5, encryptionkey) {
 			// send encrypted file blob to server
-			server.uploadBlob(blob, ctMd5, function(blobKey) {
+			gdrive.uploadBlob(blob, oauthParams, ctMd5, function(blobKey) {
 				// store file and file-metadata in BucketFS with blob-key
 				console.log(file.name + ' encrypted blob uploaded successful!');
 				createFSFile(file, ctMd5, encryptionkey, blobKey);
@@ -332,7 +332,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 	/**
 	 * Downloads the encrypted document and decrypt it
 	 */
-	self.getFile = function(file, gottenCallback, callback) {
+	self.getFile = function(file, gottenCallback, callback, oauthParams) {
 		// try to fetch blob from the local cache
 		cache.readBlob(file.keyMap[0].hash, function(blob) {
 			if (blob) {
@@ -340,7 +340,7 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 				handleBlob(blob);
 			} else {
 				// get encrypted ArrayBuffer from server
-				server.downloadBlob(file.keyMap[0].blobKey, function(blob) {
+				gdrive.downloadBlob(file.keyMap[0].blobKey, oauthParams, function(blob) {
 					// cache the downloaded blob
 					cache.storeBlob(file.keyMap[0].hash, blob, function(success) {
 						if (success) {
@@ -377,11 +377,11 @@ var FS = function(crypto, server, util, cache,  bucketCache) {
 	/**
 	 * Deletes an encrypted file blob and removes it from the bucket FS
 	 */
-	self.deleteFile = function(file, callback) {
+	self.deleteFile = function(file, callback, oauthParams) {
 		// delete from chache
 		cache.removeBlob(file.keyMap[0].hash, function(success) {
 			// delete from server
-			server.deleteBlob(file.keyMap[0].blobKey, function(resp) {
+			gdrive.deleteBlob(file.keyMap[0].blobKey, oauthParams, function(resp) {
 				afterDelete();
 				
 			}, function(e) /* errCallback */ {

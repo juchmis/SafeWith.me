@@ -6,7 +6,7 @@ asyncTest("Create, Get, Delete Bucket", 16, function() {
 	var server = new ServerDummy("");
 	var bucketCache = new BucketCache(cache, server);
 	var crypto = new Crypto(window, openpgp, util, server);
-	var fs = new FS(crypto, server, util, cache,  bucketCache);
+	var fs = new FS(crypto, server, util, cache,  bucketCache, server);
 	
 	var email = "test@example.com";
 	var publicKeyId = undefined;
