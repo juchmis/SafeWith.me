@@ -12,7 +12,7 @@ Install dependencies (e.g. with Macports):
     cd src
     npm install
 
-Start the server:
+Start the server on http://localhost:8888:
 
     node server.js 8888 --nossl
 
