@@ -24,7 +24,7 @@
 var GoogleDrive = function(util, server) {
 	var self = this;
 	
-	var driveBaseUri = 'https://www.googleapis.com/drive/v1/files';
+	var driveBaseUri = 'https://www.googleapis.com/drive/v2/files';
 	
 	/**
 	 * Upload a new file blob to Google Drive by first allocating a
