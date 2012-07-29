@@ -95,28 +95,21 @@ var GoogleDrive = function(util, server) {
 			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
 			expected: 200,
 			success: function(file) {
-				proxyDownload(file.downloadUrl);
+				corsDownload(file.downloadUrl);
 			},
 			error: function(e) {
 				errCallback(e);
 			}
 		});
 		
-		// proxy the download of the google drive file through the server,
-		// since google drive doesn't allow CORS requests for this
-		function proxyDownload(downloadUrl) {
-			var reqBody = JSON.stringify({
-				downloadUrl: downloadUrl,
-				oauthParams: oauthParams
-			});
-
+		// then download the file contents with a CORS request
+		function corsDownload(downloadUrl) {
 			server.xhr({
-				type: 'PUT',
-				uri: '/driveFile',
-				contentType: 'application/json',
+				type: 'GET',
+				uri: downloadUrl,
+				auth: oauthParams.token_type + ' ' + oauthParams.access_token,
 				responseType: 'arraybuffer',
 				expected: 200,
-				body: reqBody,
 				success: function(resp) {
 					var blob = util.arrBuf2Blob(resp, 'application/octet-stream');
 					callback(blob);
@@ -126,7 +119,6 @@ var GoogleDrive = function(util, server) {
 				}
 			});
 		}
-		
 	};
 	
 	/**

@@ -88,32 +88,6 @@ app.put('/login', function(req, res) {
 });
 
 /**
- * PUT: Proxy Google Drive download requests since CORS requests are denied by Google 
- */
-app.put('/driveFile', function(req, res) {	
-	// parse request
-	var driveFile = req.body;
-	if (driveFile && driveFile.downloadUrl && driveFile.oauthParams) {
-		// verify the OAuth token
-		downloadBlob();
-
-	} else {
-		// invalid request
-		res.send({ errMsg: 'Invalid request' }, 400);
-	}
-	
-	function downloadBlob() {
-		res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
-		// pipe data to response stream
-		gdriveClient.downloadBlob(driveFile, res, function(err) {
-			// error
-			console.log(err.code, err.msg);
-			res.send({ errMsg: err.msg }, err.code);
-		});
-	}
-});
-
-/**
  * PUT: Create/Update public key
  */
 app.put('/ws/publicKeys', function(req, res) {
