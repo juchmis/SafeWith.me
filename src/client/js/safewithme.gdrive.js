@@ -57,7 +57,7 @@ var GoogleDrive = function(util, server) {
 
 			//gapi.auth.setToken(oauthParams);
 			var request = gapi.client.request({
-			    'path': '/upload/drive/v1/files',
+			    'path': '/upload/drive/v2/files',
 			    'method': 'POST',
 			    'params': {'uploadType': 'multipart'},
 			    'headers': {
