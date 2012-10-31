@@ -26,7 +26,6 @@ var Util = function(window, uuid) {
 	 */
 	self.checkRuntime = function() {
 		// set vendor prefixes for HTML5 Apis
-		window.BlobBuilder =  window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 		window.storageInfo = window.storageInfo || window.webkitStorageInfo;
 		window.URL = window.URL || window.webkitURL || window.mozURL;
@@ -34,7 +33,6 @@ var Util = function(window, uuid) {
 		// check for browser support
 		if (!window.crypto.getRandomValues ||
 			!window.Worker ||
-			!window.BlobBuilder ||
 			!window.requestFileSystem ||
 			!window.storageInfo) {
 			window.alert('Sorry, your browser doesn\'t support all the necessary HTML5 features yet. Try using Chrome.');
@@ -72,9 +70,7 @@ var Util = function(window, uuid) {
 	 * @return [ArrayBuffer] either a data url or a filesystem url
 	 */
 	self.arrBuf2Blob = function(buf, mimeType) {
-		var bb = new BlobBuilder();
-		bb.append(buf);
-		var blob = bb.getBlob(mimeType);
+		var blob = new Blob([buf], {type: mimeType});
 		
 		return blob;
 	};

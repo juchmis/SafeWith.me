@@ -9,7 +9,7 @@ test("JQuery and basic requirements", 13, function() {
 	ok( jQuery, "jQuery" );
 	ok( $, "$" );
 	ok( window.Worker, "Web Worker" );
-	ok( window.BlobBuilder, "BlobBuilder Api" );
+	ok( window.Blob, "BlobBuilder Api" );
 	ok( window.requestFileSystem, "FileSystem Api" );
 	ok( window.URL, "ObjectURL Api" );
 	ok( window.storageInfo, "StorageInfo Api" );
