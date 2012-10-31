@@ -86,12 +86,12 @@ asyncTest("Create, Get, Delete Bucket", 16, function() {
 
 				// delete file from bucket fs
 				fs.deleteFile(file, function() {
-					equal(bucketFS.root.length, 0);
+					equal(bucketFS.root.length, 0, "Check FS has 0 elems");
 
 					// test getAllBuckets
 					fs.getBuckets(publicKeyId, function(bucketPointers) {
-						ok(bucketPointers);
-						ok(bucketPointers.length >= 1);
+						ok(bucketPointers, "BucketPointers not null");
+						ok(bucketPointers.length >= 1, "Syncronized Server Buckets");
 
 						// remove the created bucket
 						fs.removeBucket(bucket, function(resp) {
