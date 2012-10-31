@@ -1,6 +1,6 @@
 module("Integration - Google Drive");
 
-asyncTest("Upload, Download, Delete blob", 3, function() {
+asyncTest("Upload, Update, Download, Delete blob", 5, function() {
 	var util = new Util(window, uuid);
 	var server = new Server(util);
 	var oauth = new OAuth(window);
@@ -32,11 +32,38 @@ asyncTest("Upload, Download, Delete blob", 3, function() {
 				util.blob2BinStr(downloaded, function(binStr) {
 					equal(binStr, contents, 'Downloaded blob');
 					
-					// delete
-					gdrive.deleteBlob(createdId, oauthParams, function(resp) {
-						ok(resp.labels.trashed, 'Deleted blob');
+					// create updated blob
+					var contents2 = 'Hello';
+					var buf2 = util.binStr2ArrBuf(contents2);
+					var blob2 = util.arrBuf2Blob(buf2, 'text/plain');
+					
+					// update blob
+					gdrive.updateBlob(createdId, blob2, oauthParams, md5(contents2), function(updatedId) {
+						ok(createdId, 'Updated ID ' + updatedId);
 						
+						// download and check updated blob
+						gdrive.downloadBlob(createdId, oauthParams, function(downloadedUpd) {
+							util.blob2BinStr(downloadedUpd, function(binStrUpd) {
+								equal(binStrUpd, contents2, 'Downloaded updated blob');
+
+								// delete
+								gdrive.deleteBlob(createdId, oauthParams, function(resp) {
+									ok(resp.labels.trashed, 'Deleted blob');
+
+									start();
+								});
+
+							});
+						}, function(err) {				
+							// test failed
+							start();
+							return;
+						});
+						
+					}, function(err) {				
+						// test failed
 						start();
+						return;
 					});
 					
 				});

@@ -85,6 +85,64 @@ var GoogleDrive = function(util, server) {
 	};
 	
 	/**
+	 * Update an existing file blob on Google Drive by ID and an upload of
+	 * the file contents (PUT)
+	 */
+	self.updateBlob = function(fileId, blob, oauthParams, md5, callback, errCallback) {
+		var boundary = '-------314159265358979323846';
+		var delimiter = "\r\n--" + boundary + "\r\n";
+		var close_delim = "\r\n--" + boundary + "--";
+	
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var contentType = blob.type || 'application/octect-stream';
+			var metadata = {
+			  'title': 'encrypted.safe',
+			  'mimeType': contentType
+			};
+
+			var base64Data = btoa(reader.result);
+			var multipartRequestBody =
+			    delimiter +
+			    'Content-Type: application/json\r\n\r\n' +
+			    JSON.stringify(metadata) +
+			    delimiter +
+			    'Content-Type: ' + contentType + '\r\n' +
+			    'Content-Transfer-Encoding: base64\r\n' +
+			    '\r\n' +
+			    base64Data +
+			    close_delim;
+
+			//gapi.auth.setToken(oauthParams);
+			var request = gapi.client.request({
+			    'path': '/upload/drive/v2/files/' + fileId,
+			    'method': 'PUT',
+			    'params': {'uploadType': 'multipart'},
+			    'headers': {
+					'Authorization': oauthParams.token_type + ' ' + oauthParams.access_token,
+					'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+			    },
+			    'body': multipartRequestBody
+			});
+			
+			request.execute(function(resp) {
+				if (resp.error) {
+					errCallback(resp.error);
+				} else {
+					// check md5 checksum
+					if (md5 === resp.md5Checksum) {
+						callback(resp.id);
+					} else {
+						errCallback({errMsg: 'MD5 of uploaded blob does not match!'});
+					}
+				}
+			});
+		};
+		
+		reader.readAsBinaryString(blob);
+	};
+	
+	/**
 	 * Download a blob from Google Drive
 	 */
 	self.downloadBlob = function(fileId, oauthParams, callback, errCallback) {
