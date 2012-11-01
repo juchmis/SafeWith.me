@@ -8,6 +8,7 @@ asyncTest("Upload, Update, Download, Delete blob", 5, function() {
 	
 	var oauthParams = oauth.oauth2Callback();
 	if (oauthParams) {
+		gdrive.oauthParams = oauthParams;
 		// if oauth params are present, do test
 		testUpload();
 		
@@ -24,11 +25,11 @@ asyncTest("Upload, Update, Download, Delete blob", 5, function() {
 		var blob = util.arrBuf2Blob(buf, 'text/plain');
 		
 		// upload to google drive
-		gdrive.uploadBlob(blob, oauthParams, md5(contents), function(createdId) {
+		gdrive.uploadBlob(blob, md5(contents), function(createdId) {
 			ok(createdId, 'Created ID ' + createdId);
 			
 			// download
-			gdrive.downloadBlob(createdId, oauthParams, function(downloaded) {
+			gdrive.downloadBlob(createdId, function(downloaded) {
 				util.blob2BinStr(downloaded, function(binStr) {
 					equal(binStr, contents, 'Downloaded blob');
 					
@@ -38,16 +39,16 @@ asyncTest("Upload, Update, Download, Delete blob", 5, function() {
 					var blob2 = util.arrBuf2Blob(buf2, 'text/plain');
 					
 					// update blob
-					gdrive.updateBlob(createdId, blob2, oauthParams, md5(contents2), function(updatedId) {
+					gdrive.updateBlob(createdId, blob2, md5(contents2), function(updatedId) {
 						ok(createdId, 'Updated ID ' + updatedId);
 						
 						// download and check updated blob
-						gdrive.downloadBlob(createdId, oauthParams, function(downloadedUpd) {
+						gdrive.downloadBlob(createdId, function(downloadedUpd) {
 							util.blob2BinStr(downloadedUpd, function(binStrUpd) {
 								equal(binStrUpd, contents2, 'Downloaded updated blob');
 
 								// delete
-								gdrive.deleteBlob(createdId, oauthParams, function(resp) {
+								gdrive.deleteBlob(createdId, function(resp) {
 									ok(resp.labels.trashed, 'Deleted blob');
 
 									start();

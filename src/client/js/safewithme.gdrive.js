@@ -29,22 +29,22 @@ var GoogleDrive = function(util, server) {
 	 * Upload a new file blob to Google Drive by first allocating a
 	 * new file resource (POST) and then uploading the file contents (PUT)
 	 */
-	self.uploadBlob = function(blob, oauthParams, md5, callback, errCallback) {		
-		uploadHelper('POST', '/upload/drive/v2/files', blob, oauthParams, md5, callback, errCallback);
+	self.uploadBlob = function(blob, md5, callback, errCallback) {		
+		uploadHelper('POST', '/upload/drive/v2/files', blob, md5, callback, errCallback);
 	};
 	
 	/**
 	 * Update an existing file blob on Google Drive by ID and an upload of
 	 * the file contents (PUT)
 	 */
-	self.updateBlob = function(fileId, blob, oauthParams, md5, callback, errCallback) {		
-		uploadHelper('PUT', '/upload/drive/v2/files/' + fileId, blob, oauthParams, md5, callback, errCallback);
+	self.updateBlob = function(fileId, blob, md5, callback, errCallback) {		
+		uploadHelper('PUT', '/upload/drive/v2/files/' + fileId, blob, md5, callback, errCallback);
 	};
 	
 	/**
 	 * Private upload helper method
 	 */
-	var uploadHelper = function(method, path, blob, oauthParams, md5, callback, errCallback) {
+	var uploadHelper = function(method, path, blob, md5, callback, errCallback) {
 		var boundary = '-------314159265358979323846';
 		var delimiter = "\r\n--" + boundary + "\r\n";
 		var close_delim = "\r\n--" + boundary + "--";
@@ -71,13 +71,12 @@ var GoogleDrive = function(util, server) {
 			    base64Data +
 			    close_delim;
 
-			//gapi.auth.setToken(oauthParams);
 			var request = gapi.client.request({
 			    'path': path,
 			    'method': method,
 			    'params': {'uploadType': 'multipart'},
 			    'headers': {
-					'Authorization': oauthParams.token_type + ' ' + oauthParams.access_token,
+					'Authorization': self.oauthParams.token_type + ' ' + self.oauthParams.access_token,
 					'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
 			    },
 			    'body': multipartRequestBody
@@ -103,12 +102,12 @@ var GoogleDrive = function(util, server) {
 	/**
 	 * Download a blob from Google Drive
 	 */
-	self.downloadBlob = function(fileId, oauthParams, callback, errCallback) {
+	self.downloadBlob = function(fileId, callback, errCallback) {
 		// first get file downloadUrl from google drive
 		server.xhr({
 			type: 'GET',
 			uri: driveBaseUri + '/' + fileId,
-			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
+			auth: self.oauthParams.token_type + ' ' + self.oauthParams.access_token,
 			expected: 200,
 			success: function(file) {
 				corsDownload(file.downloadUrl);
@@ -123,7 +122,7 @@ var GoogleDrive = function(util, server) {
 			server.xhr({
 				type: 'GET',
 				uri: downloadUrl,
-				auth: oauthParams.token_type + ' ' + oauthParams.access_token,
+				auth: self.oauthParams.token_type + ' ' + self.oauthParams.access_token,
 				responseType: 'arraybuffer',
 				expected: 200,
 				success: function(resp) {
@@ -140,7 +139,7 @@ var GoogleDrive = function(util, server) {
 	/**
 	 * Deletes a blob from Google Drive
 	 */
-	self.deleteBlob = function(fileId, oauthParams, callback, errCallback) {
+	self.deleteBlob = function(fileId, callback, errCallback) {
 		var reqBody = JSON.stringify({
 			labels: {
 				trashed: true
@@ -152,7 +151,7 @@ var GoogleDrive = function(util, server) {
 			uri: driveBaseUri + '/' + fileId,
 			contentType: 'application/json',
 			body: reqBody,
-			auth: oauthParams.token_type + ' ' + oauthParams.access_token,
+			auth: self.oauthParams.token_type + ' ' + self.oauthParams.access_token,
 			expected: 200,
 			success: function(resp) {
 				callback(resp);

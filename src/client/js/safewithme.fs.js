@@ -95,25 +95,19 @@ var FS = function(crypto, server, util, cache,  bucketCache, gdrive) {
 	};
 	
 	/**
-	 * POSTs the bucket to the server
+	 * POSTs the bucket to the gdrive
 	 */
 	self.postBucket = function(bucket, callback) {
 		var bucketJson = JSON.stringify(bucket);
 		
-		server.xhr({
-			type: 'POST',
-			uri: '/ws/buckets',
-			contentType: 'application/json',
-			body: bucketJson,
-			expected: 201,
-			success: function(updatedBucket) {
-				console.log('Bucket successfully created on server.');
-				callback(bucket);
-			},
-			error: function(err) {
-				console.log('No connection to server... bucket not created on server!');
-				callback(bucket);
-			}
+		var blob = new Blob([bucketJson], {type: 'application/json'});
+		blob.name = 'bucket.json';
+		
+		gdrive.uploadBlob(blob, md5(bucketJson), function(createdId) {
+			console.log('Bucket successfully created on server.');
+			callback(bucket);
+		}, function(err) {
+			throw err;
 		});
 	};
 	

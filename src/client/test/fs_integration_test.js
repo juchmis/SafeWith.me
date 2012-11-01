@@ -12,6 +12,7 @@ asyncTest("Create, Get, Delete Bucket", 16, function() {
 	
 	var oauthParams = oauth.oauth2Callback();
 	if (oauthParams) {
+		gdrive.oauthParams = oauthParams;
 		// if oauth params are present, do test
 		startTests();
 		
