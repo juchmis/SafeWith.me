@@ -16,15 +16,14 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * A wrapper for Google Drive communication
  */
 var GoogleDrive = function(util, server) {
-	var self = this;
+	'use strict';
 	
-	var driveBaseUri = 'https://www.googleapis.com/drive/v2/files';
+	var self = this;
+	var	driveBaseUri = 'https://www.googleapis.com/drive/v2/files';
 	
 	/**
 	 * Upload a new file blob to Google Drive by first allocating a

@@ -16,8 +16,6 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * SafeWith.me uses the model-view-presenter (MVP) pattern to seperate 'view'
  * (DOM manipulation) logic from 'presenter' (business) logic. Dependency
@@ -27,6 +25,8 @@
  * no knowledge of file meta-data such as filenames.
  */
 var SAFEWITHME = (function (window, document, $) {
+	'use strict';
+	
 	var self = {};
 	
 	/**
@@ -75,3 +75,7 @@ var SAFEWITHME = (function (window, document, $) {
 	
 	return self;
 }(window, document, $));
+
+$(function() {
+	SAFEWITHME.init();  // init main module on document ready
+});

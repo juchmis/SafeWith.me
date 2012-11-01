@@ -16,13 +16,13 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * This module handles caching both Buckets in local storage
  * as well as decrypted BucketFS objects in memory
  */
 var BucketCache = function(cache, server) {
+	'use strict';
+	
 	var self = this;
 
 	//

@@ -16,9 +16,9 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 var Util = function(window, uuid) {
+	'use strict';
+	
 	var self = this;
 	
 	/**

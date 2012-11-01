@@ -16,12 +16,12 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * This class contains all logic that makes changes to the DOM
  */
 var FSView = function(window, document, $, fs) {
+	'use strict';
+	
 	var self = this;
 	
 	/**

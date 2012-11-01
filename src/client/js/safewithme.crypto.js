@@ -16,12 +16,12 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * A wrapper for OpenPGP encryption logic
  */
 var Crypto = function(window, openpgp, util, server) {
+	'use strict';
+	
 	var self = this;
 	
 	var privateKey;		// user's private key

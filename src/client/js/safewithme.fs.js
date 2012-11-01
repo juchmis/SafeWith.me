@@ -16,13 +16,13 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * This class implements all logic required for filesystem and
  * I/O between the browser's HTML5 File Apis and the application.
  */
 var FS = function(crypto, server, util, cache,  bucketCache, gdrive) {
+	'use strict';
+	
 	var self = this;
 	
 	//

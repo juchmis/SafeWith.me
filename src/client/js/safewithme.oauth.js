@@ -16,12 +16,12 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * A Wrapper for OAuth 2.0 authentication
  */
 var OAuth = function(window) {
+	'use strict';
+	
 	var self = this;
 	
 	self.getLoginLink = function() {

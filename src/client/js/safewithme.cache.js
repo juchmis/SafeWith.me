@@ -16,13 +16,13 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * This module handles generic caching of both JSON objects in LocalStorage
  * as well as Blobs in the local FileSystem
  */
 var Cache = function(window) {
+	'use strict';
+	
 	var self = this;
 	
 	//

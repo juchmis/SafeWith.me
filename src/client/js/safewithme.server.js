@@ -16,12 +16,12 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 /**
  * This class handles all communication with the server
  */
 var Server = function(util) {
+	'use strict';
+	
 	var self = this;
 	
 	//

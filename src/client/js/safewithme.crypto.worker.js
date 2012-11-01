@@ -16,12 +16,11 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-'use strict';
-
 // import web worker dependencies
 importScripts('lib/openpgp.worker.min.js');
 
 var CRYPTOWORKER = (function (symEncrypt, symDecrypt, sha1, sha256) {
+	'use strict';
 	
 	//
 	// Web Worker logic
