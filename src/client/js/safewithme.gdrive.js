@@ -51,10 +51,12 @@ var GoogleDrive = function(util, server) {
 	
 		var reader = new FileReader();
 		reader.onload = function(e) {
-			var contentType = blob.type || 'application/octect-stream';
+			var fileName = blob.name || 'encrypted.safe',
+				contentType = blob.type || 'application/octect-stream';
+				
 			var metadata = {
-			  'title': 'encrypted.safe',
-			  'mimeType': contentType
+			  'title' : fileName,
+			  'mimeType' : contentType
 			};
 
 			var base64Data = btoa(reader.result);

@@ -70,7 +70,8 @@ var Util = function(window, uuid) {
 	 * @return [ArrayBuffer] either a data url or a filesystem url
 	 */
 	self.arrBuf2Blob = function(buf, mimeType) {
-		var blob = new Blob([buf], {type: mimeType});
+		var b = new Uint8Array(buf);
+		var blob = new Blob([b], {type: mimeType});
 		
 		return blob;
 	};
