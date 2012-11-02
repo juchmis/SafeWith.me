@@ -26,25 +26,9 @@ var GoogleDrive = function(util, server) {
 	var	driveBaseUri = 'https://www.googleapis.com/drive/v2/files';
 	
 	/**
-	 * Upload a new file blob to Google Drive by first allocating a
-	 * new file resource (POST) and then uploading the file contents (PUT)
-	 */
-	self.uploadBlob = function(blob, md5, callback, errCallback) {		
-		uploadHelper('POST', '/upload/drive/v2/files', blob, md5, callback, errCallback);
-	};
-	
-	/**
-	 * Update an existing file blob on Google Drive by ID and an upload of
-	 * the file contents (PUT)
-	 */
-	self.updateBlob = function(fileId, blob, md5, callback, errCallback) {		
-		uploadHelper('PUT', '/upload/drive/v2/files/' + fileId, blob, md5, callback, errCallback);
-	};
-	
-	/**
 	 * Private upload helper method
 	 */
-	var uploadHelper = function(method, path, blob, md5, callback, errCallback) {
+	function uploadHelper(method, path, blob, md5, callback, errCallback) {
 		var boundary = '-------314159265358979323846';
 		var delimiter = "\r\n--" + boundary + "\r\n";
 		var close_delim = "\r\n--" + boundary + "--";
@@ -97,6 +81,22 @@ var GoogleDrive = function(util, server) {
 		};
 		
 		reader.readAsBinaryString(blob);
+	};
+	
+	/**
+	 * Upload a new file blob to Google Drive by first allocating a
+	 * new file resource (POST) and then uploading the file contents (PUT)
+	 */
+	self.uploadBlob = function(blob, md5, callback, errCallback) {		
+		uploadHelper('POST', '/upload/drive/v2/files', blob, md5, callback, errCallback);
+	};
+	
+	/**
+	 * Update an existing file blob on Google Drive by ID and an upload of
+	 * the file contents (PUT)
+	 */
+	self.updateBlob = function(fileId, blob, md5, callback, errCallback) {		
+		uploadHelper('PUT', '/upload/drive/v2/files/' + fileId, blob, md5, callback, errCallback);
 	};
 	
 	/**
